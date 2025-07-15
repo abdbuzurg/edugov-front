@@ -1,0 +1,65 @@
+{
+  "NavigationBar": {
+    "bigMessage": "National Database of Scientific and Scientific-Pedagogical Personnel",
+    "home": "Home",
+    "institutions": "Institutions",
+    "personnel": "Personnel",
+    "library": "Library",
+    "scientificPublications": "Scientific Publications",
+    "contacts": "Contacts",
+    "register": "Register",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "RegisterPage": {
+    "header": "Registration",
+    "emailLabel": "Email Address",
+    "emailRequiredValidationError": "Email address is required",
+    "emailValidationError": "Invalid email address",
+    "passwordLabel": "Password",
+    "passwordRequiredValidationError": "Password is required",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordRequiredValidationError": "Confirm password is required",
+    "passwordTooShortValidationError": "Password is too short",
+    "passwordTooLongValidationError": "Password is too long",
+    "passwordNotMatchValidationError": "Passwords must match",
+    "registerSubmitButtonText": "Register",
+    "alreadyAccountExistText": "Already have an account?",
+    "loginLinkText": "Login",
+    "toastRegistrationInProccess": "Registration in progress...",
+    "toastRegistrationSuccess": "Registration successful. Please log in.",
+    "toastRegistrationFailed": "Registration failed"
+  },
+  "LoginPage": {
+    "header": "Login",
+    "emailLabel": "Email address",
+    "emailRequiredValidationError": "Email address is required",
+    "emailValidationError": "Invalid email address",
+    "passwordLabel": "Password",
+    "passwordRequiredValidationError": "Password is required",
+    "loginSubmitButtonText": "LOGIN",
+    "toastLoginInProgress": "Logging in...",
+    "toastLoginSuccess": "Log in successful.",
+    "toastLoginFailed": "Log in failed."
+  },
+  "Employee": {
+    "Details": {
+      "title": "Basic Information",
+      "stateYourCurrentCredentials": "Enter your current full name",
+      "surnameLabel": "Surname",
+      "surnameRequiredValidationText": "Surname is required",
+      "nameLabel": "Name",
+      "nameRequiredValidationText": "Name is required",
+      "middlenameLabel": "Middle Name",
+      "middlenameRequiredValidationText": "Middle Name is required",
+      "stateYourOldCredentials": "Enter your previous full name (if changed)",
+      "onUpdateLoadingToastText": "Updating basic information...",
+      "onUpdateSuccessToastText": "Basic information saved successfully",
+      "onUpdateErrorToastText": "Error updating basic information",
+      "deleteButtonText": "Delete",
+      "addButtonText": "Add",
+      "saveButtonText": "Save",
+      "cancelButtonText": "Cancel"
+    }
+  }
+}

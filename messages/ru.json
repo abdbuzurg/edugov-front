@@ -1,0 +1,65 @@
+{
+  "NavigationBar": {
+    "bigMessage": "Национальная база научных и научно-педагогических кадров",
+    "home": "Главная",
+    "institutions": "Организации",
+    "personnel": "Кадры",
+    "library": "Библиотека",
+    "scientificPublications": "Научные издания",
+    "contacts": "Контакты",
+    "register": "Регистрация",
+    "login": "Вход",
+    "logout": "Выход"
+  },
+  "RegisterPage": {
+    "header": "Регистрация",
+    "emailLabel": "Адрес электронной почты",
+    "emailRequiredValidationError": "адрес электронной почты обязателен",
+    "emailValidationError": "неправильно указан адрес электроной почты",
+    "passwordLabel": "Пароль",
+    "passwordRequiredValidationError": "пароль обязателен",
+    "confirmPasswordLabel": "Подтверждение пароля",
+    "confirmPasswordRequiredValidationError": "подтверждающий пароль обязателен",
+    "passwordTooShortValidationError": "очень короткий пароль",
+    "passwordTooLongValidationError": "очень длинный пароль",
+    "passwordNotMatchValidationError": "пароли должны совпадать",
+    "registerSubmitButtonText": "Зарегистрироваться",
+    "alreadyAccountExistText": "Уже есть аккаунт ?",
+    "loginLinkText": "Вход",
+    "toastRegistrationInProccess": "Идёт регистрация...",
+    "toastRegistrationSuccess": "Регистрация успешна. Выполните вход.",
+    "toastRegistrationFailed": "Ошибка при регистрации"
+  },
+  "LoginPage": {
+    "header": "Вход",
+    "emailLabel": "Адрес электронной почты",
+    "emailRequiredValidationError": "адрес электронной почты обязателен",
+    "emailValidationError": "неправильно указан адрес электроной почты",
+    "passwordLabel": "Пароль",
+    "passwordRequiredValidationError": "пароль обязателен",
+    "loginSubmitButtonText": "ВХОД",
+    "toastLoginInProgress": "Выполняется вход...",
+    "toastLoginSuccess": "Вход выполнен успешно.",
+    "toastLoginFailed": "Вход не выполнен."
+  },
+  "Employee": {
+    "Details": {
+      "title": "Основная информация",
+      "stateYourCurrentCredentials": "Укажите ваше текущее ФИО",
+      "surnameLabel": "Фамилия",
+      "surnameRequiredValidationText": "Фамилия объязательно",
+      "nameLabel": "Имя",
+      "nameRequiredValidationText": "Имя объязательно",
+      "middlenameLabel": "Отчество",
+      "middlenameRequiredValidationText": "Отчество объязательно",
+      "stateYourOldCredentials": "Укажите старое ФИО (если меняли)",
+      "onUpdateLoadingToastText": "Идёт обновление основной имформации...",
+      "onUpdateSuccessToastText": "Основная информация сохранена успено",
+      "onUpdateErrorToastText":"Ошибка при обновлнее основной информации",
+      "deleteButtonText": "Удалить",
+      "addButtonText": "Добавить",
+      "saveButtonText": "Сохранить",
+      "cancelButtonText": "Отмена"
+    }
+  }
+}

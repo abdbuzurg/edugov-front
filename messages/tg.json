@@ -1,0 +1,65 @@
+{
+  "NavigationBar": {
+    "bigMessage": "ПОЙГОХИ МИЛЛИИ КАДРХОИ ИЛМИ ВА ИЛМИ - ПЕДАГОГИ",
+    "home": "Асосӣ",
+    "institutions": "Муассисаҳо",
+    "personnel": "Кадрҳо",
+    "library": "Китобхона",
+    "scientificPublications": "Нашрияҳои илмӣ",
+    "contacts": "Тамос",
+    "register": "Бақайдгирӣ",
+    "login": "Вуруд",
+    "logout": "Баромад"
+  },
+  "RegisterPage": {
+    "header": "Бақайдгирӣ",
+    "emailLabel": "Суроғаи почтаи электронӣ",
+    "emailRequiredValidationError": "Суроғаи почтаи электронӣ ҳатмист",
+    "emailValidationError": "Суроғаи почтаи электронӣ нодуруст аст",
+    "passwordLabel": "Парол",
+    "passwordRequiredValidationError": "Парол ҳатмист",
+    "confirmPasswordLabel": "Тасдиқи парол",
+    "confirmPasswordRequiredValidationError": "Тасдиқи парол ҳатмист",
+    "passwordTooShortValidationError": "Парол хеле кӯтоҳ аст",
+    "passwordTooLongValidationError": "Парол хеле дароз аст",
+    "passwordNotMatchValidationError": "Паролҳо бояд мувофиқат кунанд",
+    "registerSubmitButtonText": "Бақайдгирӣ",
+    "alreadyAccountExistText": "Оё аллакай ҳисоб доред?",
+    "loginLinkText": "Вуруд",
+    "toastRegistrationInProccess": "Бақайдгирӣ идома дорад...",
+    "toastRegistrationSuccess": "Бақайдгирӣ муваффақ шуд. Лутфан, ворид шавед.",
+    "toastRegistrationFailed": "Бақайдгирӣ ноком шуд"
+  },
+  "LoginPage": {
+    "header": "Вуруд",
+    "emailLabel": "Суроғаи почтаи электронӣ",
+    "emailRequiredValidationError": "Суроғаи почтаи электронӣ ҳатмист",
+    "emailValidationError": "Суроғаи почтаи электронӣ нодуруст аст",
+    "passwordLabel": "Парол",
+    "passwordRequiredValidationError": "Парол ҳатмист",
+    "loginSubmitButtonText": "ВУРУД",
+    "toastLoginInProgress": "Вуруд идома дорад...",
+    "toastLoginSuccess": "Вуруд муваффақ шуд.",
+    "toastLoginFailed": "Вуруд ноком шуд."
+  },
+  "Employee": {
+    "Details": {
+      "title": "Маълумоти асосӣ",
+      "stateYourCurrentCredentials": "Ному насаби ҳозираи худро ворид кунед",
+      "surnameLabel": "Насаб",
+      "surnameRequiredValidationText": "Насаб ҳатмист",
+      "nameLabel": "Ном",
+      "nameRequiredValidationText": "Ном ҳатмист",
+      "middlenameLabel": "Номи падар",
+      "middlenameRequiredValidationText": "Номи падар ҳатмист",
+      "stateYourOldCredentials": "Ному насаби пешинаро ворид кунед (агар иваз шуда бошад)",
+      "onUpdateLoadingToastText": "Навсозии маълумоти асосӣ дар ҳоли иҷро...",
+      "onUpdateSuccessToastText": "Маълумоти асосӣ бомуваффақият захира карда шуд",
+      "onUpdateErrorToastText": "Ҳангоми навсозии маълумоти асосӣ хатогӣ рух дод",
+      "deleteButtonText": "Нест кардан",
+      "addButtonText": "Илова кардан",
+      "saveButtonText": "Захира кардан",
+      "cancelButtonText": "Бекор кардан"
+    }
+  }
+}
