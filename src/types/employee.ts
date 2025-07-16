@@ -34,7 +34,6 @@ export type EmployeeDegree = {
   dateEnd: Date
   givenBy: string
   dateDegreeRecieved: Date
-  linkToDegreeFile: string
   createdAt: Date
   updatedAt: Date
 }

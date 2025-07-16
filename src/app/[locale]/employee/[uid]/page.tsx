@@ -61,8 +61,7 @@ const employeeMock: Employee = {
       dateStart: new Date("09/01/2016"),
       dateEnd: new Date("06/20/2021"),
       givenBy: "Университет Центральной Азии",
-      dateDegreeRecieved: new Date("20/06/2021"),
-      linkToDegreeFile: "link",
+      dateDegreeRecieved: new Date("06/20/2021"),
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -75,7 +74,6 @@ const employeeMock: Employee = {
       dateEnd: new Date("06/20/2016"),
       givenBy: "Лицей МГУ",
       dateDegreeRecieved: new Date("20/06/2016"),
-      linkToDegreeFile: "link",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -309,7 +307,6 @@ export default async function EmployeeProfile({
   if (!employee) {
     notFound()
   }
-  console.log(employee)
 
   return (
     <div className="bg-white w-full">
@@ -317,7 +314,7 @@ export default async function EmployeeProfile({
         <div className="flex-1 flex space-x-4 py-4">
           <DetailsInformationSection details={employee.details} employeeID={employee.id} />
           <div className="flex-5  flex flex-col space-y-4">
-            {employeeMock.degree && <DegreeInformationSection degree={employeeMock.degree} />}
+            <DegreeInformationSection degree={employee.degree} employeeID={employee.id}/>
             {employeeMock.workExperience && <WorkExperienceInformationSection workExperience={employeeMock.workExperience} />}
             {employeeMock.mainResearchArea && <MainResearchAreaInformationSection mainResearchArea={employeeMock.mainResearchArea} />}
             {employeeMock.publication && <PublicationInformationSection publications={employeeMock.publication} />}

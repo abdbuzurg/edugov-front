@@ -25,7 +25,7 @@ export default function DetailsInformationSection({ details, employeeID }: Props
   const detailsQuery = useQuery<EmployeeDetails[], Error, EmployeeDetails[]>({
     queryKey: ["employee-details", { employeeID: employeeID }],
     initialData: details ?? [],
-    queryFn: () => employeeApi.getDetails(employeeID),
+    queryFn: () => employeeApi.getDetailsByEmployeeID(employeeID),
   })
 
   const [editMode, setEditMode] = useState<boolean>(false)
