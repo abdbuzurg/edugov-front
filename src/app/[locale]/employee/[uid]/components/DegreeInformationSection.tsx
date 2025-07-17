@@ -3,7 +3,7 @@
 import { employeeApi } from "@/api/employee";
 import { ApiError } from "@/api/types";
 import Dialog from "@/components/Dialog";
-import { EmployeeDegree } from "@/types/employee";
+import { Employee, EmployeeDegree } from "@/types/employee";
 import formatDate from "@/utils/dateFormatter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -15,32 +15,53 @@ import { toast } from "react-toastify";
 interface Props {
   degree: EmployeeDegree[] | undefined
   employeeID: number
+  locale: string
 }
 
 interface DegreeState extends EmployeeDegree {
   editMode: boolean
 }
 
-export default function DegreeInformationSection({ degree, employeeID }: Props) {
+export default function DegreeInformationSection({ degree, employeeID, locale }: Props) {
+  const queryClient = useQueryClient()
 
+  const [degreeState, setDegreeState] = useState<DegreeState[]>([])
+  useEffect(() => {
+    setDegreeState(degree ? degree.map(v => ({
+      ...v,
+      dateStart: new Date(v.dateStart),
+      dateEnd: new Date(v.dateEnd),
+      dateDegreeRecieved: new Date(v.dateDegreeRecieved),
+      editMode: false
+    })) : [])
+  }, [])
 
-  const [degreeState, setDegreeState] = useState<DegreeState[]>(degree?.map(v => ({ ...v, editMode: false })) ?? [])
   const degreeQuery = useQuery<EmployeeDegree[], Error, EmployeeDegree[]>({
-    queryKey: ["employee-degrees", { employeeID: employeeID }],
+    queryKey: ["employee-degrees", {
+      employeeID: employeeID,
+      locale: locale,
+    }],
     queryFn: () => employeeApi.getDegreesByEmployeeID(employeeID),
     initialData: degree ?? [],
   })
   useEffect(() => {
     if (degreeQuery.data.length) {
-      setDegreeState([...degreeQuery.data.map(v => ({ ...v, editMode: false }))])
+      setDegreeState([...degreeQuery.data.map(v => ({
+        ...v,
+        dateStart: new Date(v.dateStart),
+        dateEnd: new Date(v.dateEnd),
+        dateDegreeRecieved: new Date(v.dateDegreeRecieved),
+        editMode: false
+      }))])
     }
   }, [degreeQuery.data])
 
   const addNewDegree = () => {
     setDegreeState([{
       id: 0,
+      employeeID: employeeID,
       degreeLevel: "",
-      recievedFrom: "",
+      universityName: "",
       speciality: "",
       dateStart: new Date(),
       dateEnd: new Date(),
@@ -52,23 +73,24 @@ export default function DegreeInformationSection({ degree, employeeID }: Props) 
     }, ...degreeState])
   }
 
-  const queryClient = useQueryClient()
-
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [toBeDeletedIndex, setToBeDeletedIndex] = useState(-1)
+  const [toBeDeletedID, setToBeDeletedID] = useState(-1)
   const deleteDegreeMutation = useMutation<void, AxiosError<ApiError>, number>({
     mutationFn: employeeApi.deleteDegree
   })
   const deleteDegree = () => {
     const loadingStateToast = toast.info("Удаление из категории образование...")
-    deleteDegreeMutation.mutate(toBeDeletedIndex, {
+    deleteDegreeMutation.mutate(toBeDeletedID, {
       onSettled: () => {
         toast.dismiss(loadingStateToast)
       },
       onSuccess: () => {
         toast.success("Удаление Успешно.")
         queryClient.invalidateQueries({
-          queryKey: ["employee-degrees", { employeeID: employeeID }]
+          queryKey: ["employee-degrees", {
+            employeeID: employeeID,
+            locale: locale,
+          }]
         })
         setIsDeleteDialogOpen(false)
       },
@@ -124,23 +146,22 @@ export default function DegreeInformationSection({ degree, employeeID }: Props) 
               }}
               onDeleteClick={() => {
                 setIsDeleteDialogOpen(true)
-                setToBeDeletedIndex(index)
+                setToBeDeletedID(degree.id)
               }}
             />
             :
             <DegreeEdit
               key={degree.id}
               degree={degree}
+              locale={locale}
               index={index}
               employeeID={employeeID}
               disableEditMode={() => {
                 const editModeEnabled = degreeState.map((v, i) => i == index ? { ...v, editMode: false } : v)
                 setDegreeState([...editModeEnabled])
-
               }}
               removeNewDegreeOnCancel={() => {
                 const degrees = degreeState.filter((_, i) => i != index)
-                console.log(degrees)
                 setDegreeState([...degrees])
               }}
               updateDegreeState={(values: DegreeState) => {
@@ -167,7 +188,7 @@ function DegreeDisplay({ degree, enableEditMode, onDeleteClick }: DegreeDisplayP
   return (
     <div className="flex flex-col space-y-1  border-b-1 pb-2">
       <div className="flex justify-between items-center border-gray-500">
-        <p className="font-semibold text-xl">{degree.recievedFrom}</p>
+        <p className="font-semibold text-xl">{degree.universityName}</p>
         <div className="flex space-x-2">
           <FaPen
             color="blue"
@@ -201,12 +222,13 @@ interface DegreeEditProps {
   index: number
   employeeID: number
   degree: EmployeeDegree | undefined
+  locale: string
   disableEditMode: () => void
   removeNewDegreeOnCancel: () => void
   updateDegreeState: (values: DegreeState) => void
 }
 
-function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegreeOnCancel, updateDegreeState }: DegreeEditProps) {
+function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, removeNewDegreeOnCancel, updateDegreeState }: DegreeEditProps) {
   if (!degree) return null
 
   const queryClient = useQueryClient()
@@ -223,16 +245,25 @@ function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegre
       ...degree,
     },
     onSubmit: values => {
+      const mutationVariable: EmployeeDegree = {
+        ...values,
+        employeeID: employeeID,
+        dateDegreeRecieved: highDigreeLevelCheck(values.degreeLevel) ? values.dateDegreeRecieved : values.dateEnd,
+        givenBy: highDigreeLevelCheck(values.degreeLevel) ? values.givenBy : values.universityName,  
+      }
       if (values.id === 0) {
         const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Образование...")
-        createDegreeMutation.mutate(values, {
+        createDegreeMutation.mutate(mutationVariable, {
           onSettled: () => {
             toast.dismiss(loadingStateToast)
           },
           onSuccess: () => {
             toast.success("Новые данные были успешно добавлены в категорию Образование.")
             queryClient.invalidateQueries({
-              queryKey: ["employee-degrees", { employeeID: employeeID }]
+              queryKey: ["employee-degrees", {
+                employeeID: employeeID,
+                locale: locale
+              }]
             })
             disableEditMode()
           },
@@ -248,14 +279,17 @@ function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegre
       }
 
       const loadingStateToast = toast.info("Идёт обновление данных в категории Образование...")
-      updateDegreeMutation.mutate(values, {
+      updateDegreeMutation.mutate(mutationVariable, {
         onSettled: () => {
           toast.dismiss(loadingStateToast)
         },
         onSuccess: () => {
           toast.success("Данные были успешно обновлены в категорию Образование.")
           queryClient.invalidateQueries({
-            queryKey: ["employee-degrees", { employeeID: employeeID }]
+            queryKey: ["employee-degrees", {
+              employeeID: employeeID,
+              locale: locale,
+            }]
           })
           disableEditMode()
         },
@@ -290,13 +324,13 @@ function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegre
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_recievedFrom`} className="font-semibold">Университет</label>
+        <label htmlFor={`${index}_universityName`} className="font-semibold">Университет</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-          id={`${index}_recievedFrom`}
-          name="recievedFrom"
-          value={form.values.recievedFrom}
+          id={`${index}_universityName`}
+          name="universityName"
+          value={form.values.universityName}
           onChange={form.handleChange}
         />
       </div>
@@ -311,6 +345,7 @@ function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegre
               id={`${index}_degreeLevel_${degree.id}_bachelor`}
               value="Бакалавр"
               onChange={form.handleChange}
+              checked={form.values.degreeLevel == "Бакалавр"}
             />
             <label htmlFor={`${index}_degreeLevel_${degree.id}_bachelor`}>Бакалавр</label>
           </div>
@@ -321,6 +356,7 @@ function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegre
               id={`${index}_degreeLevel_${degree.id}_masters`}
               value="Магистр"
               onChange={form.handleChange}
+              checked={form.values.degreeLevel == "Магистр"}
             />
             <label htmlFor={`${index}_degreeLevel_${degree.id}_masters`}>Магистр</label>
           </div>
@@ -331,6 +367,7 @@ function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegre
               id={`${index}_degreeLevel_${degree.id}_specialist_level`}
               value="Специалитет"
               onChange={form.handleChange}
+              checked={form.values.degreeLevel == "Специалитет"}
             />
             <label htmlFor={`${index}_degreeLevel_${degree.id}_specialist_level`}>Специалитет</label>
           </div>
@@ -341,6 +378,7 @@ function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegre
               id={`${index}_degreeLevel_${degree.id}_pre_phd`}
               value="Кандидат Наук"
               onChange={form.handleChange}
+              checked={form.values.degreeLevel == "Кандидат Наук"}
             />
             <label htmlFor={`${index}_degreeLevel_${degree.id}_pre_phd`}>Кандидат Наук</label>
           </div>
@@ -351,6 +389,7 @@ function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegre
               id={`${index}_degreeLevel_${degree.id}_phd`}
               value="PhD"
               onChange={form.handleChange}
+              checked={form.values.degreeLevel == "PhD"}
             />
             <label htmlFor={`${index}_degreeLevel-${degree.id}_phd`}>PhD</label>
           </div>
@@ -361,6 +400,7 @@ function DegreeEdit({ degree, index, employeeID, disableEditMode, removeNewDegre
               id={`${index}_degreeLevel_${degree.id}_doctor_of_science`}
               value="Доктор Наук"
               onChange={form.handleChange}
+              checked={form.values.degreeLevel == "Доктор Наук"}
             />
             <label htmlFor={`${index}_degreeLevel_${degree.id}_doctor_of_science`}>Доктор Наук</label>
           </div>

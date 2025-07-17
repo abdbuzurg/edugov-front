@@ -16,14 +16,18 @@ import * as yup from "yup"
 interface Props {
   details: EmployeeDetails[] | null
   employeeID: number
+  locale: string
 }
 
-export default function DetailsInformationSection({ details, employeeID }: Props) {
+export default function DetailsInformationSection({ details, employeeID, locale }: Props) {
 
   const t = useTranslations("Employee.Details")
 
   const detailsQuery = useQuery<EmployeeDetails[], Error, EmployeeDetails[]>({
-    queryKey: ["employee-details", { employeeID: employeeID }],
+    queryKey: ["employee-details", {
+      employeeID: employeeID,
+      locale: locale,
+    }],
     initialData: details ?? [],
     queryFn: () => employeeApi.getDetailsByEmployeeID(employeeID),
   })
@@ -40,12 +44,9 @@ export default function DetailsInformationSection({ details, employeeID }: Props
       </div>
       {!editMode
         ?
-        <>
-          {detailsQuery.isLoading && <Loading />}
-          {detailsQuery.isSuccess && <DetailsDisplay details={detailsQuery.data} employeeID={employeeID} />}
-        </>
+        <DetailsDisplay details={detailsQuery.data} employeeID={employeeID} />
         :
-        <DetailsEdit details={detailsQuery.data} employeeID={employeeID} disableEditMode={() => setEditMode(false)} />
+        <DetailsEdit details={detailsQuery.data} employeeID={employeeID} locale={locale} disableEditMode={() => setEditMode(false)} />
       }
     </div>
   )
@@ -71,7 +72,12 @@ const extractOldCredentials = (details: EmployeeDetails[], employeeID: number): 
   return details.filter(v => !v.isNewEmployeeDetails).map(v => ({ ...v, employeeID: employeeID }))
 }
 
-function DetailsDisplay({ details, employeeID }: Props) {
+interface DetailsDisplayProps {
+  details: EmployeeDetails[] | undefined
+  employeeID: number
+}
+
+function DetailsDisplay({ details, employeeID }: DetailsDisplayProps) {
   const [latest, setLatests] = useState<EmployeeDetails>(extractLatestCredentials(details ?? [], employeeID))
   const [old, setOld] = useState<EmployeeDetails[]>(extractOldCredentials(details ?? [], employeeID))
 
@@ -104,15 +110,20 @@ function DetailsDisplay({ details, employeeID }: Props) {
   )
 }
 
+interface DetailsEditProps {
+
+  locale: string
+  details: EmployeeDetails[] | null
+  employeeID: number
+  disableEditMode: () => void
+}
+
 function DetailsEdit({
   details,
   employeeID,
   disableEditMode,
-}: {
-  details: EmployeeDetails[] | null
-  employeeID: number
-  disableEditMode: () => void
-}) {
+  locale,
+}: DetailsEditProps) {
   const t = useTranslations("Employee.Details")
 
   const queryClient = useQueryClient()
@@ -156,7 +167,10 @@ function DetailsEdit({
         onSuccess: () => {
           toast.success(`${t("onUpdateSuccessToastText")}`)
           queryClient.invalidateQueries({
-            queryKey: ["employee-details", { employeeID: employeeID }]
+            queryKey: ["employee-details", { 
+              employeeID: employeeID, 
+              locale: locale,
+            }]
           })
           disableEditMode()
         },

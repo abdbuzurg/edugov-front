@@ -1,7 +1,7 @@
 // api/client.ts
 import axios, { AxiosInstance, AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { redirect } from 'next/navigation'; // For client-side redirects
 import { AuthResponse } from './auth';
+import { useRouter } from 'next/router';
 
 // Ensure this matches your backend's base URL
 // Base URL for your backend API
@@ -91,12 +91,12 @@ clientAxios.interceptors.response.use(
       }
 
       isRefreshing = true; // Set flag to indicate a refresh is now in progress
-
+      
       try {
         // Call your Next.js API route for token refresh.
         // This route will internally use the HttpOnly refresh token (sent automatically by browser)
         // to get a new access token from your authentication backend.
-        const refreshResponse = await axios.post<AuthResponse>('api/auth/refresh');
+        const refreshResponse = await axios.post<AuthResponse>('api/auth/refresh-token');
 
         const { accessToken: newAccessToken } = refreshResponse.data;
 
@@ -121,7 +121,10 @@ clientAxios.interceptors.response.use(
         // Redirect the user to the login page to re-authenticate
         const currentLocale = typeof window !== 'undefined' ? localStorage.getItem('currentLocale') : null;
         const redirectPath = currentLocale ? `/${currentLocale}/login` : '/login';
-        redirect(redirectPath);
+
+        if (typeof window !== 'undefined') {
+          window.location.href = redirectPath
+        }
         return Promise.reject(refreshError); // Propagate the refresh error
       } finally {
         isRefreshing = false; // Reset the refreshing flag

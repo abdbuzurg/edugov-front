@@ -1,28 +1,64 @@
 "use client"
 
+import { employeeApi } from "@/api/employee";
+import { ApiError } from "@/api/types";
 import Dialog from "@/components/Dialog";
 import { EmployeeWorkExperience } from "@/types/employee";
 import formatDate from "@/utils/dateFormatter";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Axios, AxiosError } from "axios";
 import { useFormik } from "formik";
-import { ChangeEvent, FormEvent, Fragment, useState } from "react";
+import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 interface Props {
-  workExperience: EmployeeWorkExperience[]
+  workExperience: EmployeeWorkExperience[] | undefined
+  employeeID: number
+  locale: string
 }
 
-export default function WorkExperienceInformationSection({ workExperience }: Props) {
+interface WorkExperienceState extends EmployeeWorkExperience {
+  editMode: boolean
+}
 
-  const editModeFormData = useFormik({
-    initialValues: {
-      workExperience: workExperience.map(v => ({ ...v, editMode: false })),
-    },
-    onSubmit: _ => { }
+export default function WorkExperienceInformationSection({ workExperience, employeeID, locale }: Props) {
+  const queryClient = useQueryClient()
+
+  const [workExperienceState, setWorkExperienceState] = useState<WorkExperienceState[]>([])
+  useEffect(() => {
+    setWorkExperienceState(workExperience ? workExperience.map(v => ({
+      ...v,
+      dateEnd: new Date(v.dateEnd),
+      dateStart: new Date(v.dateStart),
+      employeeID: employeeID,
+      editMode: false,
+    })) : [])
+  }, [])
+
+  const workExperienceQuery = useQuery<EmployeeWorkExperience[], AxiosError<ApiError>, EmployeeWorkExperience[]>({
+    queryKey: ["employee-work-experience", {
+      employeeID: employeeID,
+      locale: locale,
+    }],
+    queryFn: () => employeeApi.getWorkExperienceByEmployeeID(employeeID)
   })
+  useEffect(() => {
+    if (workExperienceQuery.data) {
+      setWorkExperienceState([...workExperienceQuery.data.map(v => ({
+        ...v,
+        dateEnd: new Date(v.dateEnd),
+        dateStart: new Date(v.dateStart),
+        employeeID: employeeID,
+        editMode: false,
+      }))])
+    }
+  }, [workExperienceQuery.data])
 
   const addNewWorkExperience = () => {
-    editModeFormData.setFieldValue("workExperience", [{
+    setWorkExperienceState([{
       id: 0,
+      employeeID: employeeID,
       workplace: "",
       jobTitle: "",
       description: "",
@@ -30,38 +66,39 @@ export default function WorkExperienceInformationSection({ workExperience }: Pro
       dateEnd: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
-      editMode: true
-    }, ...editModeFormData.values.workExperience])
+      editMode: true,
+    }, ...workExperienceState])
   }
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const deleteWorkExperience = (index: number) => {
-    const workExperiences = editModeFormData.values.workExperience.filter((_, i) => i != index)
-    editModeFormData.setFieldValue("workExperience", workExperiences)
-    setIsDeleteDialogOpen(false)
-  }
-
-  const onDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    editModeFormData.setFieldValue(e.target.name, new Date(e.target.value))
-  }
-
-  const onCancelClick = (index: number, id: number) => {
-    const findByID = workExperience.find(v => v.id == id)
-    if (!findByID) {
-      const workExperiences = editModeFormData.values.workExperience.filter((_, i) => i != index)
-      editModeFormData.setFieldValue("workExperience", workExperiences)
-      return
-    }
-
-    editModeFormData.setFieldValue(`workExperience[${index}]`, {
-      ...findByID,
-      editMode: false,
+  const [toBeDeletedID, setToBeDeletedID] = useState(-1)
+  const deleteWorkExperienceMutation = useMutation<void, AxiosError<ApiError>, number>({
+    mutationFn: employeeApi.deleteWorkExprience,
+  })
+  const deleteWorkExperience = () => {
+    const loadingStateToast = toast.info("Удаление из категории образование...")
+    deleteWorkExperienceMutation.mutate(toBeDeletedID, {
+      onSettled: () => {
+        toast.dismiss(loadingStateToast)
+      },
+      onSuccess: () => {
+        toast.success("Удаление Успешно.")
+        queryClient.invalidateQueries({
+          queryKey: ["employee-work-experience", {
+            employeeID: employeeID,
+            locale: locale,
+          }]
+        })
+        setIsDeleteDialogOpen(false)
+      },
+      onError: (error) => {
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+        } else {
+          toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
+        }
+      }
     })
-  }
-
-  const onFormSubmit = (e: FormEvent<HTMLFormElement>, index: number) => {
-    e.preventDefault()
-    editModeFormData.setFieldValue(`workExperience[${index}].editMode`, false)
   }
 
   return (
@@ -73,139 +110,275 @@ export default function WorkExperienceInformationSection({ workExperience }: Pro
         </div>
       </div>
       <div className="flex flex-col space-y-1 px-6">
-        {editModeFormData.values.workExperience.map((experience, index) => (
-          <Fragment key={index}>
-            {!experience.editMode
-              ?
-              <div className="flex flex-col space-y-1  border-b-1 pb-2" key={index}>
-                <Dialog
-                  isOpen={isDeleteDialogOpen}
-                  onClose={() => setIsDeleteDialogOpen(false)}
-                >
-                  <h4 className="text-center font-semibold">Вы уверены что хотите удалить?</h4>
-                  <div className="flex space-x-2 items-center justify-center mt-2">
-                    <div
-                      className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
-                      onClick={() => deleteWorkExperience(index)}
-                    >
-                      Удалить
-                    </div>
-                    <div
-                      className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
-                      onClick={() => setIsDeleteDialogOpen(false)}
-                    >
-                      Отмена
-                    </div>
-                  </div>
-                </Dialog>
-                <div className="flex justify-between items-center border-gray-500">
-                  <p className="font-semibold text-xl">{experience.workplace}</p>
-                  <div className="flex space-x-2">
-                    <FaPen
-                      color="blue"
-                      onClick={() => editModeFormData.setFieldValue(`workExperience[${index}].editMode`, true)}
-                      className="cursor-pointer"
-                    />
-                    <FaTrash
-                      color="red"
-                      onClick={() => setIsDeleteDialogOpen(true)}
-                      className="cursor-pointer"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <h5>Full Stack Software Developer</h5>
-                  <div className="flex space-x-2">
-                    <h4>{formatDate(experience.dateStart)} - {formatDate(experience.dateEnd)}</h4>
-                  </div>
-                  <p>{experience.description}</p>
-                </div>
-              </div>
-              :
-              <form onSubmit={(e: FormEvent<HTMLFormElement>) => onFormSubmit(e, index)} className="flex flex-col space-y-2 border-b-1 pb-2">
-                <div className="flex flex-col space-y-1">
-                  <label htmlFor={`workExperience[${index}.workplace]`} className="font-semibold">Компания или организация</label>
-                  <input
-                    type="text"
-                    className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-                    id={`workExperience[${index}].workplace`}
-                    name={`workExperience[${index}].workplace`}
-                    value={editModeFormData.values.workExperience[index].workplace}
-                    onChange={editModeFormData.handleChange}
-                  />
-                </div>
-
-                <div className="flex flex-col space-y-1">
-                  <label htmlFor={`workExperience[${index}.workplace]`} className="font-semibold">Должность</label>
-                  <input
-                    type="text"
-                    className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-                    id={`workExperience[${index}].jobTitle`}
-                    name={`workExperience[${index}].jobTitle`}
-                    value={editModeFormData.values.workExperience[index].jobTitle}
-                    onChange={editModeFormData.handleChange}
-                  />
-                </div>
-
-                <div className="flex flex-col space-y-1">
-                  <label className="font-semibold">Период</label>
-                  <div className="flex space-x-2">
-                    <div className="flex flex-col space-y-1">
-                      <label>Начало</label>
-                      <input
-                        type="date"
-                        className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-                        id={`workExperience[${index}].dateStart`}
-                        name={`workExperience[${index}].dateStart`}
-                        value={editModeFormData.values.workExperience[index].dateStart.toISOString().slice(0, 10)}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
-                      />
-                    </div>
-                    <div className="flex flex-col space-y-1">
-                      <label>Конец</label>
-                      <input
-                        type="date"
-                        className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-                        id={`workExperience[${index}].dateEnd`}
-                        name={`workExperience[${index}].dateEnd`}
-                        value={editModeFormData.values.workExperience[index].dateEnd.toISOString().slice(0, 10)}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col space-y-1">
-                  <label htmlFor={`workExperience[${index}.description]`} className="font-semibold">Краткое описание должности</label>
-                  <textarea
-                    className="border p-2 rounded-xl border-gray-400 bg-gray-300 max-w-full min-h-[150px]"
-                    id={`workExperience[${index}].description`}
-                    name={`workExperience[${index}].description`}
-                    value={editModeFormData.values.workExperience[index].description}
-                    onChange={editModeFormData.handleChange}
-                  ></textarea>
-                </div>
-
-                <div className="flex space-x-2 items-center justify-start">
-                  <button
-                    type="submit"
-                    className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
-                  >
-                    Сохранить
-                  </button>
-                  <button
-                    type="button"
-                    className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
-                    onClick={() => onCancelClick(index, experience.id)}
-                  >
-                    Отмена
-                  </button>
-                </div>
-              </form>
-            }
-          </Fragment>
-        ))}
+        <Dialog
+          isOpen={isDeleteDialogOpen}
+          onClose={() => setIsDeleteDialogOpen(false)}
+        >
+          <h4 className="text-center font-semibold">Вы уверены что хотите удалить?</h4>
+          <div className="flex space-x-2 items-center justify-center mt-2">
+            <div
+              className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
+              onClick={() => deleteWorkExperience()}
+            >
+              Удалить
+            </div>
+            <div
+              className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              Отмена
+            </div>
+          </div>
+        </Dialog>
+        {workExperienceState.map((experience, index) =>
+          !experience.editMode
+            ?
+            <WorkExperienceDisplay
+              workExperience={experience}
+              enableEditMode={() => {
+                const editModeEnabled = workExperienceState.map((v, i) => i == index ? { ...v, editMode: true } : v)
+                setWorkExperienceState([...editModeEnabled])
+              }}
+              onDeleteClick={() => {
+                setIsDeleteDialogOpen(true)
+                setToBeDeletedID(experience.id)
+              }}
+            />
+            :
+            <WorkExperienceEdit
+              workExperience={experience}
+              employeeID={employeeID}
+              locale={locale}
+              index={index}
+              disableEditMode={() => {
+                const editModeEnabled = workExperienceState.map((v, i) => i == index ? { ...v, editMode: false } : v)
+                setWorkExperienceState([...editModeEnabled])
+              }}
+              removeNewWorkExperienceOnCancel={() => {
+                const workExperience = workExperienceState.filter((_, i) => i != index)
+                setWorkExperienceState([...workExperience])
+              }}
+              updateWorkExperienceState={(values: WorkExperienceState) => {
+                const degrees = workExperienceState.map((v, i) => i == index ? values : v)
+                setWorkExperienceState(degrees)
+              }}
+            />
+        )}
       </div>
     </div>
+  )
+}
+
+interface WorkExperienceDisplayProps {
+  workExperience: EmployeeWorkExperience | undefined
+  enableEditMode: () => void
+  onDeleteClick: () => void
+}
+
+function WorkExperienceDisplay({ workExperience, enableEditMode, onDeleteClick }: WorkExperienceDisplayProps) {
+  if (!workExperience) return null
+
+  return (
+    <div className="flex flex-col space-y-1  border-b-1 pb-2">
+      <div className="flex justify-between items-center border-gray-500">
+        <p className="font-semibold text-xl">{workExperience.workplace}</p>
+        <div className="flex space-x-2">
+          <FaPen
+            color="blue"
+            onClick={() => enableEditMode()}
+            className="cursor-pointer"
+          />
+          <FaTrash
+            color="red"
+            onClick={() => onDeleteClick()}
+            className="cursor-pointer"
+          />
+        </div>
+      </div>
+      <div>
+        <h5>Full Stack Software Developer</h5>
+        <div className="flex space-x-2">
+          <h4>{formatDate(workExperience.dateStart)} - {formatDate(workExperience.dateEnd)}</h4>
+        </div>
+        <p>{workExperience.description}</p>
+      </div>
+    </div>
+  )
+}
+
+interface WorkExperienceEditProps {
+  workExperience: EmployeeWorkExperience | undefined
+  employeeID: number
+  index: number
+  locale: string
+  disableEditMode: () => void
+  removeNewWorkExperienceOnCancel: () => void
+  updateWorkExperienceState: (value: WorkExperienceState) => void
+}
+
+function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeNewWorkExperienceOnCancel, updateWorkExperienceState, disableEditMode }: WorkExperienceEditProps) {
+  if (!workExperience) return null
+
+  const queryClient = useQueryClient()
+  const createWorkExperience = useMutation<EmployeeWorkExperience, AxiosError<ApiError>, EmployeeWorkExperience>({
+    mutationFn: employeeApi.createWorkExperience,
+  })
+
+  const updateWorkExperienceMutation = useMutation<EmployeeWorkExperience, AxiosError<ApiError>, EmployeeWorkExperience>({
+    mutationFn: employeeApi.updateWorkExperience,
+  })
+
+  const form = useFormik({
+    initialValues: {
+      ...workExperience,
+    },
+    onSubmit: values => {
+      if (values.id === 0) {
+        const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Опыт работы...")
+        createWorkExperience.mutate(values, {
+          onSettled: () => {
+            toast.dismiss(loadingStateToast)
+          },
+          onSuccess: () => {
+            toast.success("Новые данные были успешно добавлены в категорию Опыт работы.")
+            queryClient.invalidateQueries({
+              queryKey: ["employee-work-experience", {
+                employeeID: employeeID,
+                locale: locale
+              }]
+            })
+            disableEditMode()
+          },
+          onError: (error) => {
+            if (error.response && error.response.data && error.response.data.message) {
+              toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+            } else {
+              toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
+            }
+          }
+        })
+        return
+      }
+
+      const loadingStateToast = toast.info("Идёт обновление данных в категории Опыт работы...")
+      updateWorkExperienceMutation.mutate(values, {
+        onSettled: () => {
+          toast.dismiss(loadingStateToast)
+        },
+        onSuccess: () => {
+          toast.success("Данные были успешно обновлены в категорию Опыт работы.")
+          queryClient.invalidateQueries({
+            queryKey: ["employee-work-experience", {
+              employeeID: employeeID,
+              locale: locale,
+            }]
+          })
+          disableEditMode()
+        },
+        onError: (error) => {
+          if (error.response && error.response.data && error.response.data.message) {
+            toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+          } else {
+            toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
+          }
+        }
+      })
+    }
+  })
+
+  const onDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    form.setFieldValue(e.target.name, new Date(e.target.value))
+  }
+
+  const onCancelClick = (id: number) => {
+    if (id === 0) {
+      removeNewWorkExperienceOnCancel()
+      return
+    }
+
+    disableEditMode()
+  }
+
+  return (
+    <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
+      <div className="flex flex-col space-y-1">
+        <label htmlFor={`${index}_workplace]`} className="font-semibold">Компания или организация</label>
+        <input
+          type="text"
+          className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+          id={`${index}_workplace`}
+          name={`workplace`}
+          value={form.values.workplace}
+          onChange={form.handleChange}
+        />
+      </div>
+
+      <div className="flex flex-col space-y-1">
+        <label htmlFor={`${index}_workplace]`} className="font-semibold">Должность</label>
+        <input
+          type="text"
+          className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+          id={`${index}_jobTitle`}
+          name={`jobTitle`}
+          value={form.values.jobTitle}
+          onChange={form.handleChange}
+        />
+      </div>
+
+      <div className="flex flex-col space-y-1">
+        <label className="font-semibold">Период</label>
+        <div className="flex space-x-2">
+          <div className="flex flex-col space-y-1">
+            <label>Начало</label>
+            <input
+              type="date"
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              id={`${index}_dateStart`}
+              name={`dateStart`}
+              value={form.values.dateStart.toISOString().slice(0, 10)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
+            />
+          </div>
+          <div className="flex flex-col space-y-1">
+            <label>Конец</label>
+            <input
+              type="date"
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              id={`${index}_dateEnd`}
+              name={`dateEnd`}
+              value={form.values.dateEnd.toISOString().slice(0, 10)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-1">
+        <label htmlFor={`${index}_description]`} className="font-semibold">Краткое описание должности</label>
+        <textarea
+          className="border p-2 rounded-xl border-gray-400 bg-gray-300 max-w-full min-h-[150px]"
+          id={`${index}_description`}
+          name={`description`}
+          value={form.values.description}
+          onChange={form.handleChange}
+        ></textarea>
+      </div>
+
+      <div className="flex space-x-2 items-center justify-start">
+        <button
+          type="submit"
+          className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
+        >
+          Сохранить
+        </button>
+        <button
+          type="button"
+          className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
+          onClick={() => onCancelClick(workExperience.id)}
+        >
+          Отмена
+        </button>
+      </div>
+    </form>
   )
 }

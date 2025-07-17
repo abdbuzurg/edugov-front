@@ -10,6 +10,7 @@ export default function LanguageSwitcher() {
   const currentLocale = params.locale as string;
   useEffect(() => {
     localStorage.setItem("currentLocale", currentLocale)
+    
   }, [])
 
   // Define the locales you support
@@ -26,7 +27,6 @@ export default function LanguageSwitcher() {
     const pathSegments = pathname.split('/').filter(segment => segment !== currentLocale && segment !== '');
     const newPath = `/${newLocale}/${pathSegments.join('/')}`;
     router.push(newPath);
-    router.refresh()
   };
 
   return (

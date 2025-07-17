@@ -52,11 +52,12 @@ const employeeMock: Employee = {
       updatedAt: new Date(),
     }
   ],
-  degree: [
+  degrees: [
     {
       id: 1,
+      employeeID: 1,
       degreeLevel: "Бакалавр",
-      recievedFrom: "Университет Центральной Азии",
+      universityName: "Университет Центральной Азии",
       speciality: "Компьютерная наука",
       dateStart: new Date("09/01/2016"),
       dateEnd: new Date("06/20/2021"),
@@ -67,8 +68,9 @@ const employeeMock: Employee = {
     },
     {
       id: 2,
+      employeeID: 1,
       degreeLevel: "Школа",
-      recievedFrom: "Лицей МГУ",
+      universityName: "Лицей МГУ",
       speciality: "Высшее образование",
       dateStart: new Date("09/01/2014"),
       dateEnd: new Date("06/20/2016"),
@@ -78,9 +80,10 @@ const employeeMock: Employee = {
       updatedAt: new Date(),
     },
   ],
-  workExperience: [
+  workExperiences: [
     {
       id: 1,
+      employeeID: 1,
       workplace: "ТГЭМ",
       jobTitle: "Фулстэк разработчик",
       description: "Фулстэк разработка программы для контроля склада. Включает в себя автоматическое создание отчётов и сбора данных",
@@ -91,6 +94,7 @@ const employeeMock: Employee = {
     },
     {
       id: 2,
+      employeeID: 1,
       workplace: "Лицей Ага Хана",
       jobTitle: "Фулстэк разработчик",
       description: "Фулстэк разработка программы для контроля товарооборота куханных материалов включая оборот учебных материалов. Включает в себя автоматическое создание отчётов и сбора данных",
@@ -101,6 +105,7 @@ const employeeMock: Employee = {
     },
     {
       id: 3,
+      employeeID: 1,
       workplace: "ТГЭМ",
       jobTitle: "Фулстэк разработчик",
       description: "Фулстэк разработка программы для контроля склада. Включает в себя автоматическое создание отчётов и сбора данных",
@@ -111,6 +116,7 @@ const employeeMock: Employee = {
     },
     {
       id: 4,
+      employeeID: 1,
       workplace: "ТГЭМ",
       jobTitle: "Фулстэк разработчик",
       description: "Фулстэк разработка программы для контроля склада. Включает в себя автоматическое создание отчётов и сбора данных",
@@ -120,7 +126,7 @@ const employeeMock: Employee = {
       updatedAt: new Date(),
     },
   ],
-  mainResearchArea: [
+  mainResearchAreas: [
     {
       id: 1,
       area: "Математика",
@@ -164,7 +170,7 @@ const employeeMock: Employee = {
       updatedAt: new Date(),
     },
   ],
-  publication: [
+  publications: [
     {
       id: 1,
       publicationTitle: "Влияние климатических изменений на миграцию птиц",
@@ -187,7 +193,7 @@ const employeeMock: Employee = {
       updatedAt: new Date(),
     },
   ],
-  scientificAward: [
+  scientificAwards: [
     {
       id: 1,
       scientificAwardTitle: "Нобелевская премия",
@@ -205,7 +211,7 @@ const employeeMock: Employee = {
       updatedAt: new Date(),
     },
   ],
-  patent: [
+  patents: [
     {
       id: 1,
       patentTitle: "Способ получения углеродных нанотрубок 1 ",
@@ -223,7 +229,7 @@ const employeeMock: Employee = {
       updatedAt: new Date(),
     },
   ],
-  participationInProfessionalCommunity: [
+  participationInProfessionalCommunities: [
     {
       id: 1,
       professionalCommunityTitle: "Ассоциация врачей Таджикистана 1",
@@ -241,7 +247,7 @@ const employeeMock: Employee = {
       updatedAt: new Date(),
     },
   ],
-  refresherCourse: [
+  refresherCourses: [
     {
       id: 1,
       courseTitle: "Управление персоналом и кадровое делопроизводство 1",
@@ -308,20 +314,22 @@ export default async function EmployeeProfile({
     notFound()
   }
 
+  console.log(employee)
+
   return (
     <div className="bg-white w-full">
       <div className="m-auto lg:w-[1280px] w-full flex">
         <div className="flex-1 flex space-x-4 py-4">
-          <DetailsInformationSection details={employee.details} employeeID={employee.id} />
+          <DetailsInformationSection details={employee.details} employeeID={employee.id} locale={locale}/>
           <div className="flex-5  flex flex-col space-y-4">
-            <DegreeInformationSection degree={employee.degree} employeeID={employee.id}/>
-            {employeeMock.workExperience && <WorkExperienceInformationSection workExperience={employeeMock.workExperience} />}
-            {employeeMock.mainResearchArea && <MainResearchAreaInformationSection mainResearchArea={employeeMock.mainResearchArea} />}
-            {employeeMock.publication && <PublicationInformationSection publications={employeeMock.publication} />}
-            {employeeMock.scientificAward && <ScientificAwardInformationSection scientificAwards={employeeMock.scientificAward} />}
-            {employeeMock.patent && <PatentInformationSection patents={employeeMock.patent} />}
-            {employeeMock.participationInProfessionalCommunity && <ParticipationInProfessionalCommunityInformationSection participationInProfessionalCommunities={employeeMock.participationInProfessionalCommunity} />}
-            {employeeMock.refresherCourse && <RefresherCourseInformationSection refresherCourses={employeeMock.refresherCourse} />}
+            <DegreeInformationSection degree={employee.degrees} employeeID={employee.id} locale={locale}/>
+            {employeeMock.workExperiences && <WorkExperienceInformationSection workExperience={employeeMock.workExperiences} employeeID={employee.id} locale={locale} key={`${uid}-${locale}`}/>}
+            {employeeMock.mainResearchAreas && <MainResearchAreaInformationSection mainResearchArea={employeeMock.mainResearchAreas} />}
+            {employeeMock.publications && <PublicationInformationSection publications={employeeMock.publications} />}
+            {employeeMock.scientificAwards && <ScientificAwardInformationSection scientificAwards={employeeMock.scientificAwards} />}
+            {employeeMock.patents && <PatentInformationSection patents={employeeMock.patents} />}
+            {employeeMock.participationInProfessionalCommunities && <ParticipationInProfessionalCommunityInformationSection participationInProfessionalCommunities={employeeMock.participationInProfessionalCommunities} />}
+            {employeeMock.refresherCourses && <RefresherCourseInformationSection refresherCourses={employeeMock.refresherCourses} />}
           </div>
         </div>
       </div>

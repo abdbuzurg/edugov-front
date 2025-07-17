@@ -4,14 +4,14 @@ export type Employee = {
   createdAt: Date
   updatedAt: Date
   details: EmployeeDetails[]
-  degree?: EmployeeDegree[]
-  workExperience?: EmployeeWorkExperience[]
-  mainResearchArea?: EmployeeMainResearchArea[]
-  publication?: EmployeePublication[]
-  scientificAward?: EmployeeScientificAward[]
-  patent?: EmployeePatent[]
-  participationInProfessionalCommunity?: EmployeeParticipationInProfessionalCommunity[]
-  refresherCourse?: EmployeeRefrehserCourse[]
+  degrees?: EmployeeDegree[]
+  workExperiences?: EmployeeWorkExperience[]
+  mainResearchAreas?: EmployeeMainResearchArea[]
+  publications?: EmployeePublication[]
+  scientificAwards?: EmployeeScientificAward[]
+  patents?: EmployeePatent[]
+  participationInProfessionalCommunities?: EmployeeParticipationInProfessionalCommunity[]
+  refresherCourses?: EmployeeRefrehserCourse[]
 }
 
 export type EmployeeDetails = {
@@ -27,8 +27,9 @@ export type EmployeeDetails = {
 
 export type EmployeeDegree = {
   id: number
+  employeeID: number
   degreeLevel: string
-  recievedFrom: string
+  universityName: string
   speciality: string
   dateStart: Date
   dateEnd: Date
@@ -40,6 +41,7 @@ export type EmployeeDegree = {
 
 export type EmployeeWorkExperience = {
   id: number
+  employeeID: number
   workplace: string
   jobTitle: string
   description: string
