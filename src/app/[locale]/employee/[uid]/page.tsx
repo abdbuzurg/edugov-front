@@ -275,6 +275,7 @@ async function getEmployeeFullInfoByUID(uid: string, locale: string): Promise<Em
   const accessToken = cookieStore.get("accessToken")
   const refreshToken = cookieStore.get("refreshToken")
 
+  console.log(accessToken, refreshToken)
   if (!accessToken && !refreshToken) {
     return null
   }
