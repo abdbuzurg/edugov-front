@@ -53,7 +53,7 @@ export default function LoginForm() {
             default:
               console.log("ERROR INCORRECT USER ROLE")
           }
-          router.refresh()
+          // router.refresh()
         },
         onError: (error) => {
           if (error.response && error.response.data && error.response.data.message) {
