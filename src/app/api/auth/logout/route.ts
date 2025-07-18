@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'; // To clear cookies
 
 // Replace with the actual URL of your backend's logout/token invalidation endpoint
-const BACKEND_LOGOUT_URL = process.env.BACKEND_LOGOUT_URL || `http://localhost:8080/auth/logout`;
+const BACKEND_LOGOUT_URL = process.env.BACKEND_LOGOUT_URL;
 
 export async function POST() {
   const cookieStore = await cookies();
@@ -14,7 +14,7 @@ export async function POST() {
     // 1. Call your actual backend to invalidate the refresh token
     // This is important to prevent a compromised refresh token from being used.
     if (refreshToken) {
-      await fetch(BACKEND_LOGOUT_URL, {
+      await fetch(BACKEND_LOGOUT_URL!, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

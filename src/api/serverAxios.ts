@@ -1,10 +1,10 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { AuthResponse } from "./auth";
-import { accessTokenDuration, BACKEND_REFRESH_URL, refreshTokenDuration } from "@/utils/tokenDurations";
+import { accessTokenDuration, refreshTokenDuration } from "@/utils/tokenDurations";
 
-export const BACKEND_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
-
+export const BACKEND_API_BASE_URL = process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL;
+const BACKEND_REFRESH_URL = process.env.BACKEND_REFRESH_URL
 /**
  * Creates an Axios instance specifically for Server Components.
  * It takes the 'cookies' object from 'next/headers' to access tokens
@@ -68,7 +68,7 @@ export async function handleServerAuthRefresh<T>(
   try {
     // 1. Call your Next.js API route for token refresh
     // The browser automatically sends the HttpOnly refreshToken cookie with this request.
-    const refreshResponse = await axios.post<AuthResponse>(BACKEND_REFRESH_URL);
+    const refreshResponse = await axios.post<AuthResponse>(BACKEND_REFRESH_URL!);
 
     const newAccessToken = refreshResponse.data.accessToken;
     const newRefreshToken = refreshResponse.data.refreshToken;

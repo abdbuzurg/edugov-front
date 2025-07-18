@@ -4,7 +4,7 @@ import { AuthResponse } from './auth';
 
 // Ensure this matches your backend's base URL
 // Base URL for your backend API
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/';
+const API_BASE_URL = process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL;
 
 const clientAxios: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

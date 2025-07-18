@@ -16,7 +16,7 @@ export type AuthResponse = {
 
 export const authApi = {
   register: async (credentials: AuthRequest): Promise<boolean> => {
-    const response = await clientAxios.post(`/auth/register`, credentials)
+    const response = await clientAxios.post(`auth/register`, credentials)
     return response.status === 201
   },
   login: async (credentials: AuthRequest): Promise<AuthResponse> => {

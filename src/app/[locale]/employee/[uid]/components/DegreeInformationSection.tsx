@@ -46,7 +46,7 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
     initialData: degree ?? [],
   })
   useEffect(() => {
-    if (degreeQuery.data.length) {
+    if (degreeQuery.data) {
       setDegreeState([...degreeQuery.data.map(v => ({
         ...v,
         dateStart: new Date(v.dateStart),

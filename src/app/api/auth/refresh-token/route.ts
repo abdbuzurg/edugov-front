@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'; // To access and set cookies
 import { AuthResponse } from '@/api/auth';
 import { ApiError } from '@/api/types';
-import { accessTokenDuration, BACKEND_REFRESH_URL, refreshTokenDuration } from '@/utils/tokenDurations';
+import { accessTokenDuration, refreshTokenDuration } from '@/utils/tokenDurations';
+
+const BACKEND_REFRESH_URL = process.env.BACKEND_REFRESH_URL
 
 // Replace with the actual URL of your backend's token refresh endpoint
 export async function POST() {
@@ -22,7 +24,7 @@ export async function POST() {
     // 1. Forward the refresh token to your actual backend authentication server
     // Note: The backend might expect the refresh token in the body or a header.
     // Here, we assume it expects it in the body for simplicity.
-    const backendResponse = await fetch(BACKEND_REFRESH_URL, {
+    const backendResponse = await fetch(BACKEND_REFRESH_URL!, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -5,14 +5,14 @@ import { ApiError } from '@/api/types';
 import { accessTokenDuration, refreshTokenDuration } from '@/utils/tokenDurations';
 
 // Replace with the actual URL of your backend's login endpoint
-const BACKEND_LOGIN_URL = process.env.BACKEND_LOGIN_URL || `http://localhost:8080/auth/login`;
+const BACKEND_LOGIN_URL = process.env.BACKEND_LOGIN_URL;
 
 export async function POST(request: Request) {
   try {
     const { email, password }: AuthRequest = await request.json();
 
     // 1. Forward credentials to your actual backend authentication server
-    const backendResponse = await fetch(BACKEND_LOGIN_URL, {
+    const backendResponse = await fetch(BACKEND_LOGIN_URL!, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
