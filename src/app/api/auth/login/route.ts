@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     cookieStore.set({
       name: "accessToken",
       value: authData.accessToken,
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: accessTokenDuration, // Example: one hour
