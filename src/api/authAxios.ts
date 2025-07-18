@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_NEXT_JS_BACKEND_URL; // Changed to Next.js app's base URL
-console.log(process.env.NEXT_PUBLIC_NEXT_JS_BACKEND_URL)
 
 const authAxios: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

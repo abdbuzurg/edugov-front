@@ -13,6 +13,8 @@ import { cookies } from "next/headers";
 import { createServerAxios, handleServerAuthRefresh } from "@/api/serverAxios";
 import axios from "axios";
 
+export const dynamic = "force-dynamic"
+
 const employeeMock: Employee = {
   id: 1,
   uid: "akjsdhaklsjdhaklsd",

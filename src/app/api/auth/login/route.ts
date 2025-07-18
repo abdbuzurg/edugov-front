@@ -44,7 +44,6 @@ export async function POST(request: Request) {
       path: '/',
     });
 
-    console.log(authData.refreshToken)
     cookieStore.set({
       name: "refreshToken",
       value: authData.refreshToken,
