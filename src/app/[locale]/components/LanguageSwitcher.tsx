@@ -9,8 +9,9 @@ export default function LanguageSwitcher() {
   const pathname = usePathname(); // Get the current pathname
   const currentLocale = params.locale as string;
   useEffect(() => {
-    localStorage.setItem("currentLocale", currentLocale)
-    
+    if (typeof window !== undefined) {
+      localStorage.setItem("currentLocale", currentLocale)
+    }
   }, [])
 
   // Define the locales you support

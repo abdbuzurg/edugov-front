@@ -3,7 +3,7 @@
 import { employeeApi } from "@/api/employee";
 import { ApiError } from "@/api/types";
 import Dialog from "@/components/Dialog";
-import { Employee, EmployeeDegree } from "@/types/employee";
+import { EmployeeDegree } from "@/types/employee";
 import formatDate from "@/utils/dateFormatter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";

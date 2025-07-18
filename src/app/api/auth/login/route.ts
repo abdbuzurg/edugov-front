@@ -2,12 +2,10 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'; // Import cookies function to set cookies
 import { AuthRequest, AuthResponse } from '@/api/auth'; // Import your types
 import { ApiError } from '@/api/types';
-import { BACKEND_API_BASE_URL } from '@/api/serverAxios';
+import { accessTokenDuration, refreshTokenDuration } from '@/utils/tokenDurations';
 
 // Replace with the actual URL of your backend's login endpoint
 const BACKEND_LOGIN_URL = process.env.BACKEND_LOGIN_URL || `http://localhost:8080/auth/login`;
-export const accessTokenDuration = 2 * 60 * 60 * 1000;
-export const refreshTokenDuration = 7 * 24 * 60 * 60 * 100;
 
 export async function POST(request: Request) {
   try {
@@ -35,7 +33,6 @@ export async function POST(request: Request) {
 
     // 2. Set the non-HttpOnly access token cookie for server-side component access
     // This cookie is readable by client-side JS and sent with server-side requests.
-    const oneHour = 60 * 60 * 1000; // Example: Access token validity (adjust as per your backend)
     const cookieStore = await cookies();
     cookieStore.set({
       name: "accessToken",

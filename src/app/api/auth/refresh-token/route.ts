@@ -2,12 +2,10 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'; // To access and set cookies
 import { AuthResponse } from '@/api/auth';
 import { ApiError } from '@/api/types';
-import { accessTokenDuration, refreshTokenDuration } from '../login/route';
+import { accessTokenDuration, BACKEND_REFRESH_URL, refreshTokenDuration } from '@/utils/tokenDurations';
 
 // Replace with the actual URL of your backend's token refresh endpoint
-export const BACKEND_REFRESH_URL = process.env.BACKEND_REFRESH_URL || 'http://localhost:8080/auth/refresh-token';
-
-export async function POST(request: Request) {
+export async function POST() {
   const cookieStore = await cookies();
   // Get the HttpOnly refresh token from the incoming request's cookies
   const refreshToken = cookieStore.get('refreshToken')?.value;

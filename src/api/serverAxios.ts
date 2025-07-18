@@ -1,8 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { AuthResponse } from "./auth";
-import { BACKEND_REFRESH_URL } from "@/app/api/auth/refresh-token/route";
-import { accessTokenDuration, refreshTokenDuration } from "@/app/api/auth/login/route";
+import { accessTokenDuration, BACKEND_REFRESH_URL, refreshTokenDuration } from "@/utils/tokenDurations";
 
 export const BACKEND_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
 

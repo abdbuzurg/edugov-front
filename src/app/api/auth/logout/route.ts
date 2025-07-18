@@ -1,12 +1,11 @@
 // app/api/auth/logout/route.ts
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers'; // To clear cookies
-import { BACKEND_API_BASE_URL } from '@/api/serverAxios';
 
 // Replace with the actual URL of your backend's logout/token invalidation endpoint
 const BACKEND_LOGOUT_URL = process.env.BACKEND_LOGOUT_URL || `http://localhost:8080/auth/logout`;
 
-export async function POST(request: Request) {
+export async function POST() {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get('refreshToken')?.value; // Get refresh token to invalidate on backend
 

@@ -1,4 +1,3 @@
-import EmployeeMainInformationSection from "./components/EmployeeMainInformationSection";
 import { Employee } from "@/types/employee";
 import DegreeInformationSection from "./components/DegreeInformationSection";
 import WorkExperienceInformationSection from "./components/WorkExperienceInformationSection";
@@ -8,7 +7,6 @@ import ScientificAwardInformationSection from "./components/ScientificAwardInfor
 import PatentInformationSection from "./components/PatentInformationSection";
 import ParticipationInProfessionalCommunityInformationSection from "./components/ParticipationInProfessionalCommunityInformationSection";
 import RefresherCourseInformationSection from "./components/RefresherCourseInformationSection";
-import { employeeApi } from "@/api/employee";
 import { notFound } from "next/navigation";
 import DetailsInformationSection from "./components/DetailsInformationSection";
 import { cookies } from "next/headers";
@@ -301,13 +299,15 @@ async function getEmployeeFullInfoByUID(uid: string, locale: string): Promise<Em
   }
 }
 
+
+
 export default async function EmployeeProfile({
   params
 }: {
-  params: {
+  params: Promise<{
     locale: string
     uid: string
-  }
+  }>
 }) {
 
   const { uid, locale } = await params;

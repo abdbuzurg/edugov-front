@@ -1,7 +1,6 @@
 // api/client.ts
 import axios, { AxiosInstance, AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { AuthResponse } from './auth';
-import { useRouter } from 'next/router';
 
 // Ensure this matches your backend's base URL
 // Base URL for your backend API
