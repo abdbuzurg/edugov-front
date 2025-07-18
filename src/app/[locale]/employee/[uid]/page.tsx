@@ -319,8 +319,10 @@ export default async function EmployeeProfile({
 }) {
 
   const { uid, locale } = await params;
+  console.log(uid, locale)
 
   const employee = await getEmployeeFullInfoByUID(uid, locale)
+  console.log(employee)
   if (!employee) {
     notFound()
   }
