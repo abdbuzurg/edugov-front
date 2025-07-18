@@ -283,7 +283,10 @@ async function getEmployeeFullInfoByUID(uid: string, locale: string): Promise<Em
 
   const serverAxios = createServerAxios(cookieStore, locale)
   try {
-    const response = await serverAxios.get<Employee>(`/employee/${uid}`)
+    const response = await serverAxios.get<Employee>(`/employee/${uid}`, {
+      adapter: 'fetch',
+      fetchOptions: { cache: 'no-store' },
+    })
     return response.data
   } catch (error: any) {
     console.log("ERROR DETECTED")
