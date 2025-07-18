@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       name: "accessToken",
       value: authData.accessToken,
       httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       maxAge: accessTokenDuration, // Example: one hour
       path: '/',
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       name: "refreshToken",
       value: authData.refreshToken,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       maxAge: refreshTokenDuration, // Example: one hour
       path: '/',
