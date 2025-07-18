@@ -69,6 +69,7 @@ export type EmployeeMainResearchAreaKeyTopics = {
 
 export type EmployeePublication = {
   id: number
+  employeeID: number
   publicationTitle: string
   linkToPublication: string
   createdAt: Date
@@ -77,9 +78,9 @@ export type EmployeePublication = {
 
 export type EmployeeScientificAward = {
   id: number
+  employeeID: number
   scientificAwardTitle: string
   givenBy: string
-  linkToScientificAwardFile: string
   createdAt: Date
   updatedAt: Date
 }

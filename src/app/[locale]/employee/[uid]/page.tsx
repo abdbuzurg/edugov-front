@@ -174,12 +174,14 @@ const employeeMock: Employee = {
     {
       id: 1,
       publicationTitle: "Влияние климатических изменений на миграцию птиц",
+      employeeID: 1,
       linkToPublication: "",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
       id: 2,
+      employeeID: 1,
       publicationTitle: "Влияние климатических изменений на миграцию птиц Влияние климатических изменений на миграцию птиц Влияние климатических изменений на миграцию птиц",
       linkToPublication: "",
       createdAt: new Date(),
@@ -187,6 +189,7 @@ const employeeMock: Employee = {
     },
     {
       id: 3,
+      employeeID: 1,
       publicationTitle: "Влияние климатических изменений на миграцию птиц123",
       linkToPublication: "",
       createdAt: new Date(),
@@ -196,17 +199,17 @@ const employeeMock: Employee = {
   scientificAwards: [
     {
       id: 1,
+      employeeID: 1,
       scientificAwardTitle: "Нобелевская премия",
       givenBy: "Нобелевский фонд",
-      linkToScientificAwardFile: "",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
       id: 2,
+      employeeID: 1,
       scientificAwardTitle: "Нобелевская премия",
       givenBy: "Нобелевский фонд",
-      linkToScientificAwardFile: "",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -320,13 +323,33 @@ export default async function EmployeeProfile({
     <div className="bg-white w-full">
       <div className="m-auto lg:w-[1280px] w-full flex">
         <div className="flex-1 flex space-x-4 py-4">
-          <DetailsInformationSection details={employee.details} employeeID={employee.id} locale={locale}/>
+          <DetailsInformationSection
+            details={employee.details}
+            employeeID={employee.id}
+            locale={locale}
+          />
           <div className="flex-5  flex flex-col space-y-4">
-            <DegreeInformationSection degree={employee.degrees} employeeID={employee.id} locale={locale}/>
-            {employeeMock.workExperiences && <WorkExperienceInformationSection workExperience={employeeMock.workExperiences} employeeID={employee.id} locale={locale} key={`${uid}-${locale}`}/>}
+            <DegreeInformationSection
+              degree={employee.degrees}
+              employeeID={employee.id}
+              locale={locale}
+            />
+            <WorkExperienceInformationSection
+              workExperience={employee.workExperiences}
+              employeeID={employee.id}
+              locale={locale}
+            />
             {employeeMock.mainResearchAreas && <MainResearchAreaInformationSection mainResearchArea={employeeMock.mainResearchAreas} />}
-            {employeeMock.publications && <PublicationInformationSection publications={employeeMock.publications} />}
-            {employeeMock.scientificAwards && <ScientificAwardInformationSection scientificAwards={employeeMock.scientificAwards} />}
+            <PublicationInformationSection
+              publications={employee.publications}
+              employeeID={employee.id}
+              locale={locale}
+            />
+            <ScientificAwardInformationSection
+              scientificAwards={employee.scientificAwards}
+              employeeID={employee.id}
+              locale={locale}
+            />
             {employeeMock.patents && <PatentInformationSection patents={employeeMock.patents} />}
             {employeeMock.participationInProfessionalCommunities && <ParticipationInProfessionalCommunityInformationSection participationInProfessionalCommunities={employeeMock.participationInProfessionalCommunities} />}
             {employeeMock.refresherCourses && <RefresherCourseInformationSection refresherCourses={employeeMock.refresherCourses} />}

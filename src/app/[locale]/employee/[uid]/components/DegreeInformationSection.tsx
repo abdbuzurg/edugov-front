@@ -11,6 +11,7 @@ import { useFormik } from "formik";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import * as yup from "yup"
 
 interface Props {
   degree: EmployeeDegree[] | undefined
@@ -57,6 +58,12 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
   }, [degreeQuery.data])
 
   const addNewDegree = () => {
+    const degree = degreeState.find(v => v.id == 0)
+    if (degree) {
+      toast.error("Завершите текущее добавление.")
+      return
+    }
+
     setDegreeState([{
       id: 0,
       employeeID: employeeID,
@@ -244,12 +251,50 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
     initialValues: {
       ...degree,
     },
+    validationSchema: yup.object({
+      universityName: yup
+        .string()
+        .required("Имя университета обязательна"),
+      degreeLevel: yup
+        .string()
+        .required("Степень обязательна"),
+      speciality: yup
+        .string()
+        .required("Специальность обязательна"),
+      dateStart: yup
+        .date()
+        .required("Начало обязательно")
+        .max(new Date(), "Начало не может быть в будущем"),
+      dateEnd: yup
+        .date()
+        .required("Конец обязателен")
+        .max(new Date(), "Конец не может быть в будущем")
+        .min(yup.ref("dateStart"), "Конец не может быть перед началом"),
+      givenBy: yup
+        .string()
+        .when('degreeLevel', {
+          is: (value: any) => highDigreeLevelCheck(value),
+          then: (schema) => schema
+            .required("Кем присужден обязательна для данной степени"),
+          otherwise: (schema) => schema.optional(),
+        }),
+      dateDegreeRecieved: yup
+        .date()
+        .when('degreeLvel', {
+          is: (value: any) => highDigreeLevelCheck(value),
+          then: (schema) =>
+            schema
+              .required("Дата присуждения обязательна для данной степени")
+              .max(new Date(), "Дата присуждения не может быть в будущем"),
+          otherwise: (schema) => schema.optional(),
+        })
+    }),
     onSubmit: values => {
       const mutationVariable: EmployeeDegree = {
         ...values,
         employeeID: employeeID,
         dateDegreeRecieved: highDigreeLevelCheck(values.degreeLevel) ? values.dateDegreeRecieved : values.dateEnd,
-        givenBy: highDigreeLevelCheck(values.degreeLevel) ? values.givenBy : values.universityName,  
+        givenBy: highDigreeLevelCheck(values.degreeLevel) ? values.givenBy : values.universityName,
       }
       if (values.id === 0) {
         const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Образование...")
@@ -334,6 +379,9 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
           onChange={form.handleChange}
         />
       </div>
+      {form.errors.universityName && form.touched.universityName && (
+        <div className="text-red-500 font-bold text-sm">{form.errors.universityName}</div>
+      )}
 
       <div className="flex flex-col space-y-1">
         <label className="font-semibold">Степень</label>
@@ -405,6 +453,9 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
             <label htmlFor={`${index}_degreeLevel_${degree.id}_doctor_of_science`}>Доктор Наук</label>
           </div>
         </div>
+        {form.errors.degreeLevel && form.touched.degreeLevel && (
+          <div className="text-red-500 font-bold text-sm">{form.errors.degreeLevel}</div>
+        )}
       </div>
 
       <div className="flex flex-col space-y-1">
@@ -417,6 +468,9 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
           value={form.values.speciality}
           onChange={form.handleChange}
         />
+        {form.errors.speciality && form.touched.speciality && (
+          <div className="text-red-500 font-bold text-sm">{form.errors.speciality}</div>
+        )}
       </div>
 
       <div className="flex flex-col space-y-1">
@@ -432,6 +486,10 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
               value={form.values.dateStart.toISOString().slice(0, 10)}
               onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
             />
+            {form.errors.dateStart && form.touched.dateStart && (
+              // @ts-ignore
+              <div className="text-red-500 font-bold text-sm">{form.errors.dateStart}</div>
+            )}
           </div>
           <div className="flex flex-col space-y-1">
             <label>Конец</label>
@@ -443,6 +501,10 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
               value={form.values.dateEnd.toISOString().slice(0, 10)}
               onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
             />
+            {form.errors.dateStart && form.touched.dateStart && (
+              // @ts-ignore
+              <div className="text-red-500 font-bold text-sm">{form.errors.dateStart}</div>
+            )}
           </div>
         </div>
       </div>
@@ -459,6 +521,9 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
               value={form.values.givenBy}
               onChange={form.handleChange}
             />
+            {form.errors.givenBy && form.touched.givenBy && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.givenBy}</div>
+            )}
           </div>
           <div className="flex flex-col space-y-1">
             <label>Дата присуждения</label>
@@ -470,6 +535,10 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
               value={form.values.dateDegreeRecieved.toISOString().slice(0, 10)}
               onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
             />
+            {form.errors.dateDegreeRecieved && form.touched.dateDegreeRecieved && (
+              //@ts-ignore
+              <div className="text-red-500 font-bold text-sm">{form.errors.dateDegreeRecieved}</div>
+            )}
           </div>
         </div>
       )}

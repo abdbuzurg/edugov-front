@@ -11,6 +11,7 @@ import { useFormik } from "formik";
 import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import * as yup from "yup"
 
 interface Props {
   workExperience: EmployeeWorkExperience[] | undefined
@@ -56,6 +57,11 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
   }, [workExperienceQuery.data])
 
   const addNewWorkExperience = () => {
+    const workExperience = workExperienceState.find((v) => v.id == 0)
+    if (workExperience) {
+      toast.error("Завершите текущее добавление.")
+      return
+    }
     setWorkExperienceState([{
       id: 0,
       employeeID: employeeID,
@@ -134,10 +140,11 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
           !experience.editMode
             ?
             <WorkExperienceDisplay
+              key={experience.id}
               workExperience={experience}
               enableEditMode={() => {
-                const editModeEnabled = workExperienceState.map((v, i) => i == index ? { ...v, editMode: true } : v)
-                setWorkExperienceState([...editModeEnabled])
+                const experience = workExperienceState.map((v, i) => i == index ? { ...v, editMode: true } : v)
+                setWorkExperienceState([...experience])
               }}
               onDeleteClick={() => {
                 setIsDeleteDialogOpen(true)
@@ -146,21 +153,18 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
             />
             :
             <WorkExperienceEdit
+              key={experience.id}
               workExperience={experience}
               employeeID={employeeID}
               locale={locale}
               index={index}
               disableEditMode={() => {
-                const editModeEnabled = workExperienceState.map((v, i) => i == index ? { ...v, editMode: false } : v)
-                setWorkExperienceState([...editModeEnabled])
+                const experience = workExperienceState.map((v, i) => i == index ? { ...v, editMode: false } : v)
+                setWorkExperienceState([...experience])
               }}
               removeNewWorkExperienceOnCancel={() => {
                 const workExperience = workExperienceState.filter((_, i) => i != index)
                 setWorkExperienceState([...workExperience])
-              }}
-              updateWorkExperienceState={(values: WorkExperienceState) => {
-                const degrees = workExperienceState.map((v, i) => i == index ? values : v)
-                setWorkExperienceState(degrees)
               }}
             />
         )}
@@ -196,7 +200,7 @@ function WorkExperienceDisplay({ workExperience, enableEditMode, onDeleteClick }
         </div>
       </div>
       <div>
-        <h5>Full Stack Software Developer</h5>
+        <h5>{workExperience.jobTitle}</h5>
         <div className="flex space-x-2">
           <h4>{formatDate(workExperience.dateStart)} - {formatDate(workExperience.dateEnd)}</h4>
         </div>
@@ -213,10 +217,9 @@ interface WorkExperienceEditProps {
   locale: string
   disableEditMode: () => void
   removeNewWorkExperienceOnCancel: () => void
-  updateWorkExperienceState: (value: WorkExperienceState) => void
 }
 
-function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeNewWorkExperienceOnCancel, updateWorkExperienceState, disableEditMode }: WorkExperienceEditProps) {
+function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeNewWorkExperienceOnCancel, disableEditMode }: WorkExperienceEditProps) {
   if (!workExperience) return null
 
   const queryClient = useQueryClient()
@@ -232,6 +235,26 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
     initialValues: {
       ...workExperience,
     },
+    validationSchema: yup.object({
+      workplace: yup
+        .string()
+        .required("Компания или организция обязательна"),
+      jobTitle: yup
+        .string()
+        .required("Должность обязательна"),
+      description: yup
+        .string()
+        .required("Краткое описание должности обязательна"),
+      dateStart: yup
+        .date()
+        .required("Начало обязательно")
+        .max(new Date(), "Начало не можем быть в будущем"),
+      dateEnd: yup
+        .date()
+        .required("Конец обязательно")
+        .max(new Date(), "Конец не можем в будущем.")
+        .min(yup.ref('dateStart'), "Конец не может быть перед началом.")
+    }),
     onSubmit: values => {
       if (values.id === 0) {
         const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Опыт работы...")
@@ -312,7 +335,9 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
           onChange={form.handleChange}
         />
       </div>
-
+      {form.errors.workplace && form.touched.workplace && (
+        <div className="text-red-500 font-bold text-sm">{form.errors.workplace}</div>
+      )}
       <div className="flex flex-col space-y-1">
         <label htmlFor={`${index}_workplace]`} className="font-semibold">Должность</label>
         <input
@@ -324,6 +349,9 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
           onChange={form.handleChange}
         />
       </div>
+      {form.errors.jobTitle && form.touched.jobTitle && (
+        <div className="text-red-500 font-bold text-sm">{form.errors.jobTitle}</div>
+      )}
 
       <div className="flex flex-col space-y-1">
         <label className="font-semibold">Период</label>
@@ -338,6 +366,10 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
               value={form.values.dateStart.toISOString().slice(0, 10)}
               onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
             />
+            {form.errors.dateStart && form.touched.dateStart && (
+              //@ts-ignore
+              <div className="text-red-500 font-bold text-sm">{form.errors.dateStart}</div>
+            )}
           </div>
           <div className="flex flex-col space-y-1">
             <label>Конец</label>
@@ -349,6 +381,10 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
               value={form.values.dateEnd.toISOString().slice(0, 10)}
               onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
             />
+            {form.errors.dateEnd && form.touched.dateEnd && (
+              //@ts-ignore
+              <div className="text-red-500 font-bold text-sm">{form.errors.dateEnd}</div>
+            )}
           </div>
         </div>
       </div>
@@ -362,6 +398,9 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
           value={form.values.description}
           onChange={form.handleChange}
         ></textarea>
+        {form.errors.description && form.touched.description && (
+          <div className="text-red-500 font-bold text-sm">{form.errors.description}</div>
+        )}
       </div>
 
       <div className="flex space-x-2 items-center justify-start">
