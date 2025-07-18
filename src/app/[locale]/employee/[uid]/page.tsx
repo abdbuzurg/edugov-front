@@ -277,11 +277,14 @@ async function getEmployeeFullInfoByUID(uid: string, locale: string): Promise<Em
     return null
   }
 
+  console.log("cookie check passed")
+
   const serverAxios = createServerAxios(cookieStore, locale)
   try {
     const response = await serverAxios.get<Employee>(`/employee/${uid}`)
     return response.data
   } catch (error: any) {
+    console.log("ERROR DETECTED")
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       try {
         const retry = await handleServerAuthRefresh<Employee>(

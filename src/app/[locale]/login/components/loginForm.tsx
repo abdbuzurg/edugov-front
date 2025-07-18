@@ -43,7 +43,6 @@ export default function LoginForm() {
 
           toast.info(t("toastLoginSuccess"), { delay: 2 })
           const locale = localStorage.getItem("currentLocale")
-          console.log(data)
           switch (data.userRole) {
             case "employee":
               router.push(`/${locale}/employee/${data.uid}`)
