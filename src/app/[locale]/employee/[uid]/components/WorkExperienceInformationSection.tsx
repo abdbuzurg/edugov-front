@@ -6,9 +6,9 @@ import Dialog from "@/components/Dialog";
 import { EmployeeWorkExperience } from "@/types/employee";
 import formatDate from "@/utils/dateFormatter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Axios, AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { useFormik } from "formik";
-import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import * as yup from "yup"
@@ -42,7 +42,8 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
       employeeID: employeeID,
       locale: locale,
     }],
-    queryFn: () => employeeApi.getWorkExperienceByEmployeeID(employeeID)
+    queryFn: () => employeeApi.getWorkExperienceByEmployeeID(employeeID),
+    initialData: workExperience ?? [],
   })
   useEffect(() => {
     if (workExperienceQuery.data) {

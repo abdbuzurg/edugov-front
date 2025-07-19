@@ -87,18 +87,18 @@ export type EmployeeScientificAward = {
 
 export type EmployeePatent = {
   id: number
+  employeeID: number
   patentTitle: string
   description: string
-  linkToPatentFile: string
   createdAt: Date
   updatedAt: Date
 }
 
 export type EmployeeParticipationInProfessionalCommunity = {
   id: number
+  employeeID: number
   professionalCommunityTitle: string
   roleInProfessionalCommunity: string
-  description: string
   createdAt: Date
   updatedAt: Date
 }

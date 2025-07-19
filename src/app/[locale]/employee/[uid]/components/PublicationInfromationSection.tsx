@@ -41,6 +41,7 @@ export default function PublicationInformationSection({ publications, employeeID
       locale: locale,
     }],
     queryFn: () => employeeApi.getPublicationByEmployeeID(employeeID),
+    initialData: publications ?? [],
   })
   useEffect(() => {
     if (publicationQuery.data) {

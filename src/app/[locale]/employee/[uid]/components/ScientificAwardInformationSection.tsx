@@ -41,6 +41,7 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
       locale: locale,
     }],
     queryFn: () => employeeApi.getScientificAwardByEmployeeID(employeeID),
+    initialData: scientificAwards ?? []
   })
   useEffect(() => {
     if (scientificAwardQuery.data) {

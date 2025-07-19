@@ -8,6 +8,7 @@ import formatDate from "@/utils/dateFormatter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useFormik } from "formik";
+import { useTranslations } from "next-intl";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -24,6 +25,7 @@ interface DegreeState extends EmployeeDegree {
 }
 
 export default function DegreeInformationSection({ degree, employeeID, locale }: Props) {
+  const t = useTranslations("Employee.Degree")
   const queryClient = useQueryClient()
 
   const [degreeState, setDegreeState] = useState<DegreeState[]>([])
@@ -60,7 +62,7 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
   const addNewDegree = () => {
     const degree = degreeState.find(v => v.id == 0)
     if (degree) {
-      toast.error("Завершите текущее добавление.")
+      toast.error(t("finishCurrentNewEntry"))
       return
     }
 
@@ -86,13 +88,13 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
     mutationFn: employeeApi.deleteDegree
   })
   const deleteDegree = () => {
-    const loadingStateToast = toast.info("Удаление из категории образование...")
+    const loadingStateToast = toast.info(t("deleteLoadingToastToast"))
     deleteDegreeMutation.mutate(toBeDeletedID, {
       onSettled: () => {
         toast.dismiss(loadingStateToast)
       },
       onSuccess: () => {
-        toast.success("Удаление Успешно.")
+        toast.success(t("deleteSuccessToastText"))
         queryClient.invalidateQueries({
           queryKey: ["employee-degrees", {
             employeeID: employeeID,
@@ -103,7 +105,7 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
       },
       onError: (error) => {
         if (error.response && error.response.data && error.response.data.message) {
-          toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+          toast.error(`${t("deleteErrorToastText")} - ${error.response.data.message}`)
         } else {
           toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
         }
@@ -115,7 +117,7 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
   return (
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
-        <p className="font-bold text-xl">Образование</p>
+        <p className="font-bold text-xl">{t("title")}</p>
         <div className="cursor-pointer">
           <FaPlus color="blue" onClick={() => addNewDegree()} />
         </div>
@@ -125,19 +127,19 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
         >
-          <h4 className="text-center font-semibold">Вы уверены что хотите удалить?</h4>
+          <h4 className="text-center font-semibold">{t("deletePromptText")}</h4>
           <div className="flex space-x-2 items-center justify-center mt-2">
             <div
               className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
               onClick={() => deleteDegree()}
             >
-              Удалить
+              {t("deletePromptButtonConfirmText")}
             </div>
             <div
               className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
               onClick={() => setIsDeleteDialogOpen(false)}
             >
-              Отмена
+              {t("deletePromptButtonCancelText")}
             </div>
           </div>
         </Dialog>
@@ -238,6 +240,7 @@ interface DegreeEditProps {
 function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, removeNewDegreeOnCancel, updateDegreeState }: DegreeEditProps) {
   if (!degree) return null
 
+  const t = useTranslations("Employee.Degree")
   const queryClient = useQueryClient()
   const createDegreeMutation = useMutation<EmployeeDegree, AxiosError<ApiError>, EmployeeDegree>({
     mutationFn: employeeApi.createDegree,
@@ -254,28 +257,28 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
     validationSchema: yup.object({
       universityName: yup
         .string()
-        .required("Имя университета обязательна"),
+        .required(t("universityNameValidationRequiredText")),
       degreeLevel: yup
         .string()
-        .required("Степень обязательна"),
+        .required(t("degreeLevelValidationRequiredText")),
       speciality: yup
         .string()
-        .required("Специальность обязательна"),
+        .required(t("specialityValidationRequiredText")),
       dateStart: yup
         .date()
-        .required("Начало обязательно")
-        .max(new Date(), "Начало не может быть в будущем"),
+        .required(t("dateStartValidationRequiredText"))
+        .max(new Date(), t("dateStartValidationMaxText")),
       dateEnd: yup
         .date()
-        .required("Конец обязателен")
-        .max(new Date(), "Конец не может быть в будущем")
-        .min(yup.ref("dateStart"), "Конец не может быть перед началом"),
+        .required(t("dateEndValidationRequiredText"))
+        .max(new Date(), t("dateEndValidationMaxText"))
+        .min(yup.ref("dateStart"), t("dateEndValidationMinText")),
       givenBy: yup
         .string()
         .when('degreeLevel', {
           is: (value: any) => highDigreeLevelCheck(value),
           then: (schema) => schema
-            .required("Кем присужден обязательна для данной степени"),
+            .required(t("givenByValidationRequiredText")),
           otherwise: (schema) => schema.optional(),
         }),
       dateDegreeRecieved: yup
@@ -284,8 +287,8 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
           is: (value: any) => highDigreeLevelCheck(value),
           then: (schema) =>
             schema
-              .required("Дата присуждения обязательна для данной степени")
-              .max(new Date(), "Дата присуждения не может быть в будущем"),
+              .required(t("dateDegreeRecievedValidationRequiredText"))
+              .max(new Date(), t("dateDegreeRecievedValidationMaxText")),
           otherwise: (schema) => schema.optional(),
         })
     }),
@@ -297,13 +300,13 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
         givenBy: highDigreeLevelCheck(values.degreeLevel) ? values.givenBy : values.universityName,
       }
       if (values.id === 0) {
-        const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Образование...")
+        const loadingStateToast = toast.info(t("createLoadingToastText"))
         createDegreeMutation.mutate(mutationVariable, {
           onSettled: () => {
             toast.dismiss(loadingStateToast)
           },
           onSuccess: () => {
-            toast.success("Новые данные были успешно добавлены в категорию Образование.")
+            toast.success(t("createToastSuccessText"))
             queryClient.invalidateQueries({
               queryKey: ["employee-degrees", {
                 employeeID: employeeID,
@@ -314,7 +317,7 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
           },
           onError: (error) => {
             if (error.response && error.response.data && error.response.data.message) {
-              toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+              toast.error(`${t("createErrorToastText")} - ${error.response.data.message}`)
             } else {
               toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
             }
@@ -323,13 +326,13 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
         return
       }
 
-      const loadingStateToast = toast.info("Идёт обновление данных в категории Образование...")
+      const loadingStateToast = toast.info(t("updateLoadingToastText"))
       updateDegreeMutation.mutate(mutationVariable, {
         onSettled: () => {
           toast.dismiss(loadingStateToast)
         },
         onSuccess: () => {
-          toast.success("Данные были успешно обновлены в категорию Образование.")
+          toast.success(t("updateSuccessToastText"))
           queryClient.invalidateQueries({
             queryKey: ["employee-degrees", {
               employeeID: employeeID,
@@ -340,7 +343,7 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
         },
         onError: (error) => {
           if (error.response && error.response.data && error.response.data.message) {
-            toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+            toast.error(`${t("updateErrorToastText")} - ${error.response.data.message}`)
           } else {
             toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
           }
@@ -369,7 +372,7 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_universityName`} className="font-semibold">Университет</label>
+        <label htmlFor={`${index}_universityName`} className="font-semibold">{t("universityLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -384,73 +387,73 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
       )}
 
       <div className="flex flex-col space-y-1">
-        <label className="font-semibold">Степень</label>
+        <label className="font-semibold">{t("degreeLabelText")}</label>
         <div className="flex space-x-2">
           <div className="flex space-x-1 items-center">
             <input
               type="radio"
               name="degreeLevel"
               id={`${index}_degreeLevel_${degree.id}_bachelor`}
-              value="Бакалавр"
+              value={t("degreeLevelBachelorValueText")}
               onChange={form.handleChange}
-              checked={form.values.degreeLevel == "Бакалавр"}
+              checked={form.values.degreeLevel == t("degreeLevelBachelorValueText")}
             />
-            <label htmlFor={`${index}_degreeLevel_${degree.id}_bachelor`}>Бакалавр</label>
+            <label htmlFor={`${index}_degreeLevel_${degree.id}_bachelor`}>{t("degreeLevelBachelorValueText")}</label>
           </div>
           <div className="flex space-x-1 items-center">
             <input
               type="radio"
               name="degreeLevel"
               id={`${index}_degreeLevel_${degree.id}_masters`}
-              value="Магистр"
+              value={t("degreeLevelMasterValueText")}
               onChange={form.handleChange}
-              checked={form.values.degreeLevel == "Магистр"}
+              checked={form.values.degreeLevel == t("degreeLevelMasterValueText")}
             />
-            <label htmlFor={`${index}_degreeLevel_${degree.id}_masters`}>Магистр</label>
+            <label htmlFor={`${index}_degreeLevel_${degree.id}_masters`}>{t("degreeLevelMasterValueText")}</label>
           </div>
           <div className="flex space-x-1 items-center">
             <input
               type="radio"
               name="degreeLevel"
               id={`${index}_degreeLevel_${degree.id}_specialist_level`}
-              value="Специалитет"
+              value={t("degreeLevelSpecialityValueText")}
               onChange={form.handleChange}
-              checked={form.values.degreeLevel == "Специалитет"}
+              checked={form.values.degreeLevel == t("degreeLevelSpecialityValueText")}
             />
-            <label htmlFor={`${index}_degreeLevel_${degree.id}_specialist_level`}>Специалитет</label>
+            <label htmlFor={`${index}_degreeLevel_${degree.id}_specialist_level`}>{t("degreeLevelSpecialityValueText")}</label>
           </div>
           <div className="flex space-x-1 items-center">
             <input
               type="radio"
               name="degreeLevel"
               id={`${index}_degreeLevel_${degree.id}_pre_phd`}
-              value="Кандидат Наук"
+              value={t("degreeLevelCandidateOfScienceText")}
               onChange={form.handleChange}
-              checked={form.values.degreeLevel == "Кандидат Наук"}
+              checked={form.values.degreeLevel == t("degreeLevelCandidateOfScienceText")}
             />
-            <label htmlFor={`${index}_degreeLevel_${degree.id}_pre_phd`}>Кандидат Наук</label>
+            <label htmlFor={`${index}_degreeLevel_${degree.id}_pre_phd`}>{t("degreeLevelCandidateOfScienceText")}</label>
           </div>
           <div className="flex space-x-1 items-center">
             <input
               type="radio"
               name={`degreeLevel`}
               id={`${index}_degreeLevel_${degree.id}_phd`}
-              value="PhD"
+              value={t("degreeLevelPHDText")}
               onChange={form.handleChange}
-              checked={form.values.degreeLevel == "PhD"}
+              checked={form.values.degreeLevel == t("degreeLevelPHDText")}
             />
-            <label htmlFor={`${index}_degreeLevel-${degree.id}_phd`}>PhD</label>
+            <label htmlFor={`${index}_degreeLevel-${degree.id}_phd`}>{t("degreeLevelPHDText")}</label>
           </div>
           <div className="flex space-x-1 items-center">
             <input
               type="radio"
               name="degreeLevel"
               id={`${index}_degreeLevel_${degree.id}_doctor_of_science`}
-              value="Доктор Наук"
+              value={t("degreeLevelDoctorOfScience")}
               onChange={form.handleChange}
-              checked={form.values.degreeLevel == "Доктор Наук"}
+              checked={form.values.degreeLevel == t("degreeLevelDoctorOfScience")}
             />
-            <label htmlFor={`${index}_degreeLevel_${degree.id}_doctor_of_science`}>Доктор Наук</label>
+            <label htmlFor={`${index}_degreeLevel_${degree.id}_doctor_of_science`}>{t("degreeLevelDoctorOfScience")}</label>
           </div>
         </div>
         {form.errors.degreeLevel && form.touched.degreeLevel && (
@@ -459,7 +462,7 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
       </div>
 
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`degree[${index}.speciality]`}>Специальность</label>
+        <label htmlFor={`degree[${index}.speciality]`}>{t("specialityLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -474,10 +477,10 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
       </div>
 
       <div className="flex flex-col space-y-1">
-        <label className="font-semibold">Годы Обучения</label>
+        <label className="font-semibold">{t("yearsOfStudyText")}</label>
         <div className="flex space-x-2">
           <div className="flex flex-col space-y-1">
-            <label>Начало</label>
+            <label>{t("startLabelText")}</label>
             <input
               type="date"
               className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -492,7 +495,7 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
             )}
           </div>
           <div className="flex flex-col space-y-1">
-            <label>Конец</label>
+            <label>{t("endLabelText")}</label>
             <input
               type="date"
               className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -512,7 +515,7 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
       {highDigreeLevelCheck(form.values.degreeLevel) && (
         <div className="flex space-x-2">
           <div className="flex flex-col space-y-1">
-            <label htmlFor={`degree[${index}.givenBy]`}>Кем присужден</label>
+            <label htmlFor={`degree[${index}.givenBy]`}>{t("givenByLabelText")}</label>
             <input
               type="text"
               className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -526,7 +529,7 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
             )}
           </div>
           <div className="flex flex-col space-y-1">
-            <label>Дата присуждения</label>
+            <label>{t("dateDegreeRecievedLabelText")}</label>
             <input
               type="date"
               className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -547,14 +550,14 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
           type="submit"
           className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
         >
-          Сохранить
+          {t("saveButtonText")}
         </button>
         <button
           type="button"
           className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
           onClick={() => onCancelClick(degree.id)}
         >
-          Отмена
+          {t("cancelButtonText")}
         </button>
       </div>
 

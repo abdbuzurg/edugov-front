@@ -1,4 +1,4 @@
-import { EmployeeDegree, EmployeeDetails, EmployeePublication, EmployeeScientificAward, EmployeeWorkExperience } from "@/types/employee"
+import { EmployeeDegree, EmployeeDetails, EmployeeParticipationInProfessionalCommunity, EmployeePatent, EmployeePublication, EmployeeScientificAward, EmployeeWorkExperience } from "@/types/employee"
 import clientAxios from "./clientAxios"
 
 const rootURL = "/employee"
@@ -7,6 +7,8 @@ const degreeURL = "/degree"
 const workExperienceURL = "/work-experience"
 const publicationURL = "/publication"
 const scientificAwardURL = "/scientific-award"
+const patentURL = "/patent"
+const pipcURL = "/pipc"
 
 export const employeeApi = {
 
@@ -33,49 +35,79 @@ export const employeeApi = {
   deleteDegree: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${degreeURL}/${id}`)
   },
-  getWorkExperienceByEmployeeID: async(employeeID: number): Promise<EmployeeWorkExperience[]> => {
+  getWorkExperienceByEmployeeID: async (employeeID: number): Promise<EmployeeWorkExperience[]> => {
     const response = await clientAxios.get<EmployeeWorkExperience[]>(`${rootURL}${workExperienceURL}/${employeeID}`)
     return response.data
   },
-  createWorkExperience: async(workExperience: EmployeeWorkExperience): Promise<EmployeeWorkExperience> => {
+  createWorkExperience: async (workExperience: EmployeeWorkExperience): Promise<EmployeeWorkExperience> => {
     const response = await clientAxios.post<EmployeeWorkExperience>(`${rootURL}${workExperienceURL}`, workExperience)
     return response.data
   },
-  updateWorkExperience: async(workExperience: EmployeeWorkExperience): Promise<EmployeeWorkExperience> => {
+  updateWorkExperience: async (workExperience: EmployeeWorkExperience): Promise<EmployeeWorkExperience> => {
     const response = await clientAxios.put<EmployeeWorkExperience>(`${rootURL}${workExperienceURL}`, workExperience)
     return response.data
   },
-  deleteWorkExprience: async(id: number): Promise<void> => {
+  deleteWorkExprience: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${workExperienceURL}/${id}`)
   },
-  getPublicationByEmployeeID: async(employeeID: number): Promise<EmployeePublication[]> => {
+  getPublicationByEmployeeID: async (employeeID: number): Promise<EmployeePublication[]> => {
     const response = await clientAxios.get<EmployeePublication[]>(`${rootURL}${publicationURL}/${employeeID}`)
     return response.data
   },
-  createPublication: async(publication: EmployeePublication): Promise<EmployeePublication> => {
+  createPublication: async (publication: EmployeePublication): Promise<EmployeePublication> => {
     const response = await clientAxios.post(`${rootURL}${publicationURL}`, publication)
     return response.data
   },
-  updatePublication: async(publication: EmployeePublication): Promise<EmployeePublication> => {
+  updatePublication: async (publication: EmployeePublication): Promise<EmployeePublication> => {
     const response = await clientAxios.put(`${rootURL}${publicationURL}`, publication)
     return response.data
   },
-  deletePublication: async(id: number): Promise<void> => {
+  deletePublication: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${publicationURL}/${id}`)
   },
-  getScientificAwardByEmployeeID: async(employeeID: number):Promise<EmployeeScientificAward[]> => {
+  getScientificAwardByEmployeeID: async (employeeID: number): Promise<EmployeeScientificAward[]> => {
     const response = await clientAxios.get<EmployeeScientificAward[]>(`${rootURL}${scientificAwardURL}/${employeeID}`)
     return response.data
   },
-  createScientificAward: async(scientificAward: EmployeeScientificAward): Promise<EmployeeScientificAward> => {
+  createScientificAward: async (scientificAward: EmployeeScientificAward): Promise<EmployeeScientificAward> => {
     const response = await clientAxios.post<EmployeeScientificAward>(`${rootURL}${scientificAwardURL}`, scientificAward)
     return response.data
   },
-  updateScientificAward: async(scientificAward: EmployeeScientificAward): Promise<EmployeeScientificAward> => {
+  updateScientificAward: async (scientificAward: EmployeeScientificAward): Promise<EmployeeScientificAward> => {
     const response = await clientAxios.put<EmployeeScientificAward>(`${rootURL}${scientificAwardURL}`, scientificAward)
     return response.data
   },
-  deleteScientificAward: async(id: number): Promise<void> => {
+  deleteScientificAward: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${scientificAwardURL}/${id}`)
-  } 
+  },
+  getPatentByEmployeeID: async (employeeID: number): Promise<EmployeePatent[]> => {
+    const response = await clientAxios.get<EmployeePatent[]>(`${rootURL}${patentURL}/${employeeID}`)
+    return response.data
+  },
+  createPatent: async (patent: EmployeePatent): Promise<EmployeePatent> => {
+    const response = await clientAxios.post<EmployeePatent>(`${rootURL}${patentURL}`, patent)
+    return response.data
+  },
+  updatePatent: async (patent: EmployeePatent): Promise<EmployeePatent> => {
+    const response = await clientAxios.put<EmployeePatent>(`${rootURL}${patentURL}`, patent)
+    return response.data
+  },
+  deletePatent: async (id: number): Promise<void> => {
+    await clientAxios.delete(`${rootURL}${patentURL}/${id}`)
+  },
+  getPIPCByEmployeeID:  async (employeeID: number): Promise<EmployeeParticipationInProfessionalCommunity[]> => {
+    const response = await clientAxios.get<EmployeeParticipationInProfessionalCommunity[]>(`${rootURL}${pipcURL}/${employeeID}`)
+    return response.data
+  },
+  createPIPC: async (pipc: EmployeeParticipationInProfessionalCommunity): Promise<EmployeeParticipationInProfessionalCommunity> => {
+    const response = await clientAxios.post<EmployeeParticipationInProfessionalCommunity>(`${rootURL}${pipcURL}`, pipc)
+    return response.data
+  },
+  updatePIPC: async (pipc: EmployeeParticipationInProfessionalCommunity): Promise<EmployeeParticipationInProfessionalCommunity> => {
+    const response = await clientAxios.put<EmployeeParticipationInProfessionalCommunity>(`${rootURL}${pipcURL}`, pipc)
+    return response.data
+  },
+  deletePIPC: async (id: number): Promise<void> => {
+    await clientAxios.delete(`${rootURL}${pipcURL}/${id}`)
+  },
 }
