@@ -1,6 +1,7 @@
 {
   "NavigationBar": {
-    "bigMessage": "National Database of Scientific and Scientific-Pedagogical Personnel",
+    "bigMessagePart1": "National Database of Scientific And ",
+    "bigMessagePart2": "Scientific-Pedagogical Personnel",
     "home": "Home",
     "institutions": "Institutions",
     "personnel": "Personnel",
@@ -12,6 +13,10 @@
     "logout": "Logout",
     "logoutLoadingToastText": "Logging out...",
     "logoutSuccessToastText": "Logout successful"
+  },
+  "Landing": {
+    "presidentImageAlt": "Image of president",
+    "presidentQuoteText": "I am confident that our scientists, as always, fulfilling their mission before the nation and state with high patriotic devotion, will make a valuable contribution to protecting the achievements of independence, preserving national sacred sites, strengthening the historical and cultural memory of the Tajik nation, and worthily representing our beloved Motherland – Tajikistan."
   },
   "RegisterPage": {
     "header": "Registration",

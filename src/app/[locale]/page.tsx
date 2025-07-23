@@ -1,26 +1,26 @@
-export default function Home() {
+import { getTranslations } from "next-intl/server";
+import Image from "next/image";
+
+export default async function Home() {
+  const t = await getTranslations("Landing")
   return (
     <main>
       <div className="flex m-auto lg:w-[1280px] w-full">
-        <div className="w-1/4">
-          prezident here
+        <div className="">
+          <Image 
+            src="/images/president.png"
+            alt={t("presidentImageAlt")}
+            loading="eager"
+            width={997}
+            height={664}
+            quality={100}
+          />
         </div>
-        <div className="w-full font-bold text-lg">
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident,
-            sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-        </div>
-        <div className="w-1/6">
-          image here
+        <div className="flex px-2 py-1 text-xl justify-center items-center w-full font-bold bg-[#095088] text-white text-center">
+          <p>{t("presidentQuoteText")}</p>
         </div>
       </div>
       <div className="flex-1">
-        content
       </div>
     </main>
   );
