@@ -16,6 +16,7 @@ export type Employee = {
 
 export type EmployeeDetails = {
   id: number
+  languageCode: string
   employeeID: number
   surname: string
   name: string

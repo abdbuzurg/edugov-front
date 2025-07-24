@@ -2,7 +2,6 @@
 
 import { employeeApi } from "@/api/employee";
 import { ApiError } from "@/api/types";
-import Loading from "@/app/[locale]/loading";
 import { EmployeeDetails } from "@/types/employee";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -57,6 +56,7 @@ const extractLatestCredentials = (details: EmployeeDetails[], employeeID: number
   if (!latest) {
     return {
       id: 0,
+      languageCode: "",
       employeeID: employeeID,
       name: "",
       surname: "",
@@ -212,12 +212,12 @@ function DetailsEdit({
 
   return (
     <form className="flex flex-col space-y-3" onSubmit={form.handleSubmit}>
-      {/* CURRECT CREDENTIAL FORM */}
-      <div className="py-2">
+      {/* CURRENT CREDENTIAL FORM */}
+      <div className="border-b-1 py-2">
         <div className="w-full px-6 border-b-1 items-center">
           <div className="pb-4 flex flex-col space-y-4">
             <div className="h-60 bg-gray-300 rounded-xl">
-              {employeeImage && 
+              {employeeImage &&
                 <img
                   className="w-full h-full object-fill"
                   src={URL.createObjectURL(employeeImage)}
@@ -231,63 +231,65 @@ function DetailsEdit({
               >
                 Изменить фотографию
               </label>
-              <input 
+              <input
                 type="file"
                 accept="image/*"
                 name="image"
-                id="employeeImage" 
+                id="employeeImage"
                 hidden
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   if (e.currentTarget.files) {
                     setEmployeeImage(e.currentTarget.files[0])
                   }
                 }}
-                />
+              />
             </div>
           </div>
         </div>
-        <h4 className="font-semibold text-l text-center">{t("stateYourCurrentCredentials")}</h4>
-        <div className="flex flex-col space-y-1 px-3">
-          <label htmlFor="latest.surname" className="font-semibold">{t("surnameLabel")}</label>
-          <input
-            className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-            name="latest.surname"
-            id="latest.surname"
-            type="text"
-            value={form.values.latest.surname}
-            onChange={form.handleChange}
-          />
-          {form.errors.latest && form.errors.latest.surname && form.touched.latest && form.touched.latest.surname && (
-            <div className="text-red-500 font-bold text-sm">{form.errors.latest.surname}</div>
-          )}
-        </div>
-        <div className="flex flex-col space-y-1 px-3">
-          <label htmlFor="latest.name" className="font-semibold">{t("nameLabel")}</label>
-          <input
-            className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-            name="latest.name"
-            id="latest.name"
-            type="text"
-            value={form.values.latest.name}
-            onChange={form.handleChange}
-          />
-          {form.errors.latest && form.errors.latest.name && form.touched.latest && form.touched.latest.name && (
-            <div className="text-red-500 font-bold text-sm">{form.errors.latest.name}</div>
-          )}
-        </div>
-        <div className="flex flex-col space-y-1 px-3">
-          <label htmlFor="latest.middlename" className="font-semibold">{t("middlenameLabel")}</label>
-          <input
-            className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-            name="latest.middlename"
-            id="latest.middlename"
-            type="text"
-            value={form.values.latest.middlename}
-            onChange={form.handleChange}
-          />
-          {form.errors.latest && form.errors.latest.middlename && form.touched.latest && form.touched.latest.middlename && (
-            <div className="text-red-500 font-bold text-sm">{form.errors.latest.middlename}</div>
-          )}
+        <div className="border-b-1 px-2">
+          <h4 className="font-semibold text-l text-center">{t("stateYourCurrentCredentials")}</h4>
+          <div className="flex flex-col space-y-1 px-3">
+            <label htmlFor="latest.surname" className="font-semibold">{t("surnameLabel")}</label>
+            <input
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              name="latest.surname"
+              id="latest.surname"
+              type="text"
+              value={form.values.latest.surname}
+              onChange={form.handleChange}
+            />
+            {form.errors.latest && form.errors.latest.surname && form.touched.latest && form.touched.latest.surname && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.surname}</div>
+            )}
+          </div>
+          <div className="flex flex-col space-y-1 px-3">
+            <label htmlFor="latest.name" className="font-semibold">{t("nameLabel")}</label>
+            <input
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              name="latest.name"
+              id="latest.name"
+              type="text"
+              value={form.values.latest.name}
+              onChange={form.handleChange}
+            />
+            {form.errors.latest && form.errors.latest.name && form.touched.latest && form.touched.latest.name && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.name}</div>
+            )}
+          </div>
+          <div className="flex flex-col space-y-1 px-3">
+            <label htmlFor="latest.middlename" className="font-semibold">{t("middlenameLabel")}</label>
+            <input
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              name="latest.middlename"
+              id="latest.middlename"
+              type="text"
+              value={form.values.latest.middlename}
+              onChange={form.handleChange}
+            />
+            {form.errors.latest && form.errors.latest.middlename && form.touched.latest && form.touched.latest.middlename && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.middlename}</div>
+            )}
+          </div>
         </div>
       </div>
       {/* OLD CREDENTIAL FORM */}
