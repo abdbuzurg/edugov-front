@@ -8,7 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { getIn, useFormik } from "formik";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { FaPen } from "react-icons/fa";
 import { toast } from "react-toastify";
 import * as yup from "yup"
@@ -111,7 +111,6 @@ function DetailsDisplay({ details, employeeID }: DetailsDisplayProps) {
 }
 
 interface DetailsEditProps {
-
   locale: string
   details: EmployeeDetails[] | null
   employeeID: number
@@ -131,6 +130,10 @@ function DetailsEdit({
     mutationFn: employeeApi.updateDetails,
   })
 
+  const [employeeImage, setEmployeeImage] = useState<File | undefined>()
+  useEffect(() => {
+    console.log(employeeImage)
+  }, [employeeImage])
   const form = useFormik({
     initialValues: {
       latest: extractLatestCredentials(details ?? [], employeeID),
@@ -167,8 +170,8 @@ function DetailsEdit({
         onSuccess: () => {
           toast.success(`${t("onUpdateSuccessToastText")}`)
           queryClient.invalidateQueries({
-            queryKey: ["employee-details", { 
-              employeeID: employeeID, 
+            queryKey: ["employee-details", {
+              employeeID: employeeID,
               locale: locale,
             }]
           })
@@ -210,10 +213,37 @@ function DetailsEdit({
   return (
     <form className="flex flex-col space-y-3" onSubmit={form.handleSubmit}>
       {/* CURRECT CREDENTIAL FORM */}
-      <div className="border-b-1 py-2">
-        <div className="w-full px-6">
-          <div className="h-60 bg-gray-300 rounded-xl">
-            image here
+      <div className="py-2">
+        <div className="w-full px-6 border-b-1 items-center">
+          <div className="pb-4 flex flex-col space-y-4">
+            <div className="h-60 bg-gray-300 rounded-xl">
+              {employeeImage && 
+                <img
+                  className="w-full h-full object-fill"
+                  src={URL.createObjectURL(employeeImage)}
+                />
+              }
+            </div>
+            <div className="text-center">
+              <label
+                htmlFor="employeeImage"
+                className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
+              >
+                Изменить фотографию
+              </label>
+              <input 
+                type="file"
+                accept="image/*"
+                name="image"
+                id="employeeImage" 
+                hidden
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  if (e.currentTarget.files) {
+                    setEmployeeImage(e.currentTarget.files[0])
+                  }
+                }}
+                />
+            </div>
           </div>
         </div>
         <h4 className="font-semibold text-l text-center">{t("stateYourCurrentCredentials")}</h4>
