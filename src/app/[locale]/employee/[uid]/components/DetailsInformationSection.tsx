@@ -16,9 +16,11 @@ interface Props {
   details: EmployeeDetails[] | null
   employeeID: number
   locale: string
+  uid: string
+  profilePictureExist: boolean
 }
 
-export default function DetailsInformationSection({ details, employeeID, locale }: Props) {
+export default function DetailsInformationSection({ details, employeeID, locale, uid, profilePictureExist }: Props) {
 
   const t = useTranslations("Employee.Details")
 
@@ -43,20 +45,38 @@ export default function DetailsInformationSection({ details, employeeID, locale 
       </div>
       {!editMode
         ?
-        <DetailsDisplay details={detailsQuery.data} employeeID={employeeID} />
+        <DetailsDisplay
+          details={detailsQuery.data}
+          employeeID={employeeID}
+          uid={uid}
+          profilePictureExist={profilePictureExist}
+        />
         :
-        <DetailsEdit details={detailsQuery.data} employeeID={employeeID} locale={locale} disableEditMode={() => setEditMode(false)} />
+        <DetailsEdit
+          details={detailsQuery.data}
+          employeeID={employeeID}
+          uid={uid}
+          profilePictureExist={profilePictureExist}
+          locale={locale}
+          disableEditMode={() => setEditMode(false)}
+        />
       }
     </div>
   )
 }
 
-const extractLatestCredentials = (details: EmployeeDetails[], employeeID: number): EmployeeDetails => {
-  const latest = details.find(v => v.isNewEmployeeDetails)
-  if (!latest) {
-    return {
+type LatestDetails = {
+  ru: EmployeeDetails,
+  en: EmployeeDetails,
+  tg: EmployeeDetails,
+}
+
+const extractLatestCredentials = (details: EmployeeDetails[], employeeID: number): LatestDetails => {
+  let latestRu = details.find(v => v.isNewEmployeeDetails && v.languageCode == "ru")
+  if (!latestRu) {
+    latestRu = {
       id: 0,
-      languageCode: "",
+      languageCode: "ru",
       employeeID: employeeID,
       name: "",
       surname: "",
@@ -65,7 +85,37 @@ const extractLatestCredentials = (details: EmployeeDetails[], employeeID: number
     }
   }
 
-  return { ...latest, employeeID: employeeID }
+  let latestEn = details.find(v => v.isNewEmployeeDetails && v.languageCode == "en")
+  if (!latestEn) {
+    latestEn = {
+      id: 0,
+      languageCode: "en",
+      employeeID: employeeID,
+      name: "",
+      surname: "",
+      middlename: "",
+      isNewEmployeeDetails: true,
+    }
+  }
+
+  let latestTg = details.find(v => v.isNewEmployeeDetails && v.languageCode == "tg")
+  if (!latestTg) {
+    latestTg = {
+      id: 0,
+      languageCode: "tg",
+      employeeID: employeeID,
+      name: "",
+      surname: "",
+      middlename: "",
+      isNewEmployeeDetails: true,
+    }
+  }
+
+  return {
+    ru: latestRu,
+    en: latestEn,
+    tg: latestTg,
+  }
 }
 
 const extractOldCredentials = (details: EmployeeDetails[], employeeID: number): EmployeeDetails[] => {
@@ -75,36 +125,53 @@ const extractOldCredentials = (details: EmployeeDetails[], employeeID: number): 
 interface DetailsDisplayProps {
   details: EmployeeDetails[] | undefined
   employeeID: number
+  uid: string
+  profilePictureExist: boolean
 }
 
-function DetailsDisplay({ details, employeeID }: DetailsDisplayProps) {
-  const [latest, setLatests] = useState<EmployeeDetails>(extractLatestCredentials(details ?? [], employeeID))
-  const [old, setOld] = useState<EmployeeDetails[]>(extractOldCredentials(details ?? [], employeeID))
+function DetailsDisplay({ details, employeeID, uid, profilePictureExist }: DetailsDisplayProps) {
+  if (!details) return null;
+
+  const [latest, setLatests] = useState<LatestDetails>(extractLatestCredentials(details ?? [], employeeID))
 
   useEffect(() => {
     setLatests(extractLatestCredentials(details ?? [], employeeID))
-    setOld(extractOldCredentials(details ?? [], employeeID))
   }, [details])
 
   return (
     <>
       <div className="w-full px-6">
         <div className="h-60 bg-gray-300 rounded-xl">
-          image here
+          {profilePictureExist &&
+            <img
+              className="w-full h-full object-fill"
+              src={`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}/profile-picture/${uid}`}
+              alt=""
+            />
+          }
         </div>
       </div>
-      <div className="flex flex-col items-center font-bold text-xl border-b-1 pb-2">
-        <span>{latest?.surname ?? "Не указано фамилия"}</span>
-        <span>{latest?.name ?? "Не указано имя"}</span>
-        <span>{latest?.middlename ?? "Не указано отсчество"}</span>
-      </div>
-      {old.map((v, index) => (
-        <div className="flex flex-col items-center font-bold text-xl border-b-1 pb-2" key={index}>
-          <span>{v.surname}</span>
-          <span>{v.name}</span>
-          <span>{v.middlename}</span>
+      {latest.tg.id !== 0 &&
+        <div className="flex flex-col items-center font-bold text-xl border-b-1 pb-2">
+          <span>{latest.tg.surname}</span>
+          <span>{latest.tg.name}</span>
+          <span>{latest.tg.middlename}</span>
         </div>
-      ))}
+      }
+      {latest.ru.id !== 0 &&
+        <div className="flex flex-col items-center font-bold text-xl border-b-1 pb-2">
+          <span>{latest.ru.surname}</span>
+          <span>{latest.ru.name}</span>
+          <span>{latest.ru.middlename}</span>
+        </div>
+      }
+      {latest.en.id !== 0 &&
+        <div className="flex flex-col items-center font-bold text-xl border-b-1 pb-2">
+          <span>{latest.en.surname}</span>
+          <span>{latest.en.name}</span>
+          <span>{latest.en.middlename}</span>
+        </div>
+      }
     </>
 
   )
@@ -114,6 +181,8 @@ interface DetailsEditProps {
   locale: string
   details: EmployeeDetails[] | null
   employeeID: number
+  profilePictureExist: boolean
+  uid: string
   disableEditMode: () => void
 }
 
@@ -122,6 +191,8 @@ function DetailsEdit({
   employeeID,
   disableEditMode,
   locale,
+  uid,
+  profilePictureExist,
 }: DetailsEditProps) {
   const t = useTranslations("Employee.Details")
 
@@ -130,10 +201,12 @@ function DetailsEdit({
     mutationFn: employeeApi.updateDetails,
   })
 
+  const updateProfilePictureMutation = useMutation<void, AxiosError<ApiError>, {profilePicture: File, uid: string}>({
+    mutationFn: employeeApi.updateProfilePicture,
+  })
+
+  const [isProfilePictureAvailable, setIsProfilePictureAvialable] = useState(profilePictureExist)
   const [employeeImage, setEmployeeImage] = useState<File | undefined>()
-  useEffect(() => {
-    console.log(employeeImage)
-  }, [employeeImage])
   const form = useFormik({
     initialValues: {
       latest: extractLatestCredentials(details ?? [], employeeID),
@@ -155,9 +228,9 @@ function DetailsEdit({
     }),
     onSubmit: (values) => {
       const updateEmployeeDetails: EmployeeDetails[] = [
-        {
-          ...values.latest
-        },
+        values.latest.tg,
+        values.latest.ru,
+        values.latest.en,
         ...values.old
       ]
 
@@ -212,15 +285,20 @@ function DetailsEdit({
 
   return (
     <form className="flex flex-col space-y-3" onSubmit={form.handleSubmit}>
-      {/* CURRENT CREDENTIAL FORM */}
-      <div className="border-b-1 py-2">
+      <div className="py-2">
+        {/* Profile picture */}
         <div className="w-full px-6 border-b-1 items-center">
           <div className="pb-4 flex flex-col space-y-4">
             <div className="h-60 bg-gray-300 rounded-xl">
-              {employeeImage &&
+              {isProfilePictureAvailable &&
                 <img
                   className="w-full h-full object-fill"
-                  src={URL.createObjectURL(employeeImage)}
+                  src={!employeeImage
+                    ?
+                      `${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}profile-picture/${uid}`
+                    :
+                      URL.createObjectURL(employeeImage)
+                  }
                 />
               }
             </div>
@@ -240,54 +318,148 @@ function DetailsEdit({
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   if (e.currentTarget.files) {
                     setEmployeeImage(e.currentTarget.files[0])
+                    setIsProfilePictureAvialable(true)
                   }
                 }}
               />
             </div>
           </div>
         </div>
-        <div className="border-b-1 px-2">
-          <h4 className="font-semibold text-l text-center">{t("stateYourCurrentCredentials")}</h4>
+        {/* Latest credentials on tajik */}
+        <div className="border-b-1 px-2 pb-4">
+          <h4 className="font-semibold text-l text-center">{t("stateYourCurrentCredentialsOnTajik")}</h4>
           <div className="flex flex-col space-y-1 px-3">
-            <label htmlFor="latest.surname" className="font-semibold">{t("surnameLabel")}</label>
+            <label htmlFor="latest.tg.surname" className="font-semibold">{t("surnameLabel")}</label>
             <input
               className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-              name="latest.surname"
-              id="latest.surname"
+              name="latest.tg.surname"
+              id="latest.tg.surname"
               type="text"
-              value={form.values.latest.surname}
+              value={form.values.latest.tg.surname}
               onChange={form.handleChange}
             />
-            {form.errors.latest && form.errors.latest.surname && form.touched.latest && form.touched.latest.surname && (
-              <div className="text-red-500 font-bold text-sm">{form.errors.latest.surname}</div>
+            {form.errors.latest && form.errors.latest.tg?.surname && form.touched.latest && form.touched.latest.tg?.surname && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.tg.surname}</div>
             )}
           </div>
           <div className="flex flex-col space-y-1 px-3">
-            <label htmlFor="latest.name" className="font-semibold">{t("nameLabel")}</label>
+            <label htmlFor="latest.tg.name" className="font-semibold">{t("nameLabel")}</label>
             <input
               className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-              name="latest.name"
-              id="latest.name"
+              name="latest.tg.name"
+              id="latest.tg.name"
               type="text"
-              value={form.values.latest.name}
+              value={form.values.latest.tg.name}
               onChange={form.handleChange}
             />
-            {form.errors.latest && form.errors.latest.name && form.touched.latest && form.touched.latest.name && (
-              <div className="text-red-500 font-bold text-sm">{form.errors.latest.name}</div>
+            {form.errors.latest && form.errors.latest.tg?.name && form.touched.latest && form.touched.latest.tg?.name && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.tg.name}</div>
             )}
           </div>
           <div className="flex flex-col space-y-1 px-3">
-            <label htmlFor="latest.middlename" className="font-semibold">{t("middlenameLabel")}</label>
+            <label htmlFor="latest.tg.middlename" className="font-semibold">{t("middlenameLabel")}</label>
             <input
               className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-              name="latest.middlename"
-              id="latest.middlename"
+              name="latest.tg.middlename"
+              id="latest.tg.middlename"
               type="text"
-              value={form.values.latest.middlename}
+              value={form.values.latest.tg.middlename}
               onChange={form.handleChange}
             />
-            {form.errors.latest && form.errors.latest.middlename && form.touched.latest && form.touched.latest.middlename && (
-              <div className="text-red-500 font-bold text-sm">{form.errors.latest.middlename}</div>
+            {form.errors.latest && form.errors.latest.tg?.middlename && form.touched.latest && form.touched.latest.tg?.middlename && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.tg.middlename}</div>
+            )}
+          </div>
+        </div>
+        {/* Latest credentials on russian */}
+        <div className="border-b-1 px-2 pb-4">
+          <h4 className="font-semibold text-l text-center">{t("stateYourCurrentCredentialsOnRussian")}</h4>
+          <div className="flex flex-col space-y-1 px-3">
+            <label htmlFor="latest.ru.surname" className="font-semibold">{t("surnameLabel")}</label>
+            <input
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              name="latest.ru.surname"
+              id="latest.ru.surname"
+              type="text"
+              value={form.values.latest.ru.surname}
+              onChange={form.handleChange}
+            />
+            {form.errors.latest && form.errors.latest.ru?.surname && form.touched.latest && form.touched.latest.ru?.surname && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.ru.surname}</div>
+            )}
+          </div>
+          <div className="flex flex-col space-y-1 px-3">
+            <label htmlFor="latest.ru.name" className="font-semibold">{t("nameLabel")}</label>
+            <input
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              name="latest.ru.name"
+              id="latest.ru.name"
+              type="text"
+              value={form.values.latest.ru.name}
+              onChange={form.handleChange}
+            />
+            {form.errors.latest && form.errors.latest.ru?.name && form.touched.latest && form.touched.latest.ru?.name && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.ru.name}</div>
+            )}
+          </div>
+          <div className="flex flex-col space-y-1 px-3">
+            <label htmlFor="latest.ru.middlename" className="font-semibold">{t("middlenameLabel")}</label>
+            <input
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              name="latest.ru.middlename"
+              id="latest.ru.middlename"
+              type="text"
+              value={form.values.latest.ru.middlename}
+              onChange={form.handleChange}
+            />
+            {form.errors.latest && form.errors.latest.ru?.middlename && form.touched.latest && form.touched.latest.ru?.middlename && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.ru.middlename}</div>
+            )}
+          </div>
+        </div>
+        {/* Latest credentials on english */}
+        <div className="border-b-1 px-2 pb-4">
+          <h4 className="font-semibold text-l text-center">{t("stateYourCurrentCredentialsOnEnglish")}</h4>
+          <div className="flex flex-col space-y-1 px-3">
+            <label htmlFor="latest.en.surname" className="font-semibold">{t("surnameLabel")}</label>
+            <input
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              name="latest.en.surname"
+              id="latest.en.surname"
+              type="text"
+              value={form.values.latest.en.surname}
+              onChange={form.handleChange}
+            />
+            {form.errors.latest && form.errors.latest.en?.surname && form.touched.latest && form.touched.latest.en?.surname && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.en.surname}</div>
+            )}
+          </div>
+          <div className="flex flex-col space-y-1 px-3">
+            <label htmlFor="latest.en.name" className="font-semibold">{t("nameLabel")}</label>
+            <input
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              name="latest.en.name"
+              id="latest.en.name"
+              type="text"
+              value={form.values.latest.en.name}
+              onChange={form.handleChange}
+            />
+            {form.errors.latest && form.errors.latest.en?.name && form.touched.latest && form.touched.latest.en?.name && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.en.name}</div>
+            )}
+          </div>
+          <div className="flex flex-col space-y-1 px-3">
+            <label htmlFor="latest.en.middlename" className="font-semibold">{t("middlenameLabel")}</label>
+            <input
+              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+              name="latest.en.middlename"
+              id="latest.en.middlename"
+              type="text"
+              value={form.values.latest.en.middlename}
+              onChange={form.handleChange}
+            />
+            {form.errors.latest && form.errors.latest.en?.middlename && form.touched.latest && form.touched.latest.en?.middlename && (
+              <div className="text-red-500 font-bold text-sm">{form.errors.latest.en.middlename}</div>
             )}
           </div>
         </div>

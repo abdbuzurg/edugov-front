@@ -16,6 +16,15 @@ export const employeeApi = {
     const response = await clientAxios.get<EmployeeDetails[]>(`${rootURL}${detailsURL}/${employeeID}`)
     return response.data
   },
+  updateProfilePicture: async (profilePicture: File, uid: string): Promise<void> => {
+    const formData = new FormData()
+    formData.append("profilePicture", profilePicture)
+    await clientAxios.put(`${rootURL}/profile-picture/${uid}`, formData)
+  },
+  getProfilePicture: async(uid: string):Promise<string> => {
+    const response = await clientAxios.get<string>(`${rootURL}/profile-picture/${uid}`)
+    return response.data
+  },
   updateDetails: async (details: EmployeeDetails[]): Promise<EmployeeDetails[]> => {
     const response = await clientAxios.put<EmployeeDetails[]>(`${rootURL}${detailsURL}`, { data: details })
     return response.data
@@ -95,7 +104,7 @@ export const employeeApi = {
   deletePatent: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${patentURL}/${id}`)
   },
-  getPIPCByEmployeeID:  async (employeeID: number): Promise<EmployeeParticipationInProfessionalCommunity[]> => {
+  getPIPCByEmployeeID: async (employeeID: number): Promise<EmployeeParticipationInProfessionalCommunity[]> => {
     const response = await clientAxios.get<EmployeeParticipationInProfessionalCommunity[]>(`${rootURL}${pipcURL}/${employeeID}`)
     return response.data
   },

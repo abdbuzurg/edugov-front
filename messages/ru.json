@@ -52,7 +52,9 @@
   "Employee": {
     "Details": {
       "title": "Основная информация",
-      "stateYourCurrentCredentials": "Укажите ваше текущее ФИО",
+      "stateYourCurrentCredentialsOnRussian": "Укажите ваше текущее ФИО на русском",
+      "stateYourCurrentCredentialsOnTajik": "Укажите ваше текущее ФИО на таджикском ",
+      "stateYourCurrentCredentialsOnEnglish": "Укажите ваше текущее ФИО на английском",
       "surnameLabel": "Фамилия",
       "surnameRequiredValidationText": "Фамилия обязательно",
       "nameLabel": "Имя",
