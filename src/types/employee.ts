@@ -1,6 +1,6 @@
 export type Employee = {
   id: number
-  uid: string
+  uniqueID: string
   profilePicture: string
   createdAt: Date
   updatedAt: Date

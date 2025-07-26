@@ -15,19 +15,18 @@ import * as yup from "yup"
 interface Props {
   details: EmployeeDetails[] | null
   employeeID: number
-  locale: string
+  locale:string
   uid: string
   profilePictureExist: boolean
 }
 
-export default function DetailsInformationSection({ details, employeeID, locale, uid, profilePictureExist }: Props) {
+export default function DetailsInformationSection({ details, locale, employeeID,  uid, profilePictureExist }: Props) {
 
   const t = useTranslations("Employee.Details")
 
   const detailsQuery = useQuery<EmployeeDetails[], Error, EmployeeDetails[]>({
     queryKey: ["employee-details", {
       employeeID: employeeID,
-      locale: locale,
     }],
     initialData: details ?? [],
     queryFn: () => employeeApi.getDetailsByEmployeeID(employeeID),
@@ -57,8 +56,8 @@ export default function DetailsInformationSection({ details, employeeID, locale,
           employeeID={employeeID}
           uid={uid}
           profilePictureExist={profilePictureExist}
-          locale={locale}
           disableEditMode={() => setEditMode(false)}
+          locale={locale}
         />
       }
     </div>
@@ -112,9 +111,9 @@ const extractLatestCredentials = (details: EmployeeDetails[], employeeID: number
   }
 
   return {
-    ru: latestRu,
-    en: latestEn,
-    tg: latestTg,
+    ru: {...latestRu, employeeID: employeeID},
+    en: {...latestEn, employeeID: employeeID},
+    tg: {...latestTg, employeeID: employeeID},
   }
 }
 
@@ -131,6 +130,7 @@ interface DetailsDisplayProps {
 
 function DetailsDisplay({ details, employeeID, uid, profilePictureExist }: DetailsDisplayProps) {
   if (!details) return null;
+  console.log(uid)
 
   const [latest, setLatests] = useState<LatestDetails>(extractLatestCredentials(details ?? [], employeeID))
 
@@ -178,21 +178,21 @@ function DetailsDisplay({ details, employeeID, uid, profilePictureExist }: Detai
 }
 
 interface DetailsEditProps {
-  locale: string
   details: EmployeeDetails[] | null
   employeeID: number
   profilePictureExist: boolean
   uid: string
   disableEditMode: () => void
+  locale: string
 }
 
 function DetailsEdit({
   details,
   employeeID,
   disableEditMode,
-  locale,
   uid,
   profilePictureExist,
+  locale,
 }: DetailsEditProps) {
   const t = useTranslations("Employee.Details")
 
@@ -201,12 +201,40 @@ function DetailsEdit({
     mutationFn: employeeApi.updateDetails,
   })
 
-  const updateProfilePictureMutation = useMutation<void, AxiosError<ApiError>, {profilePicture: File, uid: string}>({
+  const updateProfilePictureMutation = useMutation<void, AxiosError<ApiError>, { profilePicture: File, uid: string }>({
     mutationFn: employeeApi.updateProfilePicture,
   })
 
   const [isProfilePictureAvailable, setIsProfilePictureAvialable] = useState(profilePictureExist)
   const [employeeImage, setEmployeeImage] = useState<File | undefined>()
+  const onPofilePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.currentTarget.files) {
+      if (e.currentTarget.files.length > 1) {
+        e.currentTarget.value=''
+        toast.error(t("onProfileImageMultipleFilesErrorToastText"))
+        return
+      }
+
+      const imageFile = e.currentTarget.files[0]
+      console.log(imageFile)
+      if (!imageFile.type.startsWith("image/")) {
+        e.currentTarget.value=''
+        toast.error(t("onProfileImageNotImageErrorToastText"))
+        return
+      }
+
+      const maximumImageSize = 10*1024*1024
+      if (imageFile.size > maximumImageSize) {
+        e.currentTarget.value=''
+        toast.error(t("onProfileImageSizeExceededErrorToastText"))
+        return
+      }
+    
+      setEmployeeImage(imageFile)
+      setIsProfilePictureAvialable(true)
+    }
+  }
+
   const form = useFormik({
     initialValues: {
       latest: extractLatestCredentials(details ?? [], employeeID),
@@ -214,9 +242,21 @@ function DetailsEdit({
     },
     validationSchema: yup.object({
       latest: yup.object({
-        name: yup.string().required(t("nameRequiredValidationText")),
-        surname: yup.string().required(t("surnameRequiredValidationText")),
-        middlename: yup.string().required(t("middlenameRequiredValidationText")),
+        tg: yup.object({
+          name: yup.string().required(t("nameRequiredValidationText")),
+          surname: yup.string().required(t("surnameRequiredValidationText")),
+          middlename: yup.string().required(t("middlenameRequiredValidationText")),
+        }),
+        ru: yup.object({
+          name: yup.string().required(t("nameRequiredValidationText")),
+          surname: yup.string().required(t("surnameRequiredValidationText")),
+          middlename: yup.string().required(t("middlenameRequiredValidationText")),
+        }),
+        en: yup.object({
+          name: yup.string().required(t("nameRequiredValidationText")),
+          surname: yup.string().required(t("surnameRequiredValidationText")),
+          middlename: yup.string().required(t("middlenameRequiredValidationText")),
+        }),
       }),
       old: yup.array().of(
         yup.object({
@@ -234,8 +274,12 @@ function DetailsEdit({
         ...values.old
       ]
 
-
       const loadingStateToast = toast.info(`${t("onUpdateLoadingToastText")}`)
+
+      if (employeeImage) {
+        updateProfilePictureMutation.mutate({ profilePicture: employeeImage, uid: uid })
+      }
+
       updateDetailsMutation.mutate(updateEmployeeDetails, {
         onSettled: () => {
           toast.dismiss(loadingStateToast)
@@ -245,7 +289,6 @@ function DetailsEdit({
           queryClient.invalidateQueries({
             queryKey: ["employee-details", {
               employeeID: employeeID,
-              locale: locale,
             }]
           })
           disableEditMode()
@@ -270,6 +313,7 @@ function DetailsEdit({
     form.setFieldValue("old", [...form.values.old, {
       id: 0,
       employeeID: employeeID,
+      languageCode: locale,
       name: "",
       surname: "",
       middlename: "",
@@ -295,9 +339,9 @@ function DetailsEdit({
                   className="w-full h-full object-fill"
                   src={!employeeImage
                     ?
-                      `${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}profile-picture/${uid}`
+                    `${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}profile-picture/${uid}`
                     :
-                      URL.createObjectURL(employeeImage)
+                    URL.createObjectURL(employeeImage)
                   }
                 />
               }
@@ -315,12 +359,7 @@ function DetailsEdit({
                 name="image"
                 id="employeeImage"
                 hidden
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  if (e.currentTarget.files) {
-                    setEmployeeImage(e.currentTarget.files[0])
-                    setIsProfilePictureAvialable(true)
-                  }
-                }}
+                onChange={onPofilePictureChange}
               />
             </div>
           </div>

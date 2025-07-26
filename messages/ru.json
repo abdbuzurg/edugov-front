@@ -52,6 +52,9 @@
   "Employee": {
     "Details": {
       "title": "Основная информация",
+      "onProfileImageMultipleFilesErrorToastText":"Выбирите только пожалуйста только 1 файл",
+      "onProfileImageNotImageErrorToastText":"Формат файла должно быть изображением (jpeg, png, svg, webp). ",
+      "onProfileImageSizeExceededErrorToastText": "Размер фотографии не должно превышать 10 Мб.",
       "stateYourCurrentCredentialsOnRussian": "Укажите ваше текущее ФИО на русском",
       "stateYourCurrentCredentialsOnTajik": "Укажите ваше текущее ФИО на таджикском ",
       "stateYourCurrentCredentialsOnEnglish": "Укажите ваше текущее ФИО на английском",

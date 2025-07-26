@@ -330,7 +330,7 @@ export default async function EmployeeProfile({
             details={employee.details}
             employeeID={employee.id}
             locale={locale}
-            uid={employee.uid}
+            uid={employee.uniqueID}
             profilePictureExist={!!employee.profilePicture}
           />
           <div className="flex-5  flex flex-col space-y-4">

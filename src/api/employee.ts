@@ -16,7 +16,7 @@ export const employeeApi = {
     const response = await clientAxios.get<EmployeeDetails[]>(`${rootURL}${detailsURL}/${employeeID}`)
     return response.data
   },
-  updateProfilePicture: async (profilePicture: File, uid: string): Promise<void> => {
+  updateProfilePicture: async ({profilePicture, uid}: {profilePicture: File, uid: string}): Promise<void> => {
     const formData = new FormData()
     formData.append("profilePicture", profilePicture)
     await clientAxios.put(`${rootURL}/profile-picture/${uid}`, formData)
