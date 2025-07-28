@@ -21,6 +21,7 @@ export default async function NavigationBar({ locale, isLogged }: Props) {
             alt="logo"
             width={90}
             height={100}
+            className="w-auto h-auto"
           />
           <div className="flex flex-col space-y-0 items-start justify-start uppercase">
             <h1 className="text-4xl font-bold text-purple-900">{t("bigMessagePart1")}</h1>

@@ -9,9 +9,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL;
 const clientAxios: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, // Crucial for sending/receiving cookies (like HttpOnly refresh token)
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // --- Variables for managing the refresh token queue ---

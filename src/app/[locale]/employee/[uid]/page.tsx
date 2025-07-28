@@ -321,7 +321,6 @@ export default async function EmployeeProfile({
     notFound()
   }
 
-  console.log(employee)
   return (
     <div className="bg-white w-full">
       <div className="m-auto lg:w-[1280px] w-full flex">
@@ -331,7 +330,6 @@ export default async function EmployeeProfile({
             employeeID={employee.id}
             locale={locale}
             uid={employee.uniqueID}
-            profilePictureExist={!!employee.profilePicture}
           />
           <div className="flex-5  flex flex-col space-y-4">
             <DegreeInformationSection

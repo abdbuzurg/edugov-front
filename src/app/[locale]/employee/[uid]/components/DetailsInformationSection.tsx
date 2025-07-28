@@ -11,16 +11,16 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { FaPen } from "react-icons/fa";
 import { toast } from "react-toastify";
 import * as yup from "yup"
+import ProfilePicture from "./ProfilePicture";
 
 interface Props {
   details: EmployeeDetails[] | null
   employeeID: number
-  locale:string
+  locale: string
   uid: string
-  profilePictureExist: boolean
 }
 
-export default function DetailsInformationSection({ details, locale, employeeID,  uid, profilePictureExist }: Props) {
+export default function DetailsInformationSection({ details, locale, employeeID, uid }: Props) {
 
   const t = useTranslations("Employee.Details")
 
@@ -48,14 +48,13 @@ export default function DetailsInformationSection({ details, locale, employeeID,
           details={detailsQuery.data}
           employeeID={employeeID}
           uid={uid}
-          profilePictureExist={profilePictureExist}
+          locale={locale}
         />
         :
         <DetailsEdit
           details={detailsQuery.data}
           employeeID={employeeID}
           uid={uid}
-          profilePictureExist={profilePictureExist}
           disableEditMode={() => setEditMode(false)}
           locale={locale}
         />
@@ -111,9 +110,9 @@ const extractLatestCredentials = (details: EmployeeDetails[], employeeID: number
   }
 
   return {
-    ru: {...latestRu, employeeID: employeeID},
-    en: {...latestEn, employeeID: employeeID},
-    tg: {...latestTg, employeeID: employeeID},
+    ru: { ...latestRu, employeeID: employeeID },
+    en: { ...latestEn, employeeID: employeeID },
+    tg: { ...latestTg, employeeID: employeeID },
   }
 }
 
@@ -125,12 +124,11 @@ interface DetailsDisplayProps {
   details: EmployeeDetails[] | undefined
   employeeID: number
   uid: string
-  profilePictureExist: boolean
+  locale: string
 }
 
-function DetailsDisplay({ details, employeeID, uid, profilePictureExist }: DetailsDisplayProps) {
+function DetailsDisplay({ details, employeeID, uid, locale }: DetailsDisplayProps) {
   if (!details) return null;
-  console.log(uid)
 
   const [latest, setLatests] = useState<LatestDetails>(extractLatestCredentials(details ?? [], employeeID))
 
@@ -142,13 +140,11 @@ function DetailsDisplay({ details, employeeID, uid, profilePictureExist }: Detai
     <>
       <div className="w-full px-6">
         <div className="h-60 bg-gray-300 rounded-xl">
-          {profilePictureExist &&
-            <img
-              className="w-full h-full object-fill"
-              src={`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}/profile-picture/${uid}`}
-              alt=""
-            />
-          }
+          <ProfilePicture
+            fallbackSrc={`/images/profile_placeholder_${locale}.svg`}
+            src={`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}employee/profile-picture/${uid}`}
+            alt="profile_picture"
+          />
         </div>
       </div>
       {latest.tg.id !== 0 &&
@@ -180,7 +176,6 @@ function DetailsDisplay({ details, employeeID, uid, profilePictureExist }: Detai
 interface DetailsEditProps {
   details: EmployeeDetails[] | null
   employeeID: number
-  profilePictureExist: boolean
   uid: string
   disableEditMode: () => void
   locale: string
@@ -191,7 +186,6 @@ function DetailsEdit({
   employeeID,
   disableEditMode,
   uid,
-  profilePictureExist,
   locale,
 }: DetailsEditProps) {
   const t = useTranslations("Employee.Details")
@@ -205,33 +199,33 @@ function DetailsEdit({
     mutationFn: employeeApi.updateProfilePicture,
   })
 
-  const [isProfilePictureAvailable, setIsProfilePictureAvialable] = useState(profilePictureExist)
   const [employeeImage, setEmployeeImage] = useState<File | undefined>()
+  useEffect(() => {
+    console.log(employeeImage)
+  }, [employeeImage])
   const onPofilePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.files) {
       if (e.currentTarget.files.length > 1) {
-        e.currentTarget.value=''
+        e.currentTarget.value = ''
         toast.error(t("onProfileImageMultipleFilesErrorToastText"))
         return
       }
 
       const imageFile = e.currentTarget.files[0]
-      console.log(imageFile)
       if (!imageFile.type.startsWith("image/")) {
-        e.currentTarget.value=''
+        e.currentTarget.value = ''
         toast.error(t("onProfileImageNotImageErrorToastText"))
         return
       }
 
-      const maximumImageSize = 10*1024*1024
+      const maximumImageSize = 10 * 1024 * 1024
       if (imageFile.size > maximumImageSize) {
-        e.currentTarget.value=''
+        e.currentTarget.value = ''
         toast.error(t("onProfileImageSizeExceededErrorToastText"))
         return
       }
-    
+
       setEmployeeImage(imageFile)
-      setIsProfilePictureAvialable(true)
     }
   }
 
@@ -334,15 +328,18 @@ function DetailsEdit({
         <div className="w-full px-6 border-b-1 items-center">
           <div className="pb-4 flex flex-col space-y-4">
             <div className="h-60 bg-gray-300 rounded-xl">
-              {isProfilePictureAvailable &&
-                <img
-                  className="w-full h-full object-fill"
-                  src={!employeeImage
-                    ?
-                    `${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}profile-picture/${uid}`
-                    :
-                    URL.createObjectURL(employeeImage)
-                  }
+              {!employeeImage &&
+                <ProfilePicture
+                  src={`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}employee/profile-picture/${uid}`}
+                  alt="profile_picture"
+                  fallbackSrc={`/images/profile_placeholder_${locale}.svg`}
+                />
+              }
+              {employeeImage &&
+                <ProfilePicture
+                  src={URL.createObjectURL(employeeImage)}
+                  alt="profile_picture"
+                  fallbackSrc={`/images/profile_placeholder_${locale}.svg`}
                 />
               }
             </div>

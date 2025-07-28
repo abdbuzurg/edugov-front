@@ -1,7 +1,6 @@
 export type Employee = {
   id: number
   uniqueID: string
-  profilePicture: string
   createdAt: Date
   updatedAt: Date
   details: EmployeeDetails[]
