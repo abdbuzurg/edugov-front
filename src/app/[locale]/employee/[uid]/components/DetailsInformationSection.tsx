@@ -12,6 +12,7 @@ import { FaPen } from "react-icons/fa";
 import { toast } from "react-toastify";
 import * as yup from "yup"
 import ProfilePicture from "./ProfilePicture";
+import { useRouter } from "next/navigation";
 
 interface Props {
   details: EmployeeDetails[] | null
@@ -190,6 +191,7 @@ function DetailsEdit({
 }: DetailsEditProps) {
   const t = useTranslations("Employee.Details")
 
+  const router = useRouter()
   const queryClient = useQueryClient()
   const updateDetailsMutation = useMutation<EmployeeDetails[], AxiosError<ApiError>, EmployeeDetails[]>({
     mutationFn: employeeApi.updateDetails,
@@ -286,6 +288,7 @@ function DetailsEdit({
             }]
           })
           disableEditMode()
+          router.refresh()
         },
         onError: (error) => {
           if (error.response && error.response.data && error.response.data.message) {
