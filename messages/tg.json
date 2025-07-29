@@ -52,7 +52,12 @@
   "Employee": {
     "Details": {
       "title": "Маълумоти асосӣ",
-      "stateYourCurrentCredentials": "Ному насаби ҳозираи худро ворид кунед",
+      "onprofileimagemultiplefileserrortoasttext": "лутфан, танҳо 1 файлро интихоб кунед.",
+      "onProfileImageNotImageErrorToastText": "Формати файл бояд тасвир бошад (jpeg, png, svg, webp).",
+      "onProfileImageSizeExceededErrorToastText": "Ҳаҷми акс набояд аз 10 МБ зиёд бошад.",
+      "stateYourCurrentCredentialsOnRussian": "Ному насаби ҳозираи худро бо забони русӣ нависед.",
+      "stateYourCurrentCredentialsOnTajik": "Ному насаби ҳозираи худро бо забони тоҷикӣ нависед.",
+      "stateYourCurrentCredentialsOnEnglish": "Ному насаби ҳозираи худро бо забони англисӣ нависед.",
       "surnameLabel": "Насаб",
       "surnameRequiredValidationText": "Насаб ҳатмист",
       "nameLabel": "Ном",
