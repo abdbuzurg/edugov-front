@@ -18,13 +18,14 @@ interface Props {
   degree: EmployeeDegree[] | undefined
   employeeID: number
   locale: string
+  isCurrentUserProfile: boolean
 }
 
 interface DegreeState extends EmployeeDegree {
   editMode: boolean
 }
 
-export default function DegreeInformationSection({ degree, employeeID, locale }: Props) {
+export default function DegreeInformationSection({ degree, employeeID, locale, isCurrentUserProfile }: Props) {
   const t = useTranslations("Employee.Degree")
   const queryClient = useQueryClient()
 
@@ -46,6 +47,7 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
     }],
     queryFn: () => employeeApi.getDegreesByEmployeeID(employeeID),
     initialData: degree ?? [],
+    refetchOnMount: false,
   })
   useEffect(() => {
     if (degreeQuery.data) {
@@ -118,9 +120,11 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
         <p className="font-bold text-xl">{t("title")}</p>
-        <div className="cursor-pointer">
-          <FaPlus color="blue" onClick={() => addNewDegree()} />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="cursor-pointer">
+            <FaPlus color="blue" onClick={() => addNewDegree()} />
+          </div>
+        }
       </div>
       <div className="flex flex-col space-y-1 px-6">
         <Dialog
@@ -149,6 +153,7 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
             <DegreeDisplay
               key={degree.id}
               degree={degree}
+              isCurrentUserProfile={isCurrentUserProfile}
               enableEditMode={() => {
                 const editModeEnabled = degreeState.map((v, i) => i == index ? { ...v, editMode: true } : v)
                 setDegreeState([...editModeEnabled])
@@ -187,29 +192,32 @@ export default function DegreeInformationSection({ degree, employeeID, locale }:
 
 interface DegreeDisplayProps {
   degree: EmployeeDegree | undefined
+  isCurrentUserProfile: boolean
   enableEditMode: () => void
   onDeleteClick: () => void
 }
 
-function DegreeDisplay({ degree, enableEditMode, onDeleteClick }: DegreeDisplayProps) {
+function DegreeDisplay({ degree, enableEditMode, onDeleteClick, isCurrentUserProfile }: DegreeDisplayProps) {
   if (!degree) return null
 
   return (
     <div className="flex flex-col space-y-1  border-b-1 pb-2">
       <div className="flex justify-between items-center border-gray-500">
         <p className="font-semibold text-xl">{degree.universityName}</p>
-        <div className="flex space-x-2">
-          <FaPen
-            color="blue"
-            onClick={() => enableEditMode()}
-            className="cursor-pointer"
-          />
-          <FaTrash
-            color="red"
-            onClick={() => onDeleteClick()}
-            className="cursor-pointer"
-          />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="flex space-x-2">
+            <FaPen
+              color="blue"
+              onClick={() => enableEditMode()}
+              className="cursor-pointer"
+            />
+            <FaTrash
+              color="red"
+              onClick={() => onDeleteClick()}
+              className="cursor-pointer"
+            />
+          </div>
+        }
       </div>
       <div>
         <div className="flex space-x-2">

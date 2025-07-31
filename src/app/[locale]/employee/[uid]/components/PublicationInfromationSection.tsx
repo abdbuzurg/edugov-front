@@ -17,13 +17,14 @@ interface Props {
   publications: EmployeePublication[] | undefined
   employeeID: number
   locale: string
+  isCurrentUserProfile: boolean
 }
 
 interface PublicationState extends EmployeePublication {
   editMode: boolean
 }
 
-export default function PublicationInformationSection({ publications, employeeID, locale }: Props) {
+export default function PublicationInformationSection({ publications, employeeID, locale, isCurrentUserProfile }: Props) {
   const queryClient = useQueryClient()
 
   const [publicationState, setPublicationState] = useState<PublicationState[]>([])
@@ -42,6 +43,7 @@ export default function PublicationInformationSection({ publications, employeeID
     }],
     queryFn: () => employeeApi.getPublicationByEmployeeID(employeeID),
     initialData: publications ?? [],
+    refetchOnMount: false,
   })
   useEffect(() => {
     if (publicationQuery.data) {
@@ -107,9 +109,11 @@ export default function PublicationInformationSection({ publications, employeeID
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
         <p className="font-bold text-xl">Публикации</p>
-        <div className="cursor-pointer">
-          <FaPlus color="blue" onClick={() => addNewPublication()} />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="cursor-pointer">
+            <FaPlus color="blue" onClick={() => addNewPublication()} />
+          </div>
+        }
       </div>
       <div className="flex flex-col space-y-1 pb-2 px-6">
         <Dialog
@@ -138,6 +142,7 @@ export default function PublicationInformationSection({ publications, employeeID
             <PublicationDisplay
               key={publication.id}
               publication={publication}
+              isCurrentUserProfile={isCurrentUserProfile}
               enableEditMode={() => {
                 const publications = publicationState.map((v, i) => i === index ? { ...v, editMode: true } : v)
                 setPublicationState(publications)
@@ -171,11 +176,12 @@ export default function PublicationInformationSection({ publications, employeeID
 
 interface PublicationDisplayProps {
   publication: EmployeePublication | undefined
+  isCurrentUserProfile: boolean
   enableEditMode: () => void
   onDeleteClick: () => void
 }
 
-function PublicationDisplay({ publication, enableEditMode, onDeleteClick }: PublicationDisplayProps) {
+function PublicationDisplay({ publication, enableEditMode, onDeleteClick, isCurrentUserProfile }: PublicationDisplayProps) {
   if (!publication) return null
 
   return (
@@ -192,18 +198,20 @@ function PublicationDisplay({ publication, enableEditMode, onDeleteClick }: Publ
           </a>
         </p>
       </div>
-      <div className="flex space-x-2">
-        <FaPen
-          className="cursor-pointer"
-          color="blue"
-          onClick={() => enableEditMode()}
-        />
-        <FaTrash
-          color="red"
-          onClick={() => onDeleteClick()}
-          className="cursor-pointer"
-        />
-      </div>
+      {isCurrentUserProfile &&
+        <div className="flex space-x-2">
+          <FaPen
+            className="cursor-pointer"
+            color="blue"
+            onClick={() => enableEditMode()}
+          />
+          <FaTrash
+            color="red"
+            onClick={() => onDeleteClick()}
+            className="cursor-pointer"
+          />
+        </div>
+      }
     </div>
   )
 }

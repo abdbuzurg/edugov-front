@@ -16,13 +16,14 @@ interface Props {
   pipcs: EmployeeParticipationInProfessionalCommunity[] | undefined
   employeeID: number
   locale: string
+  isCurrentUserProfile: boolean
 }
 
 interface PIPCState extends EmployeeParticipationInProfessionalCommunity {
   editMode: boolean
 }
 
-export default function ParticipationInProfessionalCommunityInformationSection({ pipcs, employeeID, locale }: Props) {
+export default function ParticipationInProfessionalCommunityInformationSection({ pipcs, employeeID, locale, isCurrentUserProfile }: Props) {
   const queryClient = useQueryClient()
 
   const [pipcState, setPipcState] = useState<PIPCState[]>([])
@@ -41,6 +42,7 @@ export default function ParticipationInProfessionalCommunityInformationSection({
     }],
     queryFn: () => employeeApi.getPIPCByEmployeeID(employeeID),
     initialData: pipcs ?? [],
+    refetchOnMount: false,
   })
   useEffect(() => {
     if (pipcQuery.data) {
@@ -108,9 +110,11 @@ export default function ParticipationInProfessionalCommunityInformationSection({
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
         <p className="font-bold text-xl">Участие в профессиональных сообществах</p>
-        <div className="cursor-pointer">
-          <FaPlus color="blue" onClick={() => addNewPatent()} />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="cursor-pointer">
+            <FaPlus color="blue" onClick={() => addNewPatent()} />
+          </div>
+        }
       </div>
       <div className="flex flex-col space-y-2 px-6">
         <Dialog
@@ -139,6 +143,7 @@ export default function ParticipationInProfessionalCommunityInformationSection({
             <PIPCDisplay
               key={pipc.id}
               pipc={pipc}
+              isCurrentUserProfile={isCurrentUserProfile}
               enableEditMode={() => {
                 const pipc = pipcState.map((v, i) => i == index ? { ...v, editMode: true } : v)
                 setPipcState([...pipc])
@@ -172,6 +177,7 @@ export default function ParticipationInProfessionalCommunityInformationSection({
 
 interface PIPCDisplayProps {
   pipc: EmployeeParticipationInProfessionalCommunity | undefined
+  isCurrentUserProfile: boolean
   enableEditMode: () => void
   onDeleteClick: () => void
 }
@@ -179,7 +185,8 @@ interface PIPCDisplayProps {
 function PIPCDisplay({
   pipc,
   enableEditMode,
-  onDeleteClick
+  onDeleteClick,
+  isCurrentUserProfile
 }: PIPCDisplayProps) {
   if (!pipc) return null
 
@@ -190,18 +197,20 @@ function PIPCDisplay({
           <h4 className="font-semibold text-l">Название:</h4>
           <p>{pipc.professionalCommunityTitle}</p>
         </div>
-        <div className="flex space-x-2">
-          <FaPen
-            className="cursor-pointer"
-            color="blue"
-            onClick={() => enableEditMode()}
-          />
-          <FaTrash
-            color="red"
-            onClick={() => onDeleteClick()}
-            className="cursor-pointer"
-          />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="flex space-x-2">
+            <FaPen
+              className="cursor-pointer"
+              color="blue"
+              onClick={() => enableEditMode()}
+            />
+            <FaTrash
+              color="red"
+              onClick={() => onDeleteClick()}
+              className="cursor-pointer"
+            />
+          </div>
+        }
       </div>
       <div className="flex space-x-2">
         <h4 className="font-semibold text-l">Роль:</h4>

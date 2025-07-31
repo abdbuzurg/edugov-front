@@ -19,9 +19,10 @@ interface Props {
   employeeID: number
   locale: string
   uid: string
+  isCurrentUserProfile: boolean
 }
 
-export default function DetailsInformationSection({ details, locale, employeeID, uid }: Props) {
+export default function DetailsInformationSection({ details, locale, employeeID, uid, isCurrentUserProfile }: Props) {
 
   const t = useTranslations("Employee.Details")
 
@@ -31,6 +32,7 @@ export default function DetailsInformationSection({ details, locale, employeeID,
     }],
     initialData: details ?? [],
     queryFn: () => employeeApi.getDetailsByEmployeeID(employeeID),
+    refetchOnMount: false,
   })
 
   const [editMode, setEditMode] = useState<boolean>(false)
@@ -40,7 +42,7 @@ export default function DetailsInformationSection({ details, locale, employeeID,
       <div className="flex justify-between items-center border-b-1 border-gray-500 pb-2 px-6">
         <p className="font-bold text-xl">{t("title")}</p>
         <div className="cursor-pointer">
-          {!editMode && <FaPen color="blue" onClick={() => setEditMode(true)} />}
+          {!editMode && isCurrentUserProfile && <FaPen color="blue" onClick={() => setEditMode(true)} />}
         </div>
       </div>
       {!editMode
@@ -241,24 +243,20 @@ function DetailsEdit({
         tg: yup.object({
           name: yup.string().required(t("nameRequiredValidationText")),
           surname: yup.string().required(t("surnameRequiredValidationText")),
-          middlename: yup.string().required(t("middlenameRequiredValidationText")),
         }),
         ru: yup.object({
           name: yup.string().required(t("nameRequiredValidationText")),
           surname: yup.string().required(t("surnameRequiredValidationText")),
-          middlename: yup.string().required(t("middlenameRequiredValidationText")),
         }),
         en: yup.object({
           name: yup.string().required(t("nameRequiredValidationText")),
           surname: yup.string().required(t("surnameRequiredValidationText")),
-          middlename: yup.string().required(t("middlenameRequiredValidationText")),
         }),
       }),
       old: yup.array().of(
         yup.object({
           name: yup.string().required(t("nameRequiredValidationText")),
           surname: yup.string().required(t("surnameRequiredValidationText")),
-          middlename: yup.string().required(t("middlenameRequiredValidationText")),
         })
       )
     }),
@@ -288,7 +286,6 @@ function DetailsEdit({
             }]
           })
           disableEditMode()
-          router.refresh()
         },
         onError: (error) => {
           if (error.response && error.response.data && error.response.data.message) {

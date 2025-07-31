@@ -16,13 +16,14 @@ interface Props {
   scientificAwards: EmployeeScientificAward[] | undefined
   employeeID: number
   locale: string
+  isCurrentUserProfile: boolean
 }
 
 interface ScientificAwardState extends EmployeeScientificAward {
   editMode: boolean
 }
 
-export default function ScientificAwardInformationSection({ scientificAwards, employeeID, locale }: Props) {
+export default function ScientificAwardInformationSection({ scientificAwards, employeeID, locale, isCurrentUserProfile }: Props) {
 
   const queryClient = useQueryClient()
 
@@ -41,7 +42,8 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
       locale: locale,
     }],
     queryFn: () => employeeApi.getScientificAwardByEmployeeID(employeeID),
-    initialData: scientificAwards ?? []
+    initialData: scientificAwards ?? [],
+    refetchOnMount: false,
   })
   useEffect(() => {
     if (scientificAwardQuery.data) {
@@ -108,9 +110,11 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
         <p className="font-bold text-xl">Премии и награды</p>
-        <div className="cursor-pointer">
-          <FaPlus color="blue" onClick={() => addNewScientificAward()} />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="cursor-pointer">
+            <FaPlus color="blue" onClick={() => addNewScientificAward()} />
+          </div>
+        }
       </div>
       <div className="flex flex-col space-y-2 px-6">
         <Dialog
@@ -139,6 +143,7 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
             <ScientificAwardDisplay
               key={scientificAward.id}
               scientificAward={scientificAward}
+              isCurrentUserProfile={isCurrentUserProfile}
               enableEditMode={() => {
                 const awards = scientificAwardState.map((v, i) => index === i ? ({ ...v, editMode: true }) : v)
                 setScientificAwardState([...awards])
@@ -172,6 +177,7 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
 
 interface ScientificAwardDisplayProps {
   scientificAward: EmployeeScientificAward | undefined
+  isCurrentUserProfile: boolean
   enableEditMode: () => void
   onDeleteClick: () => void
 }
@@ -180,6 +186,7 @@ function ScientificAwardDisplay({
   scientificAward,
   enableEditMode,
   onDeleteClick,
+  isCurrentUserProfile,
 }: ScientificAwardDisplayProps) {
   if (!scientificAward) return null
 
@@ -190,18 +197,20 @@ function ScientificAwardDisplay({
           <h4 className="font-semibold text-l">Название:</h4>
           <p>{scientificAward.scientificAwardTitle}</p>
         </div>
-        <div className="flex space-x-2">
-          <FaPen
-            className="cursor-pointer"
-            color="blue"
-            onClick={() => enableEditMode()}
-          />
-          <FaTrash
-            color="red"
-            onClick={() => onDeleteClick()}
-            className="cursor-pointer"
-          />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="flex space-x-2">
+            <FaPen
+              className="cursor-pointer"
+              color="blue"
+              onClick={() => enableEditMode()}
+            />
+            <FaTrash
+              color="red"
+              onClick={() => onDeleteClick()}
+              className="cursor-pointer"
+            />
+          </div>
+        }
       </div>
       <div className="flex space-x-2">
         <h4 className="font-semibold text-l">Организация:</h4>

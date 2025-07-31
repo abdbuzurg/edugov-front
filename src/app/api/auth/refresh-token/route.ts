@@ -52,10 +52,10 @@ export async function POST() {
     // 2. Set the new non-HttpOnly access token cookie in the browser
     // This allows Server Components to read it and client-side JS to access it if needed.
     cookieStore.set({
-      name: "access_token",
+      name: "accessToken",
       value: data.accessToken,
-      httpOnly: false, // NOT HttpOnly, accessible by client-side JS and server components
-      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true, // NOT HttpOnly, accessible by client-side JS and server components
+      secure: false,
       sameSite: 'lax',
       maxAge: accessTokenDuration,
       path: '/',
@@ -65,10 +65,10 @@ export async function POST() {
       name: "refreshToken",
       value: data.refreshToken,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       maxAge: refreshTokenDuration, // Example: one hour
-      path: '/api/auth/refresh-token',
+      path: '/',
     });
 
     // 3. If your backend issues a new refresh token, update the HttpOnly cookie

@@ -16,13 +16,14 @@ interface Props {
   patents: EmployeePatent[] | undefined
   employeeID: number
   locale: string
+  isCurrentUserProfile: boolean
 }
 
 interface PatentState extends EmployeePatent {
   editMode: boolean
 }
 
-export default function PatentInformationSection({ patents, employeeID, locale }: Props) {
+export default function PatentInformationSection({ patents, employeeID, locale, isCurrentUserProfile }: Props) {
 
   const queryClient = useQueryClient()
   const [patentState, setPatentState] = useState<PatentState[]>([])
@@ -41,6 +42,7 @@ export default function PatentInformationSection({ patents, employeeID, locale }
     }],
     queryFn: () => employeeApi.getPatentByEmployeeID(employeeID),
     initialData: patents ?? [],
+    refetchOnMount: false,
   })
   useEffect(() => {
     if (patentQuery.data) {
@@ -107,9 +109,11 @@ export default function PatentInformationSection({ patents, employeeID, locale }
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
         <p className="font-bold text-xl">Патент</p>
-        <div className="cursor-pointer">
-          <FaPlus color="blue" onClick={() => addNewPatent()} />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="cursor-pointer">
+            <FaPlus color="blue" onClick={() => addNewPatent()} />
+          </div>
+        }
       </div>
       <div className="flex flex-col space-y-2 px-6">
         <Dialog
@@ -138,6 +142,7 @@ export default function PatentInformationSection({ patents, employeeID, locale }
             <PatentDisplay
               key={patent.id}
               patent={patent}
+              isCurrentUserProfile={isCurrentUserProfile}
               enableEditMode={() => {
                 const patent = patentState.map((v, i) => i == index ? { ...v, editMode: true } : v)
                 setPatentState([...patent])
@@ -172,11 +177,12 @@ export default function PatentInformationSection({ patents, employeeID, locale }
 
 interface PatentDisplayProps {
   patent: EmployeePatent | undefined
+  isCurrentUserProfile: boolean
   enableEditMode: () => void
   onDeleteClick: () => void
 }
 
-function PatentDisplay({ patent, enableEditMode, onDeleteClick }: PatentDisplayProps) {
+function PatentDisplay({ patent, enableEditMode, onDeleteClick, isCurrentUserProfile }: PatentDisplayProps) {
   if (!patent) return null
 
   return (
@@ -186,18 +192,20 @@ function PatentDisplay({ patent, enableEditMode, onDeleteClick }: PatentDisplayP
           <h4 className="font-semibold text-l">Название:</h4>
           <p>{patent.patentTitle}</p>
         </div>
-        <div className="flex space-x-2">
-          <FaPen
-            className="cursor-pointer"
-            color="blue"
-            onClick={() => enableEditMode()}
-          />
-          <FaTrash
-            color="red"
-            onClick={() => onDeleteClick()}
-            className="cursor-pointer"
-          />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="flex space-x-2">
+            <FaPen
+              className="cursor-pointer"
+              color="blue"
+              onClick={() => enableEditMode()}
+            />
+            <FaTrash
+              color="red"
+              onClick={() => onDeleteClick()}
+              className="cursor-pointer"
+            />
+          </div>
+        }
       </div>
       <div className="flex space-x-2">
         <h4 className="font-semibold text-l">Описание:</h4>

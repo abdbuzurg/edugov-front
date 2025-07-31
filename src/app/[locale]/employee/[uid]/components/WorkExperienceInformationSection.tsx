@@ -17,13 +17,14 @@ interface Props {
   workExperience: EmployeeWorkExperience[] | undefined
   employeeID: number
   locale: string
+  isCurrentUserProfile: boolean
 }
 
 interface WorkExperienceState extends EmployeeWorkExperience {
   editMode: boolean
 }
 
-export default function WorkExperienceInformationSection({ workExperience, employeeID, locale }: Props) {
+export default function WorkExperienceInformationSection({ workExperience, employeeID, locale, isCurrentUserProfile }: Props) {
   const queryClient = useQueryClient()
 
   const [workExperienceState, setWorkExperienceState] = useState<WorkExperienceState[]>([])
@@ -112,9 +113,11 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
         <p className="font-bold text-xl">Опыт работы</p>
-        <div className="cursor-pointer">
-          <FaPlus color="blue" onClick={() => addNewWorkExperience()} />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="cursor-pointer">
+            <FaPlus color="blue" onClick={() => addNewWorkExperience()} />
+          </div>
+        }
       </div>
       <div className="flex flex-col space-y-1 px-6">
         <Dialog
@@ -143,6 +146,7 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
             <WorkExperienceDisplay
               key={experience.id}
               workExperience={experience}
+              isCurrentUserProfile={isCurrentUserProfile}
               enableEditMode={() => {
                 const experience = workExperienceState.map((v, i) => i == index ? { ...v, editMode: true } : v)
                 setWorkExperienceState([...experience])
@@ -176,29 +180,32 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
 
 interface WorkExperienceDisplayProps {
   workExperience: EmployeeWorkExperience | undefined
+  isCurrentUserProfile: boolean
   enableEditMode: () => void
   onDeleteClick: () => void
 }
 
-function WorkExperienceDisplay({ workExperience, enableEditMode, onDeleteClick }: WorkExperienceDisplayProps) {
+function WorkExperienceDisplay({ workExperience, enableEditMode, onDeleteClick, isCurrentUserProfile }: WorkExperienceDisplayProps) {
   if (!workExperience) return null
 
   return (
     <div className="flex flex-col space-y-1  border-b-1 pb-2">
       <div className="flex justify-between items-center border-gray-500">
         <p className="font-semibold text-xl">{workExperience.workplace}</p>
-        <div className="flex space-x-2">
-          <FaPen
-            color="blue"
-            onClick={() => enableEditMode()}
-            className="cursor-pointer"
-          />
-          <FaTrash
-            color="red"
-            onClick={() => onDeleteClick()}
-            className="cursor-pointer"
-          />
-        </div>
+        {isCurrentUserProfile &&
+          <div className="flex space-x-2">
+            <FaPen
+              color="blue"
+              onClick={() => enableEditMode()}
+              className="cursor-pointer"
+            />
+            <FaTrash
+              color="red"
+              onClick={() => onDeleteClick()}
+              className="cursor-pointer"
+            />
+          </div>
+        }
       </div>
       <div>
         <h5>{workExperience.jobTitle}</h5>

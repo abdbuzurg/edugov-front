@@ -12,279 +12,28 @@ import DetailsInformationSection from "./components/DetailsInformationSection";
 import { cookies } from "next/headers";
 import { createServerAxios, handleServerAuthRefresh } from "@/api/serverAxios";
 import axios from "axios";
+import { Me } from "@/types/me";
 
 export const dynamic = "force-dynamic"
 
-// const employeeMock: Employee = {
-//   id: 1,
-//   uid: "akjsdhaklsjdhaklsd",
-//   createdAt: new Date(),
-//   updatedAt: new Date(),
-//   details: [
-//     {
-//       id: 1,
-//       employeeID: 1,
-//       surname: "Abdulloev",
-//       name: "Buzurgmehr",
-//       middlename: "Mamadamonovich",
-//       isNewEmployeeDetails: true,
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 2,
-//       employeeID: 1,
-//       surname: "Mamadamonzoda",
-//       name: "Buzurgmehr",
-//       middlename: "Mamadamonovich",
-//       isNewEmployeeDetails: false,
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 3,
-//       employeeID: 1,
-//       surname: "Mamadamonzoda1",
-//       name: "Buzurgmehr1",
-//       middlename: "Mamadamonovich1",
-//       isNewEmployeeDetails: false,
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     }
-//   ],
-//   degrees: [
-//     {
-//       id: 1,
-//       employeeID: 1,
-//       degreeLevel: "Бакалавр",
-//       universityName: "Университет Центральной Азии",
-//       speciality: "Компьютерная наука",
-//       dateStart: new Date("09/01/2016"),
-//       dateEnd: new Date("06/20/2021"),
-//       givenBy: "Университет Центральной Азии",
-//       dateDegreeRecieved: new Date("06/20/2021"),
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 2,
-//       employeeID: 1,
-//       degreeLevel: "Школа",
-//       universityName: "Лицей МГУ",
-//       speciality: "Высшее образование",
-//       dateStart: new Date("09/01/2014"),
-//       dateEnd: new Date("06/20/2016"),
-//       givenBy: "Лицей МГУ",
-//       dateDegreeRecieved: new Date("20/06/2016"),
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//   ],
-//   workExperiences: [
-//     {
-//       id: 1,
-//       employeeID: 1,
-//       workplace: "ТГЭМ",
-//       jobTitle: "Фулстэк разработчик",
-//       description: "Фулстэк разработка программы для контроля склада. Включает в себя автоматическое создание отчётов и сбора данных",
-//       dateStart: new Date("03/09/2024"),
-//       dateEnd: new Date("04/01/2025"),
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 2,
-//       employeeID: 1,
-//       workplace: "Лицей Ага Хана",
-//       jobTitle: "Фулстэк разработчик",
-//       description: "Фулстэк разработка программы для контроля товарооборота куханных материалов включая оборот учебных материалов. Включает в себя автоматическое создание отчётов и сбора данных",
-//       dateStart: new Date("03/09/2024"),
-//       dateEnd: new Date("04/01/2025"),
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 3,
-//       employeeID: 1,
-//       workplace: "ТГЭМ",
-//       jobTitle: "Фулстэк разработчик",
-//       description: "Фулстэк разработка программы для контроля склада. Включает в себя автоматическое создание отчётов и сбора данных",
-//       dateStart: new Date("03/09/2024"),
-//       dateEnd: new Date("04/01/2025"),
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 4,
-//       employeeID: 1,
-//       workplace: "ТГЭМ",
-//       jobTitle: "Фулстэк разработчик",
-//       description: "Фулстэк разработка программы для контроля склада. Включает в себя автоматическое создание отчётов и сбора данных",
-//       dateStart: new Date("03/09/2024"),
-//       dateEnd: new Date("04/01/2025"),
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//   ],
-//   mainResearchAreas: [
-//     {
-//       id: 1,
-//       area: "Математика",
-//       discipline: "Алгебра",
-//       keyTopics: [
-//         {
-//           id: 1,
-//           keyTopicTitle: "Теория чисел и криптография.1",
-//           createdAt: new Date(),
-//           updatedAt: new Date(),
-//         },
-//         {
-//           id: 2,
-//           keyTopicTitle: "Теория чисел и криптография.2",
-//           createdAt: new Date(),
-//           updatedAt: new Date(),
-//         },
-//       ],
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 2,
-//       area: "Математика1",
-//       discipline: "Алгебра1",
-//       keyTopics: [
-//         {
-//           id: 1,
-//           keyTopicTitle: "Теория чисел и криптография.3",
-//           createdAt: new Date(),
-//           updatedAt: new Date(),
-//         },
-//         {
-//           id: 2,
-//           keyTopicTitle: "Теория чисел и криптография.4",
-//           createdAt: new Date(),
-//           updatedAt: new Date(),
-//         },
-//       ],
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//   ],
-//   publications: [
-//     {
-//       id: 1,
-//       publicationTitle: "Влияние климатических изменений на миграцию птиц",
-//       employeeID: 1,
-//       linkToPublication: "",
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 2,
-//       employeeID: 1,
-//       publicationTitle: "Влияние климатических изменений на миграцию птиц Влияние климатических изменений на миграцию птиц Влияние климатических изменений на миграцию птиц",
-//       linkToPublication: "",
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 3,
-//       employeeID: 1,
-//       publicationTitle: "Влияние климатических изменений на миграцию птиц123",
-//       linkToPublication: "",
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//   ],
-//   scientificAwards: [
-//     {
-//       id: 1,
-//       employeeID: 1,
-//       scientificAwardTitle: "Нобелевская премия",
-//       givenBy: "Нобелевский фонд",
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 2,
-//       employeeID: 1,
-//       scientificAwardTitle: "Нобелевская премия",
-//       givenBy: "Нобелевский фонд",
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//   ],
-//   patents: [
-//     {
-//       id: 1,
-//       employeeID: 1,
-//       patentTitle: "Способ получения углеродных нанотрубок 1 ",
-//       description: "Детальное описание процесса, включая оборудование, параметры, необходимые для проведения процесса, а также иллюстрации (чертежи, схемы)",
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 2,
-//       employeeID: 1,
-//       patentTitle: "Способ получения углеродных нанотрубок 2",
-//       description: "Детальное описание процесса, включая оборудование, параметры, необходимые для проведения процесса, а также иллюстрации (чертежи, схемы)",
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//   ],
-//   participationInProfessionalCommunities: [
-//     {
-//       id: 1,
-//       employeeID: 1,
-//       professionalCommunityTitle: "Ассоциация врачей Таджикистана 1",
-//       roleInProfessionalCommunity: "Представление интересов организации, управление ее деятельностью и обеспечение ее развития",
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 2,
-//       employeeID: 1,
-//       professionalCommunityTitle: "Ассоциация врачей Таджикистана 2",
-//       roleInProfessionalCommunity: "Представление интересов организации, управление ее деятельностью и обеспечение ее развития",
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//   ],
-//   refresherCourses: [
-//     {
-//       id: 1,
-//       courseTitle: "Управление персоналом и кадровое делопроизводство 1",
-//       dateStart: new Date("09/01/2014"),
-//       dateEnd: new Date("06/20/2016"),
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//     {
-//       id: 2,
-//       courseTitle: "Управление персоналом и кадровое делопроизводство 2",
-//       dateStart: new Date("09/01/2014"),
-//       dateEnd: new Date("06/20/2016"),
-//       createdAt: new Date(),
-//       updatedAt: new Date(),
-//     },
-//   ]
-// }
-
-async function getEmployeeFullInfoByUID(uid: string, locale: string): Promise<Employee | null> {
+async function me(): Promise<Me | null> {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get("accessToken")
-  const refreshToken = cookieStore.get("refreshToken")
 
-  if (!accessToken && !refreshToken) {
+  if (!accessToken) {
     return null
   }
-
-  const serverAxios = createServerAxios(cookieStore, locale)
+  
   try {
-    const response = await serverAxios.get<Employee>(`/employee/${uid}`, {
+    console.log(accessToken)
+    const response = await axios.get<Me>(`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}auth/me`, {
       adapter: 'fetch',
-      fetchOptions: { cache: 'no-store' },
+      fetchOptions: { cache: 'default' },
+      headers: {
+        "Authorization": `Bearer ${accessToken.value}`
+      }
     })
+    
     return response.data
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -292,7 +41,7 @@ async function getEmployeeFullInfoByUID(uid: string, locale: string): Promise<Em
         const retry = await handleServerAuthRefresh<Employee>(
           error.config!,
           cookieStore,
-          locale,
+          "tg"
         )
 
         return retry
@@ -300,6 +49,21 @@ async function getEmployeeFullInfoByUID(uid: string, locale: string): Promise<Em
         return null
       }
     }
+    return null
+  }
+}
+
+async function getEmployeeFullInfoByUID(uid: string, locale: string): Promise<Employee | null> {
+  try {
+    const response = await axios.get<Employee>(`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}employee/${uid}`, {
+      adapter: 'fetch',
+      fetchOptions: { cache: 'no-store' },
+      headers: {
+        'Accept-Language': locale,
+      }
+    })
+    return response.data
+  } catch (error: any) {
     return null
   }
 }
@@ -321,6 +85,14 @@ export default async function EmployeeProfile({
     notFound()
   }
 
+  let isCurrentUserProfile: boolean
+  const currentUser = await me()
+  if (!currentUser) {
+    isCurrentUserProfile = false
+  } else {
+    isCurrentUserProfile = currentUser.uniqueID == employee.uniqueID
+  }
+
   return (
     <div className="bg-white w-full">
       <div className="m-auto lg:w-[1280px] w-full flex">
@@ -330,38 +102,45 @@ export default async function EmployeeProfile({
             employeeID={employee.id}
             locale={locale}
             uid={employee.uniqueID}
+            isCurrentUserProfile={isCurrentUserProfile}
           />
           <div className="flex-5  flex flex-col space-y-4">
             <DegreeInformationSection
               degree={employee.degrees}
               employeeID={employee.id}
               locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
             />
             <WorkExperienceInformationSection
               workExperience={employee.workExperiences}
               employeeID={employee.id}
               locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
             />
             {/* {employeeMock.mainResearchAreas && <MainResearchAreaInformationSection mainResearchArea={employeeMock.mainResearchAreas} />} */}
             <PublicationInformationSection
               publications={employee.publications}
               employeeID={employee.id}
               locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
             />
             <ScientificAwardInformationSection
               scientificAwards={employee.scientificAwards}
               employeeID={employee.id}
               locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
             />
-            <PatentInformationSection 
-              patents={employee.patents} 
+            <PatentInformationSection
+              patents={employee.patents}
               employeeID={employee.id}
               locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
             />
-            <ParticipationInProfessionalCommunityInformationSection 
-              pipcs={employee.participationInProfessionalCommunities} 
+            <ParticipationInProfessionalCommunityInformationSection
+              pipcs={employee.participationInProfessionalCommunities}
               employeeID={employee.id}
               locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
             />
             {/* {employeeMock.refresherCourses && <RefresherCourseInformationSection refresherCourses={employeeMock.refresherCourses} />} */}
           </div>
