@@ -3,6 +3,8 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import Logout from "./Logout";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
+import { serverSideApi } from "@/api/serverSide";
+import { cookies } from "next/headers";
 
 interface Props {
   locale: string
@@ -11,6 +13,13 @@ interface Props {
 
 export default async function NavigationBar({ locale, isLogged }: Props) {
   const t = await getTranslations("NavigationBar")
+  const cookieStore = await cookies()
+
+  const currentUser = await serverSideApi.me(cookieStore)
+  let profileLink: string | null = null
+  if (currentUser) {
+    profileLink = `/${locale}/${currentUser.type}/${currentUser.uniqueID}`
+  }
 
   return (
     <>
@@ -54,7 +63,10 @@ export default async function NavigationBar({ locale, isLogged }: Props) {
                 <Link href={`/${locale}/login`} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("login")}</Link>
               </>
               :
-              <Logout />
+              <>
+                {profileLink && <Link href={profileLink} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("profile")}</Link>}
+                <Logout />
+              </>
             }
             <LanguageSwitcher />
           </div>

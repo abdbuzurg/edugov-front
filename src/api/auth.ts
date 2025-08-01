@@ -1,3 +1,4 @@
+import { Me } from "@/types/me"
 import authAxios from "./authAxios"
 import clientAxios from "./clientAxios"
 
@@ -25,5 +26,5 @@ export const authApi = {
   },
   logout: async (): Promise<void> => {
     await authAxios.post(`api/auth/logout`)
-  }
+  },
 }

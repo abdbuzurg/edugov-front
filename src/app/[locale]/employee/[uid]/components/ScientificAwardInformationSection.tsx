@@ -10,6 +10,7 @@ import { useFormik } from "formik"
 import { FormEvent, Fragment, useEffect, useState } from "react"
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa"
 import { toast } from "react-toastify"
+import { useTranslations } from "use-intl"
 import * as yup from "yup"
 
 interface Props {
@@ -24,7 +25,7 @@ interface ScientificAwardState extends EmployeeScientificAward {
 }
 
 export default function ScientificAwardInformationSection({ scientificAwards, employeeID, locale, isCurrentUserProfile }: Props) {
-
+  const t = useTranslations("Employee.ScientificAward")
   const queryClient = useQueryClient()
 
   const [scientificAwardState, setScientificAwardState] = useState<ScientificAwardState[]>([])
@@ -58,7 +59,7 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
   const addNewScientificAward = () => {
     const scientificAward = scientificAwardState.find(v => v.id === 0)
     if (scientificAward) {
-      toast.error("Завершите текущее добавление.")
+      toast.error(t("finishCurrentNewEntry"))
       return
     }
     setScientificAwardState([
@@ -81,13 +82,13 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
     mutationFn: employeeApi.deleteScientificAward,
   })
   const deleteScientificAward = () => {
-    const loadingStateToast = toast.info("Удаление из категории Научные Награды...")
+    const loadingStateToast = toast.info(t("deleteLoadingToastText"))
     deleteScientificAwardMutation.mutate(toBeDeletedID, {
       onSettled: () => {
         toast.dismiss(loadingStateToast)
       },
       onSuccess: () => {
-        toast.success("Удаление Успешно.")
+        toast.success(t("deleteSuccessToastText"))
         queryClient.invalidateQueries({
           queryKey: ["employee-scientific-award", {
             employeeID: employeeID,
@@ -98,7 +99,7 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
       },
       onError: (error) => {
         if (error.response && error.response.data && error.response.data.message) {
-          toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+          toast.error(`${t("deleteErrorToastText")} - ${error.response.data.message}`)
         } else {
           toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
         }
@@ -109,7 +110,7 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
   return (
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
-        <p className="font-bold text-xl">Премии и награды</p>
+        <p className="font-bold text-xl">{t("scientificAwardLabelText")}</p>
         {isCurrentUserProfile &&
           <div className="cursor-pointer">
             <FaPlus color="blue" onClick={() => addNewScientificAward()} />
@@ -121,19 +122,19 @@ export default function ScientificAwardInformationSection({ scientificAwards, em
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
         >
-          <h4 className="text-center font-semibold">Вы уверены что хотите удалить?</h4>
+          <h4 className="text-center font-semibold">{t("deleteDialogHeaderText")}</h4>
           <div className="flex space-x-2 items-center justify-center mt-2">
             <div
               className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
               onClick={() => deleteScientificAward()}
             >
-              Удалить
+              {t("deleteDialogDeleteButtonText")}
             </div>
             <div
               className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
               onClick={() => setIsDeleteDialogOpen(false)}
             >
-              Отмена
+              {t("deleteDialogCancelButtonText")}
             </div>
           </div>
         </Dialog>
@@ -189,12 +190,13 @@ function ScientificAwardDisplay({
   isCurrentUserProfile,
 }: ScientificAwardDisplayProps) {
   if (!scientificAward) return null
+  const t = useTranslations("Employee.ScientificAward")
 
   return (
     <div className="flex flex-col space-y-1 border-b-1 py-2">
       <div className="flex justify-between">
         <div className="flex space-x-2">
-          <h4 className="font-semibold text-l">Название:</h4>
+          <h4 className="font-semibold text-l">{t("displayScientificAwardTitleLabelText")}</h4>
           <p>{scientificAward.scientificAwardTitle}</p>
         </div>
         {isCurrentUserProfile &&
@@ -213,7 +215,7 @@ function ScientificAwardDisplay({
         }
       </div>
       <div className="flex space-x-2">
-        <h4 className="font-semibold text-l">Организация:</h4>
+        <h4 className="font-semibold text-l">{t("displayGivenByLabelText")}</h4>
         <p>{scientificAward.givenBy}</p>
       </div>
     </div>
@@ -238,6 +240,7 @@ function ScientificAwardEdit({
   removeNewScientificAwardOnClick
 }: ScientificAwardEditProps) {
   if (!scientificAward) return null
+  const t = useTranslations("Employee.ScientificAward")
 
   const queryClient = useQueryClient()
   const createScientificAwardMutation = useMutation<EmployeeScientificAward, AxiosError<ApiError>, EmployeeScientificAward>({
@@ -254,20 +257,20 @@ function ScientificAwardEdit({
     validationSchema: yup.object({
       scientificAwardTitle: yup
         .string()
-        .required("Название награды обязательно"),
+        .required(t("scientificAwardTitleValidationRequiredText")),
       givenBy: yup
         .string()
-        .required("Организация обязательна"),
+        .required(t("givenByValidationRequiredText")),
     }),
     onSubmit: (values) => {
       if (values.id === 0) {
-        const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Премии и Награды...")
+        const loadingStateToast = toast.info(t("createLoadingToastText"))
         createScientificAwardMutation.mutate(values, {
           onSettled: () => {
             toast.dismiss(loadingStateToast)
           },
           onSuccess: () => {
-            toast.success("Новые данные были успешно добавлены в категорию Премии и Награды.")
+            toast.success(t("createSuccessToastText"))
             queryClient.invalidateQueries({
               queryKey: ["employee-scientific-award", {
                 employeeID: employeeID,
@@ -278,7 +281,7 @@ function ScientificAwardEdit({
           },
           onError: (error) => {
             if (error.response && error.response.data && error.response.data.message) {
-              toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+              toast.error(`${t("createErrorToastText")} - ${error.response.data.message}`)
             } else {
               toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
             }
@@ -287,13 +290,13 @@ function ScientificAwardEdit({
         return
       }
 
-      const loadingStateToast = toast.info("Идёт обновление данных в категории Опыт работы...")
+      const loadingStateToast = toast.info(t("updateLoadingToastText"))
       updateScientificAwardMutation.mutate(values, {
         onSettled: () => {
           toast.dismiss(loadingStateToast)
         },
         onSuccess: () => {
-          toast.success("Данные были успешно обновлены в категорию Опыт работы.")
+          toast.success(t("updateSuccessToastText"))
           queryClient.invalidateQueries({
             queryKey: ["employee-scientific-award", {
               employeeID: employeeID,
@@ -304,7 +307,7 @@ function ScientificAwardEdit({
         },
         onError: (error) => {
           if (error.response && error.response.data && error.response.data.message) {
-            toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+            toast.error(`${t("updateErrorToastText")} - ${error.response.data.message}`)
           } else {
             toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
           }
@@ -325,7 +328,7 @@ function ScientificAwardEdit({
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_scientificAwardTitle]`} className="font-semibold">Название награды</label>
+        <label htmlFor={`${index}_scientificAwardTitle]`} className="font-semibold">{t("scientificAwardTitleLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -340,7 +343,7 @@ function ScientificAwardEdit({
       </div>
 
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_givenBy]`} className="font-semibold">Организация</label>
+        <label htmlFor={`${index}_givenBy]`} className="font-semibold">{t("givenByLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -359,14 +362,14 @@ function ScientificAwardEdit({
           type="submit"
           className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
         >
-          Сохранить
+          {t("saveButtonText")}
         </button>
         <button
           type="button"
           className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
           onClick={() => onCancelClick(scientificAward.id)}
         >
-          Отмена
+          {t("cancelButtonText")}
         </button>
       </div>
     </form>

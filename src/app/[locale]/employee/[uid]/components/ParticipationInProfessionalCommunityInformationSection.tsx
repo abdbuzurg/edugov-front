@@ -7,6 +7,7 @@ import { EmployeeParticipationInProfessionalCommunity, EmployeeWorkExperience } 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { useFormik } from "formik"
+import { useTranslations } from "next-intl"
 import { FormEvent, Fragment, useEffect, useState } from "react"
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa"
 import { toast } from "react-toastify"
@@ -25,6 +26,7 @@ interface PIPCState extends EmployeeParticipationInProfessionalCommunity {
 
 export default function ParticipationInProfessionalCommunityInformationSection({ pipcs, employeeID, locale, isCurrentUserProfile }: Props) {
   const queryClient = useQueryClient()
+  const t = useTranslations("Employee.PIPC")
 
   const [pipcState, setPipcState] = useState<PIPCState[]>([])
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function ParticipationInProfessionalCommunityInformationSection({
   const addNewPatent = () => {
     const newPIPC = pipcState.find(v => v.id === 0)
     if (newPIPC) {
-      toast.error("Завершите текущее добавление.")
+      toast.error(t("finishCurrentNewEntry"))
       return
     }
 
@@ -81,13 +83,13 @@ export default function ParticipationInProfessionalCommunityInformationSection({
     mutationFn: employeeApi.deletePIPC,
   })
   const deletePIPC = () => {
-    const loadingStateToast = toast.info("Удаление из категории Участие в профессиональных сообществах...")
+    const loadingStateToast = toast.info(t("deleteLoadingToastText"))
     deletePIPCMutation.mutate(toBeDeletedID, {
       onSettled: () => {
         toast.dismiss(loadingStateToast)
       },
       onSuccess: () => {
-        toast.success("Удаление Успешно.")
+        toast.success(t("deleteSuccessToastText"))
         queryClient.invalidateQueries({
           queryKey: ["employee-pipc", {
             employeeID: employeeID,
@@ -98,7 +100,7 @@ export default function ParticipationInProfessionalCommunityInformationSection({
       },
       onError: (error) => {
         if (error.response && error.response.data && error.response.data.message) {
-          toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+          toast.error(`${t("deleteErrorToastText")} - ${error.response.data.message}`)
         } else {
           toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
         }
@@ -109,7 +111,7 @@ export default function ParticipationInProfessionalCommunityInformationSection({
   return (
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
-        <p className="font-bold text-xl">Участие в профессиональных сообществах</p>
+        <p className="font-bold text-xl">{t("pipcLabelText")}</p>
         {isCurrentUserProfile &&
           <div className="cursor-pointer">
             <FaPlus color="blue" onClick={() => addNewPatent()} />
@@ -121,19 +123,19 @@ export default function ParticipationInProfessionalCommunityInformationSection({
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
         >
-          <h4 className="text-center font-semibold">Вы уверены что хотите удалить?</h4>
+          <h4 className="text-center font-semibold">{t("deleteDialogHeaderText")}</h4>
           <div className="flex space-x-2 items-center justify-center mt-2">
             <div
               className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
               onClick={() => deletePIPC()}
             >
-              Удалить
+              {t("deleteDialogDeleteButtonText")}
             </div>
             <div
               className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
               onClick={() => setIsDeleteDialogOpen(false)}
             >
-              Отмена
+              {t("deleteDialogCancelButtonText")}
             </div>
           </div>
         </Dialog>
@@ -189,12 +191,13 @@ function PIPCDisplay({
   isCurrentUserProfile
 }: PIPCDisplayProps) {
   if (!pipc) return null
+  const t = useTranslations("Employee.PIPC")
 
   return (
     <div className="flex flex-col space-y-1 border-b-1 py-2">
       <div className="flex justify-between">
         <div className="flex space-x-2">
-          <h4 className="font-semibold text-l">Название:</h4>
+          <h4 className="font-semibold text-l">{t("displayProfessionalCommunityTitleLabelText")}</h4>
           <p>{pipc.professionalCommunityTitle}</p>
         </div>
         {isCurrentUserProfile &&
@@ -213,7 +216,7 @@ function PIPCDisplay({
         }
       </div>
       <div className="flex space-x-2">
-        <h4 className="font-semibold text-l">Роль:</h4>
+        <h4 className="font-semibold text-l">{t("displayRoleInProfessionalCommunityLabelText")}</h4>
         <p>{pipc.roleInProfessionalCommunity}</p>
       </div>
     </div>
@@ -238,7 +241,7 @@ function PIPCEdit({
   removeNewPIPCOnCancel,
 }: PIPCEditProps) {
   if (!pipc) return null
-
+  const t = useTranslations("Employee.PIPC")
 
   const queryClient = useQueryClient()
   const createPIPC = useMutation<EmployeeParticipationInProfessionalCommunity, AxiosError<ApiError>, EmployeeParticipationInProfessionalCommunity>({
@@ -256,20 +259,20 @@ function PIPCEdit({
     validationSchema: yup.object({
       professionalCommunityTitle: yup
         .string()
-        .required("Название обязательно"),
+        .required(t("professionalCommunityTitleValidationRequiredText")),
       roleInProfessionalCommunity: yup
         .string()
-        .required("Роль обязательна"),
+        .required(t("roleInProfessionalCommunityValidationRequiredText")),
     }),
     onSubmit: values => {
       if (values.id === 0) {
-        const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Участие в профессиональных сообществах...")
+        const loadingStateToast = toast.info(t("createLoadingToastText"))
         createPIPC.mutate(values, {
           onSettled: () => {
             toast.dismiss(loadingStateToast)
           },
           onSuccess: () => {
-            toast.success("Новые данные были успешно добавлены в категорию Участие в профессиональных сообществах.")
+            toast.success(t("createSuccessToastText"))
             queryClient.invalidateQueries({
               queryKey: ["employee-pipc", {
                 employeeID: employeeID,
@@ -280,7 +283,7 @@ function PIPCEdit({
           },
           onError: (error) => {
             if (error.response && error.response.data && error.response.data.message) {
-              toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+              toast.error(`${t("createErrorToastText")} - ${error.response.data.message}`)
             } else {
               toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
             }
@@ -289,13 +292,13 @@ function PIPCEdit({
         return
       }
 
-      const loadingStateToast = toast.info("Идёт обновление данных в категории Участие в профессиональных сообществах...")
+      const loadingStateToast = toast.info(t("updateLoadingToastText"))
       updatePIPC.mutate(values, {
         onSettled: () => {
           toast.dismiss(loadingStateToast)
         },
         onSuccess: () => {
-          toast.success("Данные были успешно обновлены в категорию Участие в профессиональных сообществах.")
+          toast.success(t("updateSuccessToastText"))
           queryClient.invalidateQueries({
             queryKey: ["employee-pipc", {
               employeeID: employeeID,
@@ -306,7 +309,7 @@ function PIPCEdit({
         },
         onError: (error) => {
           if (error.response && error.response.data && error.response.data.message) {
-            toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+            toast.error(`${t("updateErrorToastText")} - ${error.response.data.message}`)
           } else {
             toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
           }
@@ -328,7 +331,7 @@ function PIPCEdit({
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_professionalCommunityTitle]`} className="font-semibold">Название</label>
+        <label htmlFor={`${index}_professionalCommunityTitle]`} className="font-semibold">{t("professionalCommunityTitleLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -343,7 +346,7 @@ function PIPCEdit({
       </div>
 
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_roleInProfessionalCommunity]`} className="font-semibold">Роль</label>
+        <label htmlFor={`${index}_roleInProfessionalCommunity]`} className="font-semibold">{t("roleInProfessionalCommunityLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -362,14 +365,14 @@ function PIPCEdit({
           type="submit"
           className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
         >
-          Сохранить
+          {t("saveButtonText")}
         </button>
         <button
           type="button"
           className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
           onClick={() => onCancelClick(pipc.id)}
         >
-          Отмена
+          {t("cancelButtonText")}
         </button>
       </div>
 

@@ -7,9 +7,10 @@ import { EmployeePatent } from "@/types/employee"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { useFormik } from "formik"
-import { FormEvent, Fragment, useEffect, useState } from "react"
+import { FormEvent, Fragment, useEffect, useState, useTransition } from "react"
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa"
 import { toast } from "react-toastify"
+import { useTranslations } from "use-intl"
 import * as yup from "yup"
 
 interface Props {
@@ -24,7 +25,7 @@ interface PatentState extends EmployeePatent {
 }
 
 export default function PatentInformationSection({ patents, employeeID, locale, isCurrentUserProfile }: Props) {
-
+  const t = useTranslations("Employee.Patent")
   const queryClient = useQueryClient()
   const [patentState, setPatentState] = useState<PatentState[]>([])
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function PatentInformationSection({ patents, employeeID, locale, 
   const addNewPatent = () => {
     const newPatent = patentState.find(v => v.id === 0)
     if (newPatent) {
-      toast.info("Завершите текущее добавление.")
+      toast.info(t("finishCurrentNewEntry"))
       return
     }
     setPatentState([
@@ -80,13 +81,13 @@ export default function PatentInformationSection({ patents, employeeID, locale, 
     mutationFn: employeeApi.deletePatent,
   })
   const deletePatent = () => {
-    const loadingStateToast = toast.info("Удаление из категории Патент...")
+    const loadingStateToast = toast.info(t("deleteLoadingToastText"))
     deletePatentMutation.mutate(toBeDeletedID, {
       onSettled: () => {
         toast.dismiss(loadingStateToast)
       },
       onSuccess: () => {
-        toast.success("Удаление Успешно.")
+        toast.success(t("deleteSuccessToastText"))
         queryClient.invalidateQueries({
           queryKey: ["employee-patent", {
             employeeID: employeeID,
@@ -97,7 +98,7 @@ export default function PatentInformationSection({ patents, employeeID, locale, 
       },
       onError: (error) => {
         if (error.response && error.response.data && error.response.data.message) {
-          toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+          toast.error(`${t("deleteErrorToastText")} - ${error.response.data.message}`)
         } else {
           toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
         }
@@ -108,7 +109,7 @@ export default function PatentInformationSection({ patents, employeeID, locale, 
   return (
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
-        <p className="font-bold text-xl">Патент</p>
+        <p className="font-bold text-xl">{t("patentLabelText")}</p>
         {isCurrentUserProfile &&
           <div className="cursor-pointer">
             <FaPlus color="blue" onClick={() => addNewPatent()} />
@@ -120,19 +121,19 @@ export default function PatentInformationSection({ patents, employeeID, locale, 
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
         >
-          <h4 className="text-center font-semibold">Вы уверены что хотите удалить?</h4>
+          <h4 className="text-center font-semibold">{t("deleteDialogHeaderText")}</h4>
           <div className="flex space-x-2 items-center justify-center mt-2">
             <div
               className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
               onClick={() => deletePatent()}
             >
-              Удалить
+              {t("deleteDialogDeleteButtonText")}
             </div>
             <div
               className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
               onClick={() => setIsDeleteDialogOpen(false)}
             >
-              Отмена
+              {t("deleteDialogCancelButtonText")}
             </div>
           </div>
         </Dialog>
@@ -184,12 +185,13 @@ interface PatentDisplayProps {
 
 function PatentDisplay({ patent, enableEditMode, onDeleteClick, isCurrentUserProfile }: PatentDisplayProps) {
   if (!patent) return null
+  const t = useTranslations("Employee.Patent")
 
   return (
     <div className="flex flex-col space-y-1 border-b-1 py-2">
       <div className="flex justify-between">
         <div className="flex space-x-2">
-          <h4 className="font-semibold text-l">Название:</h4>
+          <h4 className="font-semibold text-l">{t("displayPatentTitleLabelText")}</h4>
           <p>{patent.patentTitle}</p>
         </div>
         {isCurrentUserProfile &&
@@ -208,7 +210,7 @@ function PatentDisplay({ patent, enableEditMode, onDeleteClick, isCurrentUserPro
         }
       </div>
       <div className="flex space-x-2">
-        <h4 className="font-semibold text-l">Описание:</h4>
+        <h4 className="font-semibold text-l">{t("displayDescriptionLabelText")}</h4>
         <p>{patent.description}</p>
       </div>
     </div>
@@ -234,7 +236,7 @@ function PatentEdit({
 }: PatentEditProps) {
   if (!patent) return null
 
-
+  const t = useTranslations("Employee.Patent")
   const queryClient = useQueryClient()
   const createPatentMutation = useMutation<EmployeePatent, AxiosError<ApiError>, EmployeePatent>({
     mutationFn: employeeApi.createPatent,
@@ -251,20 +253,20 @@ function PatentEdit({
     validationSchema: yup.object({
       patentTitle: yup
         .string()
-        .required("Название патента обязательно"),
+        .required(t("patentTitleValidationRequiredText")),
       description: yup
         .string()
-        .required("Описание обязательно"),
+        .required(t("descriptionValidationRequiredText")),
     }),
     onSubmit: (values) => {
       if (values.id === 0) {
-        const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Патент...")
+        const loadingStateToast = toast.info(t("createLoadingToastText"))
         createPatentMutation.mutate(values, {
           onSettled: () => {
             toast.dismiss(loadingStateToast)
           },
           onSuccess: () => {
-            toast.success("Новые данные были успешно добавлены в категорию Патент.")
+            toast.success(t("createSuccessToastText"))
             queryClient.invalidateQueries({
               queryKey: ["employee-patent", {
                 employeeID: employeeID,
@@ -275,7 +277,7 @@ function PatentEdit({
           },
           onError: (error) => {
             if (error.response && error.response.data && error.response.data.message) {
-              toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+              toast.error(`${t("createErrorToastText")} - ${error.response.data.message}`)
             } else {
               toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
             }
@@ -284,13 +286,13 @@ function PatentEdit({
         return
       }
 
-      const loadingStateToast = toast.info("Идёт обновление данных в категории Патент...")
+      const loadingStateToast = toast.info(t("updateLoadingToastText"))
       updatePatentMutation.mutate(values, {
         onSettled: () => {
           toast.dismiss(loadingStateToast)
         },
         onSuccess: () => {
-          toast.success("Данные были успешно обновлены в категорию Патент.")
+          toast.success(t("updateSuccessToastText"))
           queryClient.invalidateQueries({
             queryKey: ["employee-patent", {
               employeeID: employeeID,
@@ -301,7 +303,7 @@ function PatentEdit({
         },
         onError: (error) => {
           if (error.response && error.response.data && error.response.data.message) {
-            toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+            toast.error(`${t("updateErrorToastText")} - ${error.response.data.message}`)
           } else {
             toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
           }
@@ -323,7 +325,7 @@ function PatentEdit({
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_patentTitle`} className="font-semibold">Название</label>
+        <label htmlFor={`${index}_patentTitle`} className="font-semibold">{t("patentTileLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -338,7 +340,7 @@ function PatentEdit({
       </div>
 
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}-description`} className="font-semibold">Описание</label>
+        <label htmlFor={`${index}-description`} className="font-semibold">{t("descriptionLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -357,14 +359,14 @@ function PatentEdit({
           type="submit"
           className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
         >
-          Сохранить
+          {t("saveButtonText")}
         </button>
         <button
           type="button"
           className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
           onClick={() => onCancelClick(patent.id)}
         >
-          Отмена
+          {t("cancelButtonText")}
         </button>
       </div>
     </form>

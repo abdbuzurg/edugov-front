@@ -7,6 +7,7 @@ import { EmployeePublication } from "@/types/employee"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
 import { useFormik } from "formik"
+import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { FaExternalLinkAlt, FaPen, FaPlus, FaTrash } from "react-icons/fa"
 import { toast } from "react-toastify"
@@ -26,6 +27,7 @@ interface PublicationState extends EmployeePublication {
 
 export default function PublicationInformationSection({ publications, employeeID, locale, isCurrentUserProfile }: Props) {
   const queryClient = useQueryClient()
+  const t = useTranslations("Employee.Publication")
 
   const [publicationState, setPublicationState] = useState<PublicationState[]>([])
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function PublicationInformationSection({ publications, employeeID
   const addNewPublication = () => {
     const publication = publicationState.find(v => v.id === 0)
     if (publication) {
-      toast.error("Завершите текущее добавление.")
+      toast.error(t("finishCurrentNewEntry"))
       return
     }
     setPublicationState([
@@ -80,13 +82,13 @@ export default function PublicationInformationSection({ publications, employeeID
     mutationFn: employeeApi.deletePublication,
   })
   const deletePublication = () => {
-    const loadingStateToast = toast.info("Удаление из категории Публикации...")
+    const loadingStateToast = toast.info(t("deleteLoadingToastText"))
     deletePublicationMutation.mutate(toBeDeletedID, {
       onSettled: () => {
         toast.dismiss(loadingStateToast)
       },
       onSuccess: () => {
-        toast.success("Удаление Успешно.")
+        toast.success(t("deleteSuccessToastText"))
         queryClient.invalidateQueries({
           queryKey: ["employee-publication", {
             employeeID: employeeID,
@@ -97,7 +99,7 @@ export default function PublicationInformationSection({ publications, employeeID
       },
       onError: (error) => {
         if (error.response && error.response.data && error.response.data.message) {
-          toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+          toast.error(`${t("deleteErrorToastText")} - ${error.response.data.message}`)
         } else {
           toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
         }
@@ -108,7 +110,7 @@ export default function PublicationInformationSection({ publications, employeeID
   return (
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
-        <p className="font-bold text-xl">Публикации</p>
+        <p className="font-bold text-xl">{t("publicationLabelText")}</p>
         {isCurrentUserProfile &&
           <div className="cursor-pointer">
             <FaPlus color="blue" onClick={() => addNewPublication()} />
@@ -120,19 +122,19 @@ export default function PublicationInformationSection({ publications, employeeID
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
         >
-          <h4 className="text-center font-semibold">Вы уверены что хотите удалить?</h4>
+          <h4 className="text-center font-semibold">{t("deleteDialogHeaderText")}</h4>
           <div className="flex space-x-2 items-center justify-center mt-2">
             <div
               className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
               onClick={() => deletePublication()}
             >
-              Удалить
+              {t("deleteDialogDeleteButtonText")}
             </div>
             <div
               className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
               onClick={() => setIsDeleteDialogOpen(false)}
             >
-              Отмена
+              {t("deleteDialogCancelButtonText")}
             </div>
           </div>
         </Dialog>
@@ -234,6 +236,7 @@ function PublicationEdit({
   removeNewPublicationOnCancel,
 }: PublicationEditProps) {
   if (!publication) return null
+  const t = useTranslations("Employee.Publication")
 
   const queryClient = useQueryClient()
   const createPublication = useMutation<EmployeePublication, AxiosError<ApiError>, EmployeePublication>({
@@ -247,18 +250,22 @@ function PublicationEdit({
   const form = useFormik({
     initialValues: { ...publication },
     validationSchema: yup.object({
-      publicationTitle: yup.string().required(),
-      linkToPublication: yup.string().required()
+      publicationTitle: yup
+        .string()
+        .required(t("publicationTitleValidationRequiredLabelText")),
+      linkToPublication: yup
+        .string()
+        .required(t("linkToPublicationValidationRequiredLabelText"))
     }),
     onSubmit: (values) => {
       if (values.id === 0) {
-        const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Публикации...")
+        const loadingStateToast = toast.info(t("createLoadingToastText"))
         createPublication.mutate(values, {
           onSettled: () => {
             toast.dismiss(loadingStateToast)
           },
           onSuccess: () => {
-            toast.success("Новые данные были успешно добавлены в категорию Публикации.")
+            toast.success(t("createSuccessToastText"))
             queryClient.invalidateQueries({
               queryKey: ["employee-publication", {
                 employeeID: employeeID,
@@ -269,7 +276,7 @@ function PublicationEdit({
           },
           onError: (error) => {
             if (error.response && error.response.data && error.response.data.message) {
-              toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+              toast.error(`${t("createErrorToastText")} - ${error.response.data.message}`)
             } else {
               toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
             }
@@ -278,13 +285,13 @@ function PublicationEdit({
         return
       }
 
-      const loadingStateToast = toast.info("Идёт обновление данных в категории Публикации...")
+      const loadingStateToast = toast.info(t("updateLoadingToastText"))
       updatePublication.mutate(values, {
         onSettled: () => {
           toast.dismiss(loadingStateToast)
         },
         onSuccess: () => {
-          toast.success("Данные были успешно обновлены в категорию Публикации.")
+          toast.success(t("updateSuccessToastText"))
           queryClient.invalidateQueries({
             queryKey: ["employee-publication", {
               employeeID: employeeID,
@@ -295,7 +302,7 @@ function PublicationEdit({
         },
         onError: (error) => {
           if (error.response && error.response.data && error.response.data.message) {
-            toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+            toast.error(`${t("updateErrorToastText")} - ${error.response.data.message}`)
           } else {
             toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
           }
@@ -316,7 +323,7 @@ function PublicationEdit({
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_publicationTitle]`} className="font-semibold">Название публикации</label>
+        <label htmlFor={`${index}_publicationTitle]`} className="font-semibold">{t("publicationTitleLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -328,7 +335,7 @@ function PublicationEdit({
       </div>
 
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_linkToPublication]`} className="font-semibold">Ссылка на публикацию</label>
+        <label htmlFor={`${index}_linkToPublication]`} className="font-semibold">{t("linkToPublicationLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -344,14 +351,14 @@ function PublicationEdit({
           type="submit"
           className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
         >
-          Сохранить
+          {t("saveButtonText")}
         </button>
         <button
           type="button"
           className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
           onClick={() => onCancelClick(publication.id)}
         >
-          Отмена
+          {t("cancelButtonText")}
         </button>
       </div>
     </form>

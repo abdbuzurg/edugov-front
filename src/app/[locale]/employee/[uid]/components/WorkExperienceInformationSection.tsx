@@ -8,6 +8,7 @@ import formatDate from "@/utils/dateFormatter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useFormik } from "formik";
+import { useTranslations } from "next-intl";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -25,6 +26,7 @@ interface WorkExperienceState extends EmployeeWorkExperience {
 }
 
 export default function WorkExperienceInformationSection({ workExperience, employeeID, locale, isCurrentUserProfile }: Props) {
+  const t = useTranslations("Employee.WorkExperience")
   const queryClient = useQueryClient()
 
   const [workExperienceState, setWorkExperienceState] = useState<WorkExperienceState[]>([])
@@ -61,7 +63,7 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
   const addNewWorkExperience = () => {
     const workExperience = workExperienceState.find((v) => v.id == 0)
     if (workExperience) {
-      toast.error("Завершите текущее добавление.")
+      toast.error(t("finishCurrentNewEntry"))
       return
     }
     setWorkExperienceState([{
@@ -84,13 +86,13 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
     mutationFn: employeeApi.deleteWorkExprience,
   })
   const deleteWorkExperience = () => {
-    const loadingStateToast = toast.info("Удаление из категории образование...")
+    const loadingStateToast = toast.info(t("deleteLoadingToastText"))
     deleteWorkExperienceMutation.mutate(toBeDeletedID, {
       onSettled: () => {
         toast.dismiss(loadingStateToast)
       },
       onSuccess: () => {
-        toast.success("Удаление Успешно.")
+        toast.success(t("deleteSuccessToastText"))
         queryClient.invalidateQueries({
           queryKey: ["employee-work-experience", {
             employeeID: employeeID,
@@ -101,7 +103,7 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
       },
       onError: (error) => {
         if (error.response && error.response.data && error.response.data.message) {
-          toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+          toast.error(`${t("deleteErrorToastText")} - ${error.response.data.message}`)
         } else {
           toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
         }
@@ -112,7 +114,7 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
   return (
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
-        <p className="font-bold text-xl">Опыт работы</p>
+        <p className="font-bold text-xl">{t("workExperienceLabelText")}</p>
         {isCurrentUserProfile &&
           <div className="cursor-pointer">
             <FaPlus color="blue" onClick={() => addNewWorkExperience()} />
@@ -124,19 +126,19 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
         >
-          <h4 className="text-center font-semibold">Вы уверены что хотите удалить?</h4>
+          <h4 className="text-center font-semibold">{t("deleteDialogHeaderText")}</h4>
           <div className="flex space-x-2 items-center justify-center mt-2">
             <div
               className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
               onClick={() => deleteWorkExperience()}
             >
-              Удалить
+              {t("deleteDialogDeleteButtonText")}
             </div>
             <div
               className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
               onClick={() => setIsDeleteDialogOpen(false)}
             >
-              Отмена
+              {t("deleteDialogCancelButtonText")}
             </div>
           </div>
         </Dialog>
@@ -229,6 +231,7 @@ interface WorkExperienceEditProps {
 
 function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeNewWorkExperienceOnCancel, disableEditMode }: WorkExperienceEditProps) {
   if (!workExperience) return null
+  const t = useTranslations("Employee.WorkExperience")
 
   const queryClient = useQueryClient()
   const createWorkExperience = useMutation<EmployeeWorkExperience, AxiosError<ApiError>, EmployeeWorkExperience>({
@@ -246,32 +249,32 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
     validationSchema: yup.object({
       workplace: yup
         .string()
-        .required("Компания или организция обязательна"),
+        .required(t("workPlaceValidationRequiredText")),
       jobTitle: yup
         .string()
-        .required("Должность обязательна"),
+        .required(t("jobTitleValidationRequiredText")),
       description: yup
         .string()
-        .required("Краткое описание должности обязательна"),
+        .required(t("descriptionValidationRequiredText")),
       dateStart: yup
         .date()
-        .required("Начало обязательно")
-        .max(new Date(), "Начало не можем быть в будущем"),
+        .required(t("dateStartValidationRequiredText"))
+        .max(new Date(), t("dateStartValidationMaxText")),
       dateEnd: yup
         .date()
-        .required("Конец обязательно")
-        .max(new Date(), "Конец не можем в будущем.")
-        .min(yup.ref('dateStart'), "Конец не может быть перед началом.")
+        .required(t("dateEndValidationRequiredText"))
+        .max(new Date(), t("dateEndValidationMaxText"))
+        .min(yup.ref('dateStart'), t("dateEndValidationMinText"))
     }),
     onSubmit: values => {
       if (values.id === 0) {
-        const loadingStateToast = toast.info("Идёт сохранение новых данных в категории Опыт работы...")
+        const loadingStateToast = toast.info(t("createLoadingToastText"))
         createWorkExperience.mutate(values, {
           onSettled: () => {
             toast.dismiss(loadingStateToast)
           },
           onSuccess: () => {
-            toast.success("Новые данные были успешно добавлены в категорию Опыт работы.")
+            toast.success(t("createSuccessToastText"))
             queryClient.invalidateQueries({
               queryKey: ["employee-work-experience", {
                 employeeID: employeeID,
@@ -282,7 +285,7 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
           },
           onError: (error) => {
             if (error.response && error.response.data && error.response.data.message) {
-              toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+              toast.error(`${t("createErrorToastText")} - ${error.response.data.message}`)
             } else {
               toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
             }
@@ -291,13 +294,13 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
         return
       }
 
-      const loadingStateToast = toast.info("Идёт обновление данных в категории Опыт работы...")
+      const loadingStateToast = toast.info(t("updateLoadingToastText"))
       updateWorkExperienceMutation.mutate(values, {
         onSettled: () => {
           toast.dismiss(loadingStateToast)
         },
         onSuccess: () => {
-          toast.success("Данные были успешно обновлены в категорию Опыт работы.")
+          toast.success(t("updateSuccessToastText"))
           queryClient.invalidateQueries({
             queryKey: ["employee-work-experience", {
               employeeID: employeeID,
@@ -308,7 +311,7 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
         },
         onError: (error) => {
           if (error.response && error.response.data && error.response.data.message) {
-            toast.error(`{t("onUpdateErrorToastText")} - ${error.response.data.message}`)
+            toast.error(`${t("updateErrorToastText")} - ${error.response.data.message}`)
           } else {
             toast(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
           }
@@ -333,7 +336,7 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_workplace]`} className="font-semibold">Компания или организация</label>
+        <label htmlFor={`${index}_workplace]`} className="font-semibold">{t("workPlaceLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -347,7 +350,7 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
         <div className="text-red-500 font-bold text-sm">{form.errors.workplace}</div>
       )}
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_workplace]`} className="font-semibold">Должность</label>
+        <label htmlFor={`${index}_workplace]`} className="font-semibold">{t("jobTitleLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -362,10 +365,10 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
       )}
 
       <div className="flex flex-col space-y-1">
-        <label className="font-semibold">Период</label>
+        <label className="font-semibold">{t("periodTextLabelText")}</label>
         <div className="flex space-x-2">
           <div className="flex flex-col space-y-1">
-            <label>Начало</label>
+            <label>{t("dateStartLabelText")}</label>
             <input
               type="date"
               className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -380,7 +383,7 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
             )}
           </div>
           <div className="flex flex-col space-y-1">
-            <label>Конец</label>
+            <label>{t("dateEndLabelText")}</label>
             <input
               type="date"
               className="border p-2 rounded-xl border-gray-400 bg-gray-300"
@@ -398,7 +401,7 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
       </div>
 
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`${index}_description]`} className="font-semibold">Краткое описание должности</label>
+        <label htmlFor={`${index}_description]`} className="font-semibold">{t("descriptionLabelText")}</label>
         <textarea
           className="border p-2 rounded-xl border-gray-400 bg-gray-300 max-w-full min-h-[150px]"
           id={`${index}_description`}
@@ -416,14 +419,14 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
           type="submit"
           className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
         >
-          Сохранить
+          {t("saveButtonText")}
         </button>
         <button
           type="button"
           className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
           onClick={() => onCancelClick(workExperience.id)}
         >
-          Отмена
+          {t("cancelButtonText")}
         </button>
       </div>
     </form>

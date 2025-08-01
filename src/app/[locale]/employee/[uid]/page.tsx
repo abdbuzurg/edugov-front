@@ -10,64 +10,9 @@ import RefresherCourseInformationSection from "./components/RefresherCourseInfor
 import { notFound } from "next/navigation";
 import DetailsInformationSection from "./components/DetailsInformationSection";
 import { cookies } from "next/headers";
-import { createServerAxios, handleServerAuthRefresh } from "@/api/serverAxios";
-import axios from "axios";
-import { Me } from "@/types/me";
+import { serverSideApi } from "@/api/serverSide";
 
 export const dynamic = "force-dynamic"
-
-async function me(): Promise<Me | null> {
-  const cookieStore = await cookies()
-  const accessToken = cookieStore.get("accessToken")
-
-  if (!accessToken) {
-    return null
-  }
-  
-  try {
-    console.log(accessToken)
-    const response = await axios.get<Me>(`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}auth/me`, {
-      adapter: 'fetch',
-      fetchOptions: { cache: 'default' },
-      headers: {
-        "Authorization": `Bearer ${accessToken.value}`
-      }
-    })
-    
-    return response.data
-  } catch (error: any) {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      try {
-        const retry = await handleServerAuthRefresh<Employee>(
-          error.config!,
-          cookieStore,
-          "tg"
-        )
-
-        return retry
-      } catch (retryError: any) {
-        return null
-      }
-    }
-    return null
-  }
-}
-
-async function getEmployeeFullInfoByUID(uid: string, locale: string): Promise<Employee | null> {
-  try {
-    const response = await axios.get<Employee>(`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}employee/${uid}`, {
-      adapter: 'fetch',
-      fetchOptions: { cache: 'no-store' },
-      headers: {
-        'Accept-Language': locale,
-      }
-    })
-    return response.data
-  } catch (error: any) {
-    return null
-  }
-}
-
 
 
 export default async function EmployeeProfile({
@@ -79,14 +24,15 @@ export default async function EmployeeProfile({
   }>
 }) {
   const { uid, locale } = await params;
+  const cookieStore = await cookies()
 
-  const employee = await getEmployeeFullInfoByUID(uid, locale)
+  const employee = await serverSideApi.getEmployeeFullInfoByUID(uid, locale)
   if (!employee) {
     notFound()
   }
 
   let isCurrentUserProfile: boolean
-  const currentUser = await me()
+  const currentUser = await serverSideApi.me(cookieStore)
   if (!currentUser) {
     isCurrentUserProfile = false
   } else {
