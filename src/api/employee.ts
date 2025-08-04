@@ -1,4 +1,4 @@
-import { EmployeeDegree, EmployeeDetails, EmployeeParticipationInProfessionalCommunity, EmployeePatent, EmployeePublication, EmployeeScientificAward, EmployeeWorkExperience } from "@/types/employee"
+import { EmployeeDegree, EmployeeDetails, EmployeeParticipationInProfessionalCommunity, EmployeePatent, EmployeePublication, EmployeeScientificAward, EmployeeSocial, EmployeeWorkExperience } from "@/types/employee"
 import clientAxios from "./clientAxios"
 
 const rootURL = "/employee"
@@ -9,6 +9,7 @@ const publicationURL = "/publication"
 const scientificAwardURL = "/scientific-award"
 const patentURL = "/patent"
 const pipcURL = "/pipc"
+const socialURL = "/social"
 
 export const employeeApi = {
 
@@ -119,4 +120,19 @@ export const employeeApi = {
   deletePIPC: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${pipcURL}/${id}`)
   },
+  getSocialByEmployeeID: async(employeeID: number): Promise<EmployeeSocial[]> => {
+    const response = await clientAxios.get(`${rootURL}${socialURL}/${employeeID}`)
+    return response.data
+  },
+  createSocial: async(social: EmployeeSocial): Promise<EmployeeSocial> => {
+    const response = await clientAxios.post<EmployeeSocial>(`${rootURL}${socialURL}`, social)
+    return response.data
+  },
+  updateSocial: async(social: EmployeeSocial): Promise<EmployeeSocial> => {
+    const response = await clientAxios.put<EmployeeSocial>(`${rootURL}${socialURL}`, social)
+    return response.data
+  },
+  deleteSocial: async(id: number): Promise<void> => {
+    await clientAxios.delete(`${rootURL}${socialURL}/${id}`)
+  } 
 }

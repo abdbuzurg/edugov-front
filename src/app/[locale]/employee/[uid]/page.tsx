@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import DetailsInformationSection from "./components/DetailsInformationSection";
 import { cookies } from "next/headers";
 import { serverSideApi } from "@/api/serverSide";
+import SocialInformationSection from "./components/SocialInformationSections";
 
 export const dynamic = "force-dynamic"
 
@@ -41,16 +42,22 @@ export default async function EmployeeProfile({
 
   return (
     <div className="bg-white w-full">
-      <div className="m-auto lg:w-[1280px] w-full flex">
-        <div className="flex-1 flex space-x-4 py-4">
-          <DetailsInformationSection
-            details={employee.details}
-            employeeID={employee.id}
-            locale={locale}
-            uid={employee.uniqueID}
-            isCurrentUserProfile={isCurrentUserProfile}
-          />
-          <div className="flex-5  flex flex-col space-y-4">
+      <div className="m-auto lg:w-[1280px] w-full flex gap-x-4 py-4">
+          <div className="flex-1 flex flex-col gap-y-4">
+            <DetailsInformationSection
+              details={employee.details}
+              employeeID={employee.id}
+              locale={locale}
+              uid={employee.uniqueID}
+              isCurrentUserProfile={isCurrentUserProfile}
+            />
+            <SocialInformationSection
+              socials={employee.socials}
+              employeeID={employee.id}
+              isCurrentUserProfile={isCurrentUserProfile}
+            />
+          </div>
+          <div className="flex-5  flex flex-col gap-y-4">
             <DegreeInformationSection
               degree={employee.degrees}
               employeeID={employee.id}
@@ -70,6 +77,7 @@ export default async function EmployeeProfile({
               locale={locale}
               isCurrentUserProfile={isCurrentUserProfile}
             />
+
             <ScientificAwardInformationSection
               scientificAwards={employee.scientificAwards}
               employeeID={employee.id}
@@ -90,7 +98,6 @@ export default async function EmployeeProfile({
             />
             {/* {employeeMock.refresherCourses && <RefresherCourseInformationSection refresherCourses={employeeMock.refresherCourses} />} */}
           </div>
-        </div>
       </div>
     </div>
   )

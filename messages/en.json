@@ -242,6 +242,31 @@
       "roleInProfessionalCommunityLabelText": "Role",
       "saveButtonText": "Save",
       "cancelButtonText": "Cancel"
+    },
+    "Social": {
+      "finishCurrentNewEntry": "Complete the current entry for the Professional Social Networks category.",
+      "deleteLoadingToastText": "Deleting from Professional Social Networks...",
+      "deleteSuccessToastText": "Successfully deleted from Professional Social Networks.",
+      "deleteErrorToastText": "Error deleting from Professional Social Networks.",
+      "socialLabelText": "Professional Social Networks",
+      "deleteDialogHeaderText": "Are you sure you want to delete?",
+      "deleteDialogDeleteButtonText": "Delete",
+      "deleteDialogCancelButtonText": "Cancel",
+      "otherValue": "Other",
+      "socialNameValidationRequiredText": "Network name is required.",
+      "linkToSocialValidationRequiredText": "Link to the network is required.",
+      "otherSocialValidationRequiredText": "Please specify the other network.",
+      "createLoadingToastText": "Saving new data to Professional Social Networks...",
+      "createSuccessToastText": "New data was successfully added to Professional Social Networks.",
+      "createErrorToastText": "Error creating new data for Professional Social Networks.",
+      "updateLoadingToastText": "Updating data in Professional Social Networks...",
+      "updateSuccessToastText": "Data was successfully updated in Professional Social Networks.",
+      "updateErrorToastText": "Error updating Professional Social Networks data.",
+      "socialNameLabelText": "Network name",
+      "socialNameOtherPlaceholderLabelText": "Specify other network",
+      "linkToSocialLabelText": "Link to network",
+      "saveButtonText": "Save",
+      "cancelButtonText": "Cancel"
     }
   }
 }

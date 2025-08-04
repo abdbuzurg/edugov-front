@@ -1,3 +1,6 @@
+import { BiLibrary } from "react-icons/bi"
+import { PiChartPolarLight } from "react-icons/pi"
+
 export type Employee = {
   id: number
   uniqueID: string
@@ -12,6 +15,7 @@ export type Employee = {
   patents?: EmployeePatent[]
   participationInProfessionalCommunities?: EmployeeParticipationInProfessionalCommunity[]
   refresherCourses?: EmployeeRefrehserCourse[]
+  socials?: EmployeeSocial[]
 }
 
 export type EmployeeDetails = {
@@ -112,3 +116,18 @@ export type EmployeeRefrehserCourse = {
   createdAt: Date
   updatedAt: Date
 }
+
+export type EmployeeSocial = {
+  id: number
+  employeeID: number
+  socialName: string
+  linkToSocial: string
+  CreatedAt: Date
+  UpdatedAt: Date
+}
+
+// E - library 
+// google cholar
+// scopu
+// forcit
+// web of science

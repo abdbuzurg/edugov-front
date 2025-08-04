@@ -331,6 +331,7 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
             }
           }
         })
+
         return
       }
 

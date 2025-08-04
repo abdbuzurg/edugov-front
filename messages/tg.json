@@ -242,6 +242,31 @@
       "roleInProfessionalCommunityLabelText": "Нақш",
       "saveButtonText": "Захира кардан",
       "cancelButtonText": "Бекор кардан"
+    },
+    "Social": {
+      "finishCurrentNewEntry": "Иловаи ҷориро дар категорияи Шабакаҳои иҷтимоии касбӣ ба анҷом расонед.",
+      "deleteLoadingToastText": "Несткунӣ аз категорияи Шабакаҳои иҷтимоии касбӣ...",
+      "deleteSuccessToastText": "Аз категорияи Шабакаҳои иҷтимоии касбӣ бомуваффақият нест карда шуд.",
+      "deleteErrorToastText": "Хатогӣ ҳангоми несткунӣ аз категорияи Шабакаҳои иҷтимоии касбӣ.",
+      "socialLabelText": "Шабакаҳои иҷтимоии касбӣ",
+      "deleteDialogHeaderText": "Оё шумо мутмаин ҳастед, ки нест кардан мехоҳед?",
+      "deleteDialogDeleteButtonText": "Нест кардан",
+      "deleteDialogCancelButtonText": "Бекор кардан",
+      "otherValue": "Дигар",
+      "socialNameValidationRequiredText": "Номи шабака ҳатмист.",
+      "linkToSocialValidationRequiredText": "Истинод ба шабака ҳатмист.",
+      "otherSocialValidationRequiredText": "Шабакаи дигарро нишон диҳед.",
+      "createLoadingToastText": "Захираи маълумоти нав дар категорияи Шабакаҳои иҷтимоии касбӣ...",
+      "createSuccessToastText": "Маълумоти нав ба категорияи Шабакаҳои иҷтимоии касбӣ бомуваффақият илова карда шуд.",
+      "createErrorToastText": "Хатогӣ ҳангоми эҷоди маълумоти нав барои категорияи Шабакаҳои иҷтимоии касбӣ.",
+      "updateLoadingToastText": "Навсозии маълумот дар категорияи Шабакаҳои иҷтимоии касбӣ...",
+      "updateSuccessToastText": "Маълумот дар категорияи Шабакаҳои иҷтимоии касбӣ бомуваффақият навсозӣ шуд.",
+      "updateErrorToastText": "Хатогӣ ҳангоми навсозии маълумоти категорияи Шабакаҳои иҷтимоии касбӣ.",
+      "socialNameLabelText": "Номи шабака",
+      "socialNameOtherPlaceholderLabelText": "Шабакаи дигарро нишон диҳед",
+      "linkToSocialLabelText": "Истинод ба шабака",
+      "saveButtonText": "Захира кардан",
+      "cancelButtonText": "Бекор кардан"
     }
   }
 }
