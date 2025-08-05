@@ -82,8 +82,8 @@ export async function handleServerAuthRefresh<T>(
     cookieStore.set({
       name: "accessToken",
       value: newAccessToken,
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      secure: false,
       sameSite: 'lax',
       maxAge: accessTokenDuration, // Example: one hour
       path: '/',
@@ -92,7 +92,7 @@ export async function handleServerAuthRefresh<T>(
       name: "refreshToken",
       value: newRefreshToken,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       maxAge: refreshTokenDuration, // Example: one hour
       path: '/',

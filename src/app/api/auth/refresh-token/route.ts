@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers'; // To access and set cookies
 import { AuthResponse } from '@/api/auth';
 import { ApiError } from '@/api/types';
@@ -7,17 +7,23 @@ import { accessTokenDuration, refreshTokenDuration } from '@/utils/tokenDuration
 const BACKEND_REFRESH_URL = process.env.BACKEND_REFRESH_URL
 
 // Replace with the actual URL of your backend's token refresh endpoint
-export async function POST() {
+export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
   // Get the HttpOnly refresh token from the incoming request's cookies
-  const refreshToken = cookieStore.get('refreshToken')?.value;
+  let refreshToken = cookieStore.get('refreshToken')?.value;
 
   // If no refresh token is found, the user is not authenticated or session expired
   if (!refreshToken) {
     console.warn('Refresh token not found in cookies during refresh attempt.');
     // Clear any potentially stale access token cookie if refresh token is missing
     cookieStore.delete('accessToken');
-    return NextResponse.json({ message: 'Authentication required: Refresh token missing.' }, { status: 401 });
+    const data = await request.json()
+    console.log(data)
+    if (data.refreshToken) {
+      refreshToken = data.refreshToken
+    } else {
+      return NextResponse.json({ message: 'Authentication required: Refresh token missing.' }, { status: 401 });
+    }
   }
 
   try {
@@ -84,10 +90,9 @@ export async function POST() {
     // }
 
     // 4. Return the new access token to the client (for localStorage update)
-    return NextResponse.json({ accessToken: data.accessToken }, { status: 200 });
+    return NextResponse.json({ accessToken: data.accessToken, refreshToken: data.refreshToken }, { status: 200 });
 
   } catch (error: any) {
-    console.error('Next.js API refresh route error:', error);
     // On any unexpected error, clear cookies and return internal server error
     cookieStore.delete('refreshToken');
     cookieStore.delete('accessToken');

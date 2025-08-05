@@ -29,6 +29,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     } else if (!accessTokenFromCookie && accessTokenFromLocalStorage) {
       // If cookie is cleared but localStorage isn't, clear localStorage
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('userRole')
     }
   }, []);
 

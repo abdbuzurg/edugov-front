@@ -8,10 +8,9 @@ import { cookies } from "next/headers";
 
 interface Props {
   locale: string
-  isLogged: boolean
 }
 
-export default async function NavigationBar({ locale, isLogged }: Props) {
+export default async function NavigationBar({ locale }: Props) {
   const t = await getTranslations("NavigationBar")
   const cookieStore = await cookies()
 
@@ -56,7 +55,7 @@ export default async function NavigationBar({ locale, isLogged }: Props) {
             <Link href="/contacts" className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("contacts")}</Link>
           </div>
           <div className="flex">
-            {!isLogged
+            {!profileLink
               ?
               <>
                 <Link href={`/${locale}/register`} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("register")}</Link>
@@ -64,7 +63,7 @@ export default async function NavigationBar({ locale, isLogged }: Props) {
               </>
               :
               <>
-                {profileLink && <Link href={profileLink} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("profile")}</Link>}
+                <Link href={profileLink} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("profile")}</Link>
                 <Logout />
               </>
             }

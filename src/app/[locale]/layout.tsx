@@ -6,7 +6,6 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { cookies } from 'next/headers';
 
 export default async function LocaleLayout({
   children,
@@ -20,20 +19,12 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const cookieStore = await cookies()
-  const accessToken = cookieStore.get("accessToken")
-  const refreshToken = cookieStore.get("refreshToken")
-  let isLogged: boolean = true
-  if (!accessToken && !refreshToken) {
-    isLogged = false
-  }
-
   return (
     <html lang={locale}>
       <body>
         <NextIntlClientProvider>
           <Providers>
-            <NavigationBar locale={locale} isLogged={isLogged}/>
+            <NavigationBar locale={locale}/>
             {children}
           </Providers>
         </NextIntlClientProvider>
