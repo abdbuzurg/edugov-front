@@ -9,7 +9,6 @@ export async function POST() {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get('refreshToken')?.value; // Get refresh token to invalidate on backend
 
-  console.log(refreshToken)
   try {
     // 1. Call your actual backend to invalidate the refresh token
     // This is important to prevent a compromised refresh token from being used.

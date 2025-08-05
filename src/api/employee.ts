@@ -1,4 +1,4 @@
-import { EmployeeDegree, EmployeeDetails, EmployeeParticipationInProfessionalCommunity, EmployeePatent, EmployeePublication, EmployeeScientificAward, EmployeeSocial, EmployeeWorkExperience } from "@/types/employee"
+import { EmployeeDegree, EmployeeDetails, EmployeeParticipationInProfessionalCommunity, EmployeePatent, EmployeePublication, EmployeeRefresherCourse, EmployeeScientificAward, EmployeeSocial, EmployeeWorkExperience } from "@/types/employee"
 import clientAxios from "./clientAxios"
 
 const rootURL = "/employee"
@@ -10,6 +10,7 @@ const scientificAwardURL = "/scientific-award"
 const patentURL = "/patent"
 const pipcURL = "/pipc"
 const socialURL = "/social"
+const refresherCourseURL = "/refresher-course"
 
 export const employeeApi = {
 
@@ -134,5 +135,20 @@ export const employeeApi = {
   },
   deleteSocial: async(id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${socialURL}/${id}`)
-  } 
+  },
+  getRefresheerCoursesByEmployeeID: async(employeeID: number): Promise<EmployeeRefresherCourse[]> => {
+    const response = await clientAxios.get<EmployeeRefresherCourse[]>(`${rootURL}${refresherCourseURL}/${employeeID}`)
+    return response.data
+  },
+  createRefresherCourse: async(refresherCourse: EmployeeRefresherCourse): Promise<EmployeeRefresherCourse> => {
+    const response = await clientAxios.post<EmployeeRefresherCourse>(`${rootURL}${refresherCourseURL}`, refresherCourse)
+    return response.data
+  },
+  updateRefresherCourse: async(refresherCourse: EmployeeRefresherCourse): Promise<EmployeeRefresherCourse> => {
+    const response = await clientAxios.put<EmployeeRefresherCourse>(`${rootURL}${refresherCourseURL}`, refresherCourse)
+    return response.data
+  },
+  deleteRefresherCourse: async(id: number): Promise<void> => {
+    await clientAxios.delete(`${rootURL}${refresherCourseURL}/${id}`)
+  }
 }

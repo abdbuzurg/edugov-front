@@ -267,6 +267,36 @@
       "linkToSocialLabelText": "Истинод ба шабака",
       "saveButtonText": "Захира кардан",
       "cancelButtonText": "Бекор кардан"
+    },
+    "RefresherCourse": {
+      "finishCurrentNewEntry": "Иловаи ҷориро дар категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ ба анҷом расонед.",
+      "deleteLoadingToastText": "Хориҷкунӣ аз категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ...",
+      "deleteSuccessToastText": "Аз категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ бомуваффақият хориҷ карда шуд.",
+      "deleteErrorToastText": "Ҳангоми хориҷкунӣ аз категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ хатогӣ рух дод.",
+      "refresherCourseLabelText": "Курсҳои такмили ихтисос ва таҳсилоти иловагӣ",
+      "deleteDialogHeaderText": "Оё шумо мутмаин ҳастед, ки мехоҳед хориҷ кунед?",
+      "deleteDialogDeleteButtonText": "Хориҷ кардан",
+      "deleteDialogCancelButtonText": "Бекор кардан",
+      "courseTitleDisplaLabelText": "Номгӯй:",
+      "periodTitleDisplayLabelText": "Санаҳои баргузорӣ:",
+      "courseTitleValidationRequiredText": "Номи курс ҳатмист",
+      "dateStartValidationRequiredText": "Санаи оғоз ҳатмист",
+      "dateStartValidationMaxText": "Санаи оғоз наметавонад дар оянда бошад",
+      "dateEndValidationRequiredText": "Санаи анҷом ҳатмист",
+      "dateEndValidationMinText": "Санаи анҷом наметавонад пеш аз санаи оғоз бошад",
+      "dateEndValidationMaxText": "Санаи анҷом наметавонад дар оянда бошад",
+      "createLoadingToastText": "Захираи маълумоти нав дар категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ...",
+      "createSuccessToastText": "Маълумоти нав ба категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ бомуваффақият илова карда шуд.",
+      "createErrorToastText": "Ҳангоми эҷоди маълумоти нав барои категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ хатогӣ рух дод.",
+      "updateLoadingToastText": "Навсозии маълумот дар категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ...",
+      "updateSuccessToastText": "Маълумот дар категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ бомуваффақият навсозӣ шуд.",
+      "updateErrorToastText": "Ҳангоми навсозии маълумоти категорияи Курсҳои такмили ихтисос ва таҳсилоти иловагӣ хатогӣ рух дод.",
+      "courseTitleLabelText": "Номгӯй",
+      "periodLabelText": "Санаи баргузорӣ",
+      "dateStartLabelText": "Оғоз",
+      "dateEndLabelText": "Анҷом",
+      "saveButtonText": "Захира кардан",
+      "cancelButtonText": "Бекор кардан"
     }
   }
 }

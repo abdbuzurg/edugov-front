@@ -14,7 +14,7 @@ export type Employee = {
   scientificAwards?: EmployeeScientificAward[]
   patents?: EmployeePatent[]
   participationInProfessionalCommunities?: EmployeeParticipationInProfessionalCommunity[]
-  refresherCourses?: EmployeeRefrehserCourse[]
+  refresherCourses?: EmployeeRefresherCourse[]
   socials?: EmployeeSocial[]
 }
 
@@ -108,8 +108,9 @@ export type EmployeeParticipationInProfessionalCommunity = {
   updatedAt: Date
 }
 
-export type EmployeeRefrehserCourse = {
+export type EmployeeRefresherCourse = {
   id: number
+  employeeID: number
   courseTitle: string
   dateStart: Date
   dateEnd: Date

@@ -267,6 +267,36 @@
       "linkToSocialLabelText": "Link to network",
       "saveButtonText": "Save",
       "cancelButtonText": "Cancel"
+    },
+    "RefresherCourse": {
+      "finishCurrentNewEntry": "Please complete the current entry in the Refresher Courses and Continuing Education category.",
+      "deleteLoadingToastText": "Deleting from the Refresher Courses and Continuing Education category...",
+      "deleteSuccessToastText": "Successfully deleted from the Refresher Courses and Continuing Education category.",
+      "deleteErrorToastText": "Error while deleting from the Refresher Courses and Continuing Education category.",
+      "refresherCourseLabelText": "Refresher Courses and Continuing Education",
+      "deleteDialogHeaderText": "Are you sure you want to delete?",
+      "deleteDialogDeleteButtonText": "Delete",
+      "deleteDialogCancelButtonText": "Cancel",
+      "courseTitleDisplaLabelText": "Title:",
+      "periodTitleDisplayLabelText": "Dates:",
+      "courseTitleValidationRequiredText": "Course title is required",
+      "dateStartValidationRequiredText": "Start date is required",
+      "dateStartValidationMaxText": "Start date cannot be in the future",
+      "dateEndValidationRequiredText": "End date is required",
+      "dateEndValidationMinText": "End date cannot be before the start date",
+      "dateEndValidationMaxText": "End date cannot be in the future",
+      "createLoadingToastText": "Saving new data in the Refresher Courses and Continuing Education category...",
+      "createSuccessToastText": "New data was successfully added to the Refresher Courses and Continuing Education category.",
+      "createErrorToastText": "Error creating new data for the Refresher Courses and Continuing Education category.",
+      "updateLoadingToastText": "Updating data in the Refresher Courses and Continuing Education category...",
+      "updateSuccessToastText": "Data was successfully updated in the Refresher Courses and Continuing Education category.",
+      "updateErrorToastText": "Error updating data in the Refresher Courses and Continuing Education category.",
+      "courseTitleLabelText": "Title",
+      "periodLabelText": "Date",
+      "dateStartLabelText": "Start",
+      "dateEndLabelText": "End",
+      "saveButtonText": "Save",
+      "cancelButtonText": "Cancel"
     }
   }
 }

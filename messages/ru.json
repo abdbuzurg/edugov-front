@@ -267,6 +267,36 @@
       "linkToSocialLabelText": "Ссылка на сеть",
       "saveButtonText": "Сохранить",
       "cancelButtonText": "Отмена"
+    },
+    "RefresherCourse": {
+      "finishCurrentNewEntry": "Завершите текущее добавление в категорию Курсы повышения квалификации и дополнительное образование.",
+      "deleteLoadingToastText": "Удаление из категории Курсы повышения квалификации и дополнительное образование....",
+      "deleteSuccessToastText": "Удаление Успешно из категории Курсы повышения квалификации и дополнительное образование.",
+      "deleteErrorToastText": "Ошибка при удалении из категори Курсы повышения квалификации и дополнительное образование.",
+      "refresherCourseLabelText": "Курсы повышения квалификации и дополнительное образование",
+      "deleteDialogHeaderText": "Вы уверены что хотите удалить?",
+      "deleteDialogDeleteButtonText": "Удалить",
+      "deleteDialogCancelButtonText": "Отмена",
+      "courseTitleDisplaLabelText": "Название:",
+      "periodTitleDisplayLabelText": "Даты проведения:",
+      "courseTitleValidationRequiredText": "Название курса обязательно",
+      "dateStartValidationRequiredText": "Начало обязательно",
+      "dateStartValidationMaxText": "Начало не можем быть в будущем",
+      "dateEndValidationRequiredText": "Конец обязателен",
+      "dateEndValidationMinText": "Конец не может быть перед началом",
+      "dateEndValidationMaxText": "Конец не может быть в будущем",
+      "createLoadingToastText": "Идёт сохранение новых данных в категории Курсы повышения квалификации и дополнительное образование...",
+      "createSuccessToastText": "Новые данные были успешно добавлены в категорию Курсы повышения квалификации и дополнительное образование.",
+      "createErrorToastText": "Ошибка при создании новых данных для категории Курсы повышения квалификации и дополнительное образование.",
+      "updateLoadingToastText": "Идёт обновление данных в категории Курсы повышения квалификации и дополнительное образование...",
+      "updateSuccessToastText": "Данные были успешно обновлены в категорию Курсы повышения квалификации и дополнительное образование.",
+      "updateErrorToastText": "Ошибка при обновлении данных категории Курсы повышения квалификации и дополнительное образование.",
+      "courseTitleLabelText": "Название",
+      "periodLabelText": "Дата проведения",
+      "dateStartLabelText": "Начало",
+      "dateEndLabelText": "Конец",
+      "saveButtonText": "Сохранить",
+      "cancelButtonText": "Отмена"
     }
   }
 }

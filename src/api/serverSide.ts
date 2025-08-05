@@ -1,7 +1,6 @@
 import { Me } from "@/types/me";
 import axios from "axios";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
-import { handleServerAuthRefresh } from "./serverAxios";
 import { Employee } from "@/types/employee";
 import { cache } from "react";
 

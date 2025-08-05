@@ -47,6 +47,7 @@ export default function WorkExperienceInformationSection({ workExperience, emplo
     }],
     queryFn: () => employeeApi.getWorkExperienceByEmployeeID(employeeID),
     initialData: workExperience ?? [],
+    refetchOnMount: false,
   })
   useEffect(() => {
     if (workExperienceQuery.data) {

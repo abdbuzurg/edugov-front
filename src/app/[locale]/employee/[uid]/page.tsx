@@ -43,61 +43,82 @@ export default async function EmployeeProfile({
   return (
     <div className="bg-white w-full">
       <div className="m-auto lg:w-[1280px] w-full flex gap-x-4 py-4">
-          <div className="flex-1 flex flex-col gap-y-4">
-            <DetailsInformationSection
-              details={employee.details}
-              employeeID={employee.id}
-              locale={locale}
-              uid={employee.uniqueID}
-              isCurrentUserProfile={isCurrentUserProfile}
-            />
+        <div className="flex-1 flex flex-col gap-y-4">
+          <DetailsInformationSection
+            details={employee.details}
+            employeeID={employee.id}
+            locale={locale}
+            uid={employee.uniqueID}
+            isCurrentUserProfile={isCurrentUserProfile}
+          />
+          {(isCurrentUserProfile || employee.socials) &&
             <SocialInformationSection
               socials={employee.socials}
               employeeID={employee.id}
               isCurrentUserProfile={isCurrentUserProfile}
             />
-          </div>
-          <div className="flex-5  flex flex-col gap-y-4">
+          }
+        </div>
+        <div className="flex-5  flex flex-col gap-y-4">
+          {(isCurrentUserProfile || employee.degrees) &&
             <DegreeInformationSection
               degree={employee.degrees}
               employeeID={employee.id}
               locale={locale}
               isCurrentUserProfile={isCurrentUserProfile}
             />
+          }
+          {(isCurrentUserProfile || employee.workExperiences) &&
             <WorkExperienceInformationSection
               workExperience={employee.workExperiences}
               employeeID={employee.id}
               locale={locale}
               isCurrentUserProfile={isCurrentUserProfile}
             />
-            {/* {employeeMock.mainResearchAreas && <MainResearchAreaInformationSection mainResearchArea={employeeMock.mainResearchAreas} />} */}
+          }
+          {/* {employeeMock.mainResearchAreas && <MainResearchAreaInformationSection mainResearchArea={employeeMock.mainResearchAreas} />} */}
+
+          {(isCurrentUserProfile || employee.publications) &&
             <PublicationInformationSection
               publications={employee.publications}
               employeeID={employee.id}
               locale={locale}
               isCurrentUserProfile={isCurrentUserProfile}
             />
-
+          }
+          {(isCurrentUserProfile || employee.scientificAwards) &&
             <ScientificAwardInformationSection
               scientificAwards={employee.scientificAwards}
               employeeID={employee.id}
               locale={locale}
               isCurrentUserProfile={isCurrentUserProfile}
             />
+          }
+          {(isCurrentUserProfile || employee.patents) &&
             <PatentInformationSection
               patents={employee.patents}
               employeeID={employee.id}
               locale={locale}
               isCurrentUserProfile={isCurrentUserProfile}
             />
+          }
+          {(isCurrentUserProfile || employee.participationInProfessionalCommunities) &&
             <ParticipationInProfessionalCommunityInformationSection
               pipcs={employee.participationInProfessionalCommunities}
               employeeID={employee.id}
               locale={locale}
               isCurrentUserProfile={isCurrentUserProfile}
             />
-            {/* {employeeMock.refresherCourses && <RefresherCourseInformationSection refresherCourses={employeeMock.refresherCourses} />} */}
-          </div>
+          }
+          {(isCurrentUserProfile || employee.refresherCourses) &&
+            <RefresherCourseInformationSection
+              refresherCourses={employee.refresherCourses}
+              employeeID={employee.id}
+              locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
+            />
+          }
+        </div>
       </div>
     </div>
   )
