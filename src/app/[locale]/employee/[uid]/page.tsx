@@ -12,6 +12,8 @@ import DetailsInformationSection from "./components/DetailsInformationSection";
 import { cookies } from "next/headers";
 import { serverSideApi } from "@/api/serverSide";
 import SocialInformationSection from "./components/SocialInformationSections";
+import ParticipationInEventInfromationSection from "./components/ParticipationInEventInformationSection";
+import ResearchActivityInformationSection from "./components/ResearchActivityInformationSection";
 
 export const dynamic = "force-dynamic"
 
@@ -113,6 +115,22 @@ export default async function EmployeeProfile({
           {(isCurrentUserProfile || employee.refresherCourses) &&
             <RefresherCourseInformationSection
               refresherCourses={employee.refresherCourses}
+              employeeID={employee.id}
+              locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
+            />
+          }
+          {(isCurrentUserProfile || employee.refresherCourses) &&
+            <ParticipationInEventInfromationSection
+              participationInEvents={employee.participationInEvents}
+              employeeID={employee.id}
+              locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
+            />
+          }
+          {(isCurrentUserProfile || employee.refresherCourses) &&
+            <ResearchActivityInformationSection
+              researchActivities={employee.researchActivities}
               employeeID={employee.id}
               locale={locale}
               isCurrentUserProfile={isCurrentUserProfile}

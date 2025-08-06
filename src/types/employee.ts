@@ -16,6 +16,8 @@ export type Employee = {
   participationInProfessionalCommunities?: EmployeeParticipationInProfessionalCommunity[]
   refresherCourses?: EmployeeRefresherCourse[]
   socials?: EmployeeSocial[]
+  participationInEvents?: EmployeeParticipationInEvent[]
+  researchActivities?: EmployeeResearchActivity[]
 }
 
 export type EmployeeDetails = {
@@ -58,6 +60,7 @@ export type EmployeeWorkExperience = {
 
 export type EmployeeMainResearchArea = {
   id: number
+  employeeID: number
   area: string
   discipline: string
   keyTopics?: EmployeeMainResearchAreaKeyTopics[]
@@ -127,8 +130,20 @@ export type EmployeeSocial = {
   UpdatedAt: Date
 }
 
-// E - library 
-// google cholar
-// scopu
-// forcit
-// web of science
+export type EmployeeParticipationInEvent = {
+  id: number
+  employeeID: number
+  eventTitle: string
+  eventDate: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type EmployeeResearchActivity = {
+  id: number
+  employeeID: number
+  researchActivityTitle: string
+  employeeRole: string
+  createdAt: Date
+  updatedAt: Date
+}

@@ -3,7 +3,7 @@
 import { employeeApi } from "@/api/employee"
 import { ApiError } from "@/api/types"
 import Dialog from "@/components/Dialog"
-import { EmployeeRefresherCourse } from "@/types/employee"
+import { EmployeeParticipationInEvent } from "@/types/employee"
 import formatDate from "@/utils/dateFormatter"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AxiosError } from "axios"
@@ -15,88 +15,87 @@ import { useTranslations } from "use-intl"
 import * as yup from "yup"
 
 interface Props {
-  refresherCourses: EmployeeRefresherCourse[] | undefined
+  participationInEvents: EmployeeParticipationInEvent[] | undefined
+  employeeID: number
   locale: string
   isCurrentUserProfile: boolean
-  employeeID: number
 }
 
-interface RefresherCourseState extends EmployeeRefresherCourse {
+interface PIEState extends EmployeeParticipationInEvent {
   editMode: boolean
 }
 
-export default function RefresherCourseInformationSection({
-  refresherCourses,
+export default function ParticipationInEventInfromationSection({
+  participationInEvents,
+  employeeID,
   locale,
   isCurrentUserProfile,
-  employeeID,
 }: Props) {
-  const t = useTranslations("Employee.RefresherCourse")
   const queryClient = useQueryClient()
-  const [refresherCourseState, setRefresherCourseState] = useState<RefresherCourseState[]>([])
+  const t = useTranslations("Employee.PIE")
+
+  const [pieState, setPIEState] = useState<PIEState[]>([])
   useEffect(() => {
-    setRefresherCourseState(refresherCourses ? refresherCourses.map(v => ({
+    setPIEState(participationInEvents ? participationInEvents.map(v => ({
       ...v,
-      dateStart: new Date(v.dateStart),
-      dateEnd: new Date(v.dateEnd),
+      eventDate: new Date(v.eventDate),
       editMode: false,
     })) : [])
   }, [])
 
-  const refresherCourseQuery = useQuery<EmployeeRefresherCourse[], AxiosError<ApiError>, EmployeeRefresherCourse[]>({
-    queryKey: ["employee-refresher-course", {
+  const pieQuery = useQuery<EmployeeParticipationInEvent[], AxiosError<ApiError>, EmployeeParticipationInEvent[]>({
+    queryKey: ["employee-participation-in-event", {
       employeeID: employeeID,
       locale: locale,
     }],
-    queryFn: () => employeeApi.getRefresheerCoursesByEmployeeID(employeeID),
-    initialData: refresherCourses,
+    queryFn: () => employeeApi.getPIEByEmployeeID(employeeID),
+    initialData: participationInEvents ?? [],
     refetchOnMount: false,
   })
   useEffect(() => {
-    if (refresherCourseQuery.data) {
-      setRefresherCourseState(refresherCourseQuery.data.map(v => ({
+    if (pieQuery.data) {
+      setPIEState([...pieQuery.data.map(v => ({
         ...v,
-        dateStart: new Date(v.dateStart),
-        dateEnd: new Date(v.dateEnd),
+        eventDate: new Date(v.eventDate),
         editMode: false,
-      })))
+      }))])
     }
-  }, [refresherCourseQuery.data])
+  }, [pieQuery.data])
 
-  const addNewRefresherCourse = () => {
-    const newRefresherCourse = refresherCourseState.find(v => v.id === 0)
-    if (newRefresherCourse) {
-      toast.info(t("finishCurrentNewEntry"))
+  const addNewPIE = () => {
+    const pie = pieState.find(v => v.id === 0)
+    console.log(pie)
+    if (pie) {
+      toast.error(t("finishCurrentNewEntry"))
       return
     }
 
-    setRefresherCourseState([{
+    setPIEState([{
       id: 0,
       employeeID: employeeID,
-      courseTitle: "",
-      dateStart: new Date(),
-      dateEnd: new Date(),
+      eventDate: new Date(),
+      eventTitle: "",
       createdAt: new Date(),
       updatedAt: new Date(),
       editMode: true,
-    }, ...refresherCourseState])
+    }, ...pieState])
   }
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [toBeDeletedID, setToBeDeletedID] = useState(-1)
-  const deleteRefresherCourseMutation = useMutation<void, AxiosError<ApiError>, number>({
-    mutationFn: employeeApi.deleteRefresherCourse
+  const deletePIEMutation = useMutation<void, AxiosError<ApiError>, number>({
+    mutationFn: employeeApi.deletePIE,
   })
-  const deleteRefresherCourse = () => {
+  const deleteWorkExperience = () => {
     const loadingStateToast = toast.info(t("deleteLoadingToastText"))
-    deleteRefresherCourseMutation.mutate(toBeDeletedID, {
+    deletePIEMutation.mutate(toBeDeletedID, {
       onSettled: () => {
         toast.dismiss(loadingStateToast)
       },
       onSuccess: () => {
         toast.success(t("deleteSuccessToastText"))
         queryClient.invalidateQueries({
-          queryKey: ["employee-refresher-course", {
+          queryKey: ["employee-participation-in-event", {
             employeeID: employeeID,
             locale: locale,
           }]
@@ -111,20 +110,19 @@ export default function RefresherCourseInformationSection({
         }
       }
     })
-
   }
 
   return (
     <div className="bg-gray-100 rounded-xl py-4">
       <div className="flex justify-between border-b-1 border-gray-500 pb-2 px-6">
-        <p className="font-bold text-xl">{t("refresherCourseLabelText")}</p>
+        <p className="font-bold text-xl">{t("pieLabelText")}</p>
         {isCurrentUserProfile &&
           <div className="cursor-pointer">
-            <FaPlus color="blue" onClick={() => addNewRefresherCourse()} />
+            <FaPlus color="blue" onClick={() => addNewPIE()} />
           </div>
         }
       </div>
-      <div className="flex flex-col space-y-2 px-6">
+      <div className="flex flex-col space-y-1 px-6">
         <Dialog
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
@@ -133,7 +131,7 @@ export default function RefresherCourseInformationSection({
           <div className="flex space-x-2 items-center justify-center mt-2">
             <div
               className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
-              onClick={() => deleteRefresherCourse()}
+              onClick={() => deleteWorkExperience()}
             >
               {t("deleteDialogDeleteButtonText")}
             </div>
@@ -145,67 +143,66 @@ export default function RefresherCourseInformationSection({
             </div>
           </div>
         </Dialog>
-        {refresherCourseState.map((course, index) =>
-          !course.editMode
-            ?
-            <RefresherCourseDisplay
-              key={course.id}
-              refresherCourse={course}
+        {pieState.map((pie, index) => 
+          !pie.editMode
+            ? 
+            <PIEDisplay 
+              key={pie.id}
+              pie={pie}
               isCurrentUserProfile={isCurrentUserProfile}
               enableEditMode={() => {
-                const rf = refresherCourseState.map((v, i) => i == index ? { ...v, editMode: true } : v)
-                setRefresherCourseState([...rf])
+                const pieTemp = pieState.map((v, i) => i === index ? {...v, editMode: true}: v)
+                setPIEState([...pieTemp])
               }}
               onDeleteClick={() => {
                 setIsDeleteDialogOpen(true)
-                setToBeDeletedID(course.id)
+                setToBeDeletedID(pie.id)
               }}
             />
             :
-            <RefresherCourseEdit
-              key={course.id}
-              refresherCourse={course}
-              employeeID={employeeID}
-              locale={locale}
-              index={index}
-              disableEditMode={() => {
-                const rc = refresherCourseState.map((v, i) => i == index ? { ...v, editMode: false } : v)
-                setRefresherCourseState([...rc])
-              }}
-              removeNewRefresherCourseOnCancel={() => {
-                const rc = refresherCourseState.filter((_, i) => i != index)
-                setRefresherCourseState([...rc])
-              }}
-            />
+            <PIEEdit
+             key={pie.id}
+             pie={pie}
+             employeeID={employeeID}
+             locale={locale}
+             index={index}
+             disableEditMode={() => {
+              const pieTemp = pieState.map((v, i) => i == index ? {...v, editMode: false}: v)
+              setPIEState([...pieTemp])
+             }} 
+             removeNewPIEOnCancel={() => {
+                const pieTemp = pieState.filter((_, i) => i != index)
+                setPIEState([...pieTemp])
+             }}
+             />
         )}
       </div>
-
     </div>
   )
 }
 
-interface RefresherCourseDisplayProps {
-  refresherCourse: EmployeeRefresherCourse | null
+interface PIEDisplayProps {
+  pie: EmployeeParticipationInEvent | undefined
   isCurrentUserProfile: boolean
   enableEditMode: () => void
   onDeleteClick: () => void
 }
 
-function RefresherCourseDisplay({
-  refresherCourse,
+function PIEDisplay({
+  pie,
   isCurrentUserProfile,
   enableEditMode,
   onDeleteClick,
-}: RefresherCourseDisplayProps) {
-  if (!refresherCourse) return null
-  const t = useTranslations("Employee.RefresherCourse")
+}: PIEDisplayProps) {
+  if (!pie) return null;
+  const t = useTranslations("Employee.PIE")
 
   return (
     <div className="flex flex-col space-y-1 border-b-1 py-2">
       <div className="flex justify-between">
         <div className="flex space-x-2">
-          <h4 className="font-semibold text-l">{t("courseTitleDisplaLabelText")}</h4>
-          <p>{refresherCourse.courseTitle}</p>
+          <h4 className="font-semibold text-l">{t("displayEventTitleLabelText")}</h4>
+          <p>{pie.eventTitle}</p>
         </div>
         {isCurrentUserProfile &&
           <div className="flex space-x-2">
@@ -223,70 +220,65 @@ function RefresherCourseDisplay({
         }
       </div>
       <div className="flex space-x-2">
-        <h4 className="font-semibold text-l">{t("periodTitleDisplayLabelText")}</h4>
-        <p>{formatDate(refresherCourse.dateStart)} - {formatDate(refresherCourse.dateEnd)}</p>
+        <h4 className="font-semibold text-l">{t("displayEventDateTitleLabelText")}</h4>
+        <p>{formatDate(pie.eventDate)}</p>
       </div>
     </div>
   )
 }
 
-interface RefresherCourseEditProps {
-  refresherCourse: EmployeeRefresherCourse | undefined
+interface PIEEditProps {
+  pie: EmployeeParticipationInEvent | undefined
   employeeID: number
   index: number
   locale: string
   disableEditMode: () => void
-  removeNewRefresherCourseOnCancel: () => void
+  removeNewPIEOnCancel: () => void
 }
 
-function RefresherCourseEdit({
-  refresherCourse,
+function PIEEdit({
+  pie,
   employeeID,
   index,
   locale,
   disableEditMode,
-  removeNewRefresherCourseOnCancel,
-}: RefresherCourseEditProps) {
-  if (!refresherCourse) return null
+  removeNewPIEOnCancel,
+}: PIEEditProps) {
+  if (!pie) return null
+  const t =useTranslations("Employee.PIE")
 
-  const t = useTranslations("Employee.RefresherCourse")
   const queryClient = useQueryClient()
-  const createRefresherCourseMutation = useMutation<EmployeeRefresherCourse, AxiosError<ApiError>, EmployeeRefresherCourse>({
-    mutationFn: employeeApi.createRefresherCourse
+  const createPIE = useMutation<EmployeeParticipationInEvent, AxiosError<ApiError>, EmployeeParticipationInEvent>({
+    mutationFn: employeeApi.createPIE,
   })
-  const updateRefresherCourseMutation = useMutation<EmployeeRefresherCourse, AxiosError<ApiError>, EmployeeRefresherCourse>({
-    mutationFn: employeeApi.updateRefresherCourse
+  const updatePIE = useMutation<EmployeeParticipationInEvent, AxiosError<ApiError>, EmployeeParticipationInEvent>({
+    mutationFn: employeeApi.updatePIE
   })
 
   const form = useFormik({
     initialValues: {
-      ...refresherCourse,
+      ...pie,
     },
     validationSchema: yup.object({
-      courseTitle: yup
+      eventTitle: yup
         .string()
-        .required(t("courseTitleValidationRequiredText")),
-      dateStart: yup
+        .required(t("eventTitleValidationRequiredText")),
+      eventDate: yup
         .date()
-        .required(t("dateStartValidationRequiredText"))
-        .max(new Date(), t("dateStartValidationMaxText")),
-      dateEnd: yup
-        .date()
-        .required(t("dateEndValidationRequiredText"))
-        .max(new Date(), t("dateEndValidationMaxText"))
-        .min(yup.ref('dateStart'), t("dateEndValidationMinText"))
+        .required(t("eventDateValidationRequiredText"))
+        .max(new Date(), t("evenDateValidationMaxText"))
     }),
     onSubmit: (values) => {
       if (values.id === 0) {
         const loadingStateToast = toast.info(t("createLoadingToastText"))
-        createRefresherCourseMutation.mutate(values, {
+        createPIE.mutate(values, {
           onSettled: () => {
             toast.dismiss(loadingStateToast)
           },
           onSuccess: () => {
             toast.success(t("createSuccessToastText"))
             queryClient.invalidateQueries({
-              queryKey: ["employee-refresher-course", {
+              queryKey: ["employee-participation-in-event", {
                 employeeID: employeeID,
                 locale: locale
               }]
@@ -302,18 +294,17 @@ function RefresherCourseEdit({
           }
         })
         return
-
       }
 
       const loadingStateToast = toast.info(t("updateLoadingToastText"))
-      updateRefresherCourseMutation.mutate(values, {
+      updatePIE.mutate(values, {
         onSettled: () => {
           toast.dismiss(loadingStateToast)
         },
         onSuccess: () => {
           toast.success(t("updateSuccessToastText"))
           queryClient.invalidateQueries({
-            queryKey: ["employee-refresher-course", {
+            queryKey: ["employee-participation-in-event", {
               employeeID: employeeID,
               locale: locale,
             }]
@@ -337,7 +328,7 @@ function RefresherCourseEdit({
 
   const onCancelClick = (id: number) => {
     if (id === 0) {
-      removeNewRefresherCourseOnCancel()
+      removeNewPIEOnCancel()
       return
     }
 
@@ -347,55 +338,33 @@ function RefresherCourseEdit({
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="flex flex-col space-y-1">
-        <label htmlFor={`[${index}]_courseTitle`} className="font-semibold">{t("courseTitleLabelText")}</label>
+        <label htmlFor={`${index}_eventTitle`} className="font-semibold">{t("patentTileLabelText")}</label>
         <input
           type="text"
           className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-          id={`[${index}]_courseTitle`}
-          name={`courseTitle`}
-          value={form.values.courseTitle}
+          id={`${index}_eventTitle`}
+          name={`eventTitle`}
+          value={form.values.eventTitle}
           onChange={form.handleChange}
         />
-        {form.errors.courseTitle && form.touched.courseTitle && (
-          //@ts-ignore
-          <div className="text-red-500 font-bold text-sm">{form.errors.courseTitle}</div>
+        {form.errors.eventTitle && form.touched.eventTitle && (
+          <div className="text-red-500 font-bold text-sm">{form.errors.eventTitle}</div>
         )}
       </div>
-
       <div className="flex flex-col space-y-1">
-        <label className="font-semibold">{t("periodLabelText")}</label>
-        <div className="flex space-x-2">
-          <div className="flex flex-col space-y-1">
-            <label htmlFor={`${index}_dateStart`}>{t("dateStartLabelText")}</label>
-            <input
-              type="date"
-              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-              id={`${index}_dateStart`}
-              name={`dateStart`}
-              value={form.values.dateStart.toISOString().slice(0, 10)}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
-            />
-            {form.errors.dateStart && form.touched.dateStart && (
-              //@ts-ignore
-              <div className="text-red-500 font-bold text-sm">{form.errors.dateStart}</div>
-            )}
-          </div>
-          <div className="flex flex-col space-y-1">
-            <label htmlFor={`${index}_dateEnd`}>{t("dateEndLabelText")}</label>
-            <input
-              type="date"
-              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-              id={`${index}_dateEnd`}
-              name={`dateEnd`}
-              value={form.values.dateEnd.toISOString().slice(0, 10)}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
-            />
-            {form.errors.dateEnd && form.touched.dateEnd && (
-              //@ts-ignore
-              <div className="text-red-500 font-bold text-sm">{form.errors.dateEnd}</div>
-            )}
-          </div>
-        </div>
+        <label>{t("eventDateLabelText")}</label>
+        <input
+          type="date"
+          className="border p-2 rounded-xl border-gray-400 bg-gray-300"
+          id={`${index}_eventDate`}
+          name={`eventDate`}
+          value={form.values.eventDate.toISOString().slice(0, 10)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
+        />
+        {form.errors.eventDate && form.touched.eventDate && (
+          //@ts-ignore
+          <div className="text-red-500 font-bold text-sm">{form.errors.eventDate}</div>
+        )}
       </div>
       <div className="flex space-x-2 items-center justify-start">
         <button
@@ -407,7 +376,7 @@ function RefresherCourseEdit({
         <button
           type="button"
           className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
-          onClick={() => onCancelClick(refresherCourse.id)}
+          onClick={() => onCancelClick(pie.id)}
         >
           {t("cancelButtonText")}
         </button>

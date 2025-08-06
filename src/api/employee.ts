@@ -1,7 +1,8 @@
-import { EmployeeDegree, EmployeeDetails, EmployeeParticipationInProfessionalCommunity, EmployeePatent, EmployeePublication, EmployeeRefresherCourse, EmployeeScientificAward, EmployeeSocial, EmployeeWorkExperience } from "@/types/employee"
+import { EmployeeDegree, EmployeeDetails, EmployeeMainResearchArea, EmployeeParticipationInEvent, EmployeeParticipationInProfessionalCommunity, EmployeePatent, EmployeePublication, EmployeeRefresherCourse, EmployeeResearchActivity, EmployeeScientificAward, EmployeeSocial, EmployeeWorkExperience } from "@/types/employee"
 import clientAxios from "./clientAxios"
 
 const rootURL = "/employee"
+
 const detailsURL = "/details"
 const degreeURL = "/degree"
 const workExperienceURL = "/work-experience"
@@ -11,6 +12,9 @@ const patentURL = "/patent"
 const pipcURL = "/pipc"
 const socialURL = "/social"
 const refresherCourseURL = "/refresher-course"
+const pieURL = "/pie"
+const researchActivityURL = "/research-activity"
+const mraURL = "/mra"
 
 export const employeeApi = {
 
@@ -18,12 +22,12 @@ export const employeeApi = {
     const response = await clientAxios.get<EmployeeDetails[]>(`${rootURL}${detailsURL}/${employeeID}`)
     return response.data
   },
-  updateProfilePicture: async ({profilePicture, uid}: {profilePicture: File, uid: string}): Promise<void> => {
+  updateProfilePicture: async ({ profilePicture, uid }: { profilePicture: File, uid: string }): Promise<void> => {
     const formData = new FormData()
     formData.append("profilePicture", profilePicture)
     await clientAxios.put(`${rootURL}/profile-picture/${uid}`, formData)
   },
-  getProfilePicture: async(uid: string):Promise<string> => {
+  getProfilePicture: async (uid: string): Promise<string> => {
     const response = await clientAxios.get<string>(`${rootURL}/profile-picture/${uid}`)
     return response.data
   },
@@ -121,34 +125,79 @@ export const employeeApi = {
   deletePIPC: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${pipcURL}/${id}`)
   },
-  getSocialByEmployeeID: async(employeeID: number): Promise<EmployeeSocial[]> => {
+  getSocialByEmployeeID: async (employeeID: number): Promise<EmployeeSocial[]> => {
     const response = await clientAxios.get(`${rootURL}${socialURL}/${employeeID}`)
     return response.data
   },
-  createSocial: async(social: EmployeeSocial): Promise<EmployeeSocial> => {
+  createSocial: async (social: EmployeeSocial): Promise<EmployeeSocial> => {
     const response = await clientAxios.post<EmployeeSocial>(`${rootURL}${socialURL}`, social)
     return response.data
   },
-  updateSocial: async(social: EmployeeSocial): Promise<EmployeeSocial> => {
+  updateSocial: async (social: EmployeeSocial): Promise<EmployeeSocial> => {
     const response = await clientAxios.put<EmployeeSocial>(`${rootURL}${socialURL}`, social)
     return response.data
   },
-  deleteSocial: async(id: number): Promise<void> => {
+  deleteSocial: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${socialURL}/${id}`)
   },
-  getRefresheerCoursesByEmployeeID: async(employeeID: number): Promise<EmployeeRefresherCourse[]> => {
+  getRefresheerCoursesByEmployeeID: async (employeeID: number): Promise<EmployeeRefresherCourse[]> => {
     const response = await clientAxios.get<EmployeeRefresherCourse[]>(`${rootURL}${refresherCourseURL}/${employeeID}`)
     return response.data
   },
-  createRefresherCourse: async(refresherCourse: EmployeeRefresherCourse): Promise<EmployeeRefresherCourse> => {
+  createRefresherCourse: async (refresherCourse: EmployeeRefresherCourse): Promise<EmployeeRefresherCourse> => {
     const response = await clientAxios.post<EmployeeRefresherCourse>(`${rootURL}${refresherCourseURL}`, refresherCourse)
     return response.data
   },
-  updateRefresherCourse: async(refresherCourse: EmployeeRefresherCourse): Promise<EmployeeRefresherCourse> => {
+  updateRefresherCourse: async (refresherCourse: EmployeeRefresherCourse): Promise<EmployeeRefresherCourse> => {
     const response = await clientAxios.put<EmployeeRefresherCourse>(`${rootURL}${refresherCourseURL}`, refresherCourse)
     return response.data
   },
-  deleteRefresherCourse: async(id: number): Promise<void> => {
+  deleteRefresherCourse: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${refresherCourseURL}/${id}`)
-  }
+  },
+  getPIEByEmployeeID: async (employeeID: number): Promise<EmployeeParticipationInEvent[]> => {
+    const response = await clientAxios.get<EmployeeParticipationInEvent[]>(`${rootURL}${pieURL}/${employeeID}`)
+    return response.data
+  },
+  createPIE: async (pie: EmployeeParticipationInEvent): Promise<EmployeeParticipationInEvent> => {
+    const response = await clientAxios.post<EmployeeParticipationInEvent>(`${rootURL}${pieURL}`, pie)
+    return response.data
+  },
+  updatePIE: async (pie: EmployeeParticipationInEvent): Promise<EmployeeParticipationInEvent> => {
+    const response = await clientAxios.put<EmployeeParticipationInEvent>(`${rootURL}${pieURL}`, pie)
+    return response.data
+  },
+  deletePIE: async (id: number): Promise<void> => {
+    await clientAxios.delete(`${rootURL}${pieURL}/${id}`)
+  },
+  getResearchActivityByEmployeeID: async (employeeID: number): Promise<EmployeeResearchActivity[]> => {
+    const response = await clientAxios.get<EmployeeResearchActivity[]>(`${rootURL}${researchActivityURL}/${employeeID}`)
+    return response.data
+  },
+  createResearchActivity: async (researchActivity: EmployeeResearchActivity): Promise<EmployeeResearchActivity> => {
+    const response = await clientAxios.post<EmployeeResearchActivity>(`${rootURL}${researchActivityURL}`, researchActivity)
+    return response.data
+  },
+  updateResearchActivity: async (researchActivity: EmployeeResearchActivity): Promise<EmployeeResearchActivity> => {
+    const response = await clientAxios.put<EmployeeResearchActivity>(`${rootURL}${researchActivityURL}`, researchActivity)
+    return response.data
+  },
+  deleteResearchActivity: async (id: number): Promise<void> => {
+    await clientAxios.delete(`${rootURL}${researchActivityURL}/${id}`)
+  },
+  getMRAEmployeeID: async(employeeID: number): Promise<EmployeeMainResearchArea[]> => {
+    const response = await clientAxios.get<EmployeeMainResearchArea[]>(`${rootURL}${mraURL}/${employeeID}`)
+    return response.data
+  },
+  createMRA: async (mra: EmployeeMainResearchArea): Promise<EmployeeMainResearchArea> => {
+    const response = await clientAxios.post<EmployeeMainResearchArea>(`${rootURL}${mraURL}`, mra)
+    return response.data
+  },
+  updateMRA: async (mra: EmployeeMainResearchArea): Promise<EmployeeMainResearchArea> => {
+    const response = await clientAxios.put<EmployeeMainResearchArea>(`${rootURL}${mraURL}`, mra)
+    return response.data
+  },
+  deleteMRA: async (id: number): Promise<void> => {
+    await clientAxios.delete(`${rootURL}${mraURL}/${id}`)
+  },
 }
