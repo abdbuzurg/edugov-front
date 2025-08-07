@@ -346,6 +346,33 @@
       "employeeRoleLabelText": "Роль",
       "saveButtonText": "Сохранить",
       "cancelButtonText": "Отмена"
+    },
+    "MRA": {
+      "finishCurrentNewEntry": "Завершите текущее добавление в категорию Основная область исследований.",
+      "deleteLoadingToastText": "Удаление из категории Основная область исследований....",
+      "deleteSuccessToastText": "Удаление Успешно из категории Основная область исследований.",
+      "deleteErrorToastText": "Ошибка при удалении из категори Основная область исследований.",
+      "mainResearchAreaText": "Основная область исследований",
+      "deleteDialogHeaderText": "Вы уверены что хотите удалить?",
+      "deleteDialogDeleteButtonText": "Удалить",
+      "deleteDialogCancelButtonText": "Отмена",
+      "displayAreaLabelText": "Область:",
+      "displayDisciplineLabelText": "Дисциплина:",
+      "displayKeyTopicsLabelText": "Ключевые Темы:",
+      "areaValidationRequiredText": "Область обязательно",
+      "disciplineValidationRequiredText": "Дисциплина обязательно",
+      "keyTopicTitleValidationRequiredText": "Название ключевой темы обязательно, либо удалите поле.",
+      "createLoadingToastText": "Идёт сохранение новых данных в категории Основная область исследований...",
+      "createSuccessToastText": "Новые данные были успешно добавлены в категорию Основная область исследований.",
+      "createErrorToastText": "Ошибка при создании новых данных для категории Основная область исследований.",
+      "updateLoadingToastText": "Идёт обновление данных в категории Основная область исследований...",
+      "updateSuccessToastText": "Данные были успешно обновлены в категорию Основная область исследований.",
+      "updateErrorToastText": "Ошибка при обновлении данных категории Основная область исследований.",
+      "areaLabelText": "Область",
+      "disciplineLabelText": "Дисциплина",
+      "keyTopicsTitleLabelText": "Ключевые темы",
+      "saveButtonText": "Сохранить",
+      "cancelButtonText": "Отмена"
     }
   }
 }

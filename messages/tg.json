@@ -346,6 +346,33 @@
       "employeeRoleLabelText": "Нақш",
       "saveButtonText": "Захира кардан",
       "cancelButtonText": "Бекор кардан"
-    }
+    },
+    "MRA": {
+    "finishCurrentNewEntry": "Лутфан, иловаи ҷориро дар категорияи Соҳаи асосии тадқиқот ба анҷом расонед.",
+    "deleteLoadingToastText": "Несткунӣ аз категорияи Соҳаи асосии тадқиқот...",
+    "deleteSuccessToastText": "Аз категорияи Соҳаи асосии тадқиқот бомуваффақият нест карда шуд.",
+    "deleteErrorToastText": "Хатогӣ ҳангоми несткунӣ аз категорияи Соҳаи асосии тадқиқот.",
+    "mainResearchAreaText": "Соҳаи асосии тадқиқот",
+    "deleteDialogHeaderText": "Оё шумо мутмаин ҳастед, ки нест кардан мехоҳед?",
+    "deleteDialogDeleteButtonText": "Нест кардан",
+    "deleteDialogCancelButtonText": "Бекор кардан",
+    "displayAreaLabelText": "Соҳа:",
+    "displayDisciplineLabelText": "Фан:",
+    "displayKeyTopicsLabelText": "Мавзӯъҳои асосӣ:",
+    "areaValidationRequiredText": "Пур кардани майдони 'Соҳа' ҳатмист.",
+    "disciplineValidationRequiredText": "Пур кардани майдони 'Фан' ҳатмист.",
+    "keyTopicTitleValidationRequiredText": "Номи мавзӯи асосӣ ҳатмист, ё ин ки майдонро нест кунед.",
+    "createLoadingToastText": "Маълумоти нав дар категорияи Соҳаи асосии тадқиқот захира шуда истодааст...",
+    "createSuccessToastText": "Маълумоти нав ба категорияи Соҳаи асосии тадқиқот бомуваффақият илова карда шуд.",
+    "createErrorToastText": "Хатогӣ ҳангоми эҷоди маълумоти нав барои категорияи Соҳаи асосии тадқиқот.",
+    "updateLoadingToastText": "Маълумот дар категорияи Соҳаи асосии тадқиқот навсозӣ шуда истодааст...",
+    "updateSuccessToastText": "Маълумот дар категорияи Соҳаи асосии тадқиқот бомуваффақият навсозӣ шуд.",
+    "updateErrorToastText": "Хатогӣ ҳангоми навсозии маълумоти категорияи Соҳаи асосии тадқиқот.",
+    "areaLabelText": "Соҳа",
+    "disciplineLabelText": "Фан",
+    "keyTopicsTitleLabelText": "Мавзӯъҳои асосӣ",
+    "saveButtonText": "Захира кардан",
+    "cancelButtonText": "Бекор кардан"
+  }
   }
 }

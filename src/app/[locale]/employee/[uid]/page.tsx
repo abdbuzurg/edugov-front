@@ -136,6 +136,14 @@ export default async function EmployeeProfile({
               isCurrentUserProfile={isCurrentUserProfile}
             />
           }
+          {(isCurrentUserProfile || employee.refresherCourses) &&
+            <MainResearchAreaInformationSection
+              mainResearchAreas={employee.mainResearchAreas}
+              employeeID={employee.id}
+              locale={locale}
+              isCurrentUserProfile={isCurrentUserProfile}
+            />
+          }
         </div>
       </div>
     </div>

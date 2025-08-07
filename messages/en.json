@@ -346,6 +346,33 @@
       "employeeRoleLabelText": "Role",
       "saveButtonText": "Save",
       "cancelButtonText": "Cancel"
+    },
+    "MRA": {
+      "finishCurrentNewEntry": "Please complete the current entry in the Main Research Area category.",
+      "deleteLoadingToastText": "Deleting from Main Research Area category...",
+      "deleteSuccessToastText": "Successfully deleted from Main Research Area category.",
+      "deleteErrorToastText": "Error deleting from Main Research Area category.",
+      "mainResearchAreaText": "Main Research Area",
+      "deleteDialogHeaderText": "Are you sure you want to delete?",
+      "deleteDialogDeleteButtonText": "Delete",
+      "deleteDialogCancelButtonText": "Cancel",
+      "displayAreaLabelText": "Area:",
+      "displayDisciplineLabelText": "Discipline:",
+      "displayKeyTopicsLabelText": "Key Topics:",
+      "areaValidationRequiredText": "Area is required.",
+      "disciplineValidationRequiredText": "Discipline is required.",
+      "keyTopicTitleValidationRequiredText": "Key topic title is required, or delete the field.",
+      "createLoadingToastText": "Saving new data to the Main Research Area category...",
+      "createSuccessToastText": "New data was successfully added to the Main Research Area category.",
+      "createErrorToastText": "Error creating new data for the Main Research Area category.",
+      "updateLoadingToastText": "Updating data in the Main Research Area category...",
+      "updateSuccessToastText": "Data was successfully updated in the Main Research Area category.",
+      "updateErrorToastText": "Error updating data in the Main Research Area category.",
+      "areaLabelText": "Area",
+      "disciplineLabelText": "Discipline",
+      "keyTopicsTitleLabelText": "Key Topics",
+      "saveButtonText": "Save",
+      "cancelButtonText": "Cancel"
     }
   }
 }

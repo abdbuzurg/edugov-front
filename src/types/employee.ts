@@ -1,6 +1,3 @@
-import { BiLibrary } from "react-icons/bi"
-import { PiChartPolarLight } from "react-icons/pi"
-
 export type Employee = {
   id: number
   uniqueID: string
