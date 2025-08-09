@@ -17,7 +17,6 @@ const researchActivityURL = "/research-activity"
 const mraURL = "/mra"
 
 export const employeeApi = {
-
   getDetailsByEmployeeID: async (employeeID: number): Promise<EmployeeDetails[]> => {
     const response = await clientAxios.get<EmployeeDetails[]>(`${rootURL}${detailsURL}/${employeeID}`)
     return response.data
