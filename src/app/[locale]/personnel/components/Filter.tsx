@@ -120,13 +120,13 @@ export default function PersonnelFilterDialog({
             <input
               type="nubmer"
               className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
-              name="profilePerPagination"
-              id="profilePerPagination"
-              value={form.values.profilePerPagination}
+              name="limit"
+              id="limit"
+              value={form.values.limit}
               onChange={form.handleChange}
             />
           </div>
-          <div className="flex-1 "></div>
+          <div className="flex-1"></div>
         </div>
         <hr />
         <div className="flex space-x-2 items-center justify-center">

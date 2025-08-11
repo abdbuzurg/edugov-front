@@ -32,7 +32,7 @@ export default function Personnel() {
     highestAcademicDegree: "",
     speciality: "",
     workExperience: 0,
-    profilePerPagination: 10,
+    limit: 10,
   })
 
   const personnelDataQuery = useInfiniteQuery<PersonnelPaginatedData, AxiosError<ApiError>, InfiniteData<PersonnelPaginatedData>, readonly (string | PersonnelFilter)[], number>({

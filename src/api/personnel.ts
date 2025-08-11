@@ -11,7 +11,6 @@ export const personnelApi = {
     const response = await clientAxios.get<PersonnelPaginatedData>(`/employee/personnel`, {
       params: {
         ...filter,
-        limit: filter.profilePerPagination,
         page: pageParam
       }
     })

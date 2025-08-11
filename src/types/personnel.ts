@@ -21,5 +21,5 @@ export type PersonnelFilter = {
   highestAcademicDegree: string
   speciality: string
   workExperience: number
-  profilePerPagination: number
+  limit: number
 }
