@@ -17,7 +17,8 @@ const dummyData: PersonnelProfile[] = [
     fullname: "Рахмонзода Ахмадшо Чалолиддин",
     highestAcademicDegree: "Номзади илм",
     speciality: "Конструксияхои сохтмони бинохо ва иншоот",
-    workExperience: 15
+    workExperienceYears: 15,
+    workExperienceMonths: 10,
   }
 ]
 

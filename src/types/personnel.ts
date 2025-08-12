@@ -4,7 +4,8 @@ export type PersonnelProfile = {
   highestAcademicDegree: string
   speciality: string
   currentWorkplace: string
-  workExperience: number
+  workExperienceMonths: number
+  workExperienceYears: number
   socials?: PersonnelProfileSocials[]
 }
 
