@@ -48,11 +48,11 @@ export default async function NavigationBar({ locale }: Props) {
         <div className="lg:w-[1280px] w-full flex m-auto justify-between">
           <div className="flex">
             <Link href={`/${locale}`} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("home")}</Link>
-            <Link href="/institutions" className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("institutions")}</Link>
-            <Link href="/personnel" className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("personnel")}</Link>
-            <Link href="/library" className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("library")}</Link>
-            <Link href="/scientific_publications" className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("scientificPublications")}</Link>
-            <Link href="/contacts" className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("contacts")}</Link>
+            <Link href={`/${locale}/institutions`} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("institutions")}</Link>
+            <Link href={`/${locale}/personnel`} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("personnel")}</Link>
+            <Link href={`/${locale}/library`} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("library")}</Link>
+            <Link href={`/${locale}/scientific_publications`} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("scientificPublications")}</Link>
+            <Link href={`/${locale}/contacts`} className="hover:bg-[#0b64a8] text-white font-bold py-3 px-6">{t("contacts")}</Link>
           </div>
           <div className="flex">
             {!profileLink

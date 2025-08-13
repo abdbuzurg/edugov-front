@@ -2,6 +2,11 @@ import Link from "next/link";
 import RegisterForm from "./components/registerForm";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Регистрация"
+}
 
 export default async function Register() {
   const t = await getTranslations("RegisterPage")

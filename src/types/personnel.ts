@@ -4,14 +4,13 @@ export type PersonnelProfile = {
   highestAcademicDegree: string
   speciality: string
   currentWorkplace: string
-  workExperienceMonths: number
-  workExperienceYears: number
+  workExperience: number
   socials?: PersonnelProfileSocials[]
 }
 
 type PersonnelProfileSocials = {
-  name: string
-  link: string
+  socialName: string
+  linkToSocial: string
 }
 
 export type PersonnelFilter = {
@@ -23,4 +22,5 @@ export type PersonnelFilter = {
   speciality: string
   workExperience: number
   limit: number
+  locale: string
 }

@@ -2,7 +2,7 @@ import { PersonnelFilter, PersonnelProfile } from "@/types/personnel"
 import clientAxios from "./clientAxios"
 
 export interface PersonnelPaginatedData {
-  data: PersonnelFilter[]
+  data: PersonnelProfile[]
   nextPage: number
 }
 

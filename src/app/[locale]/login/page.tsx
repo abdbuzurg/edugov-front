@@ -1,6 +1,11 @@
 import Image from "next/image";
 import LoginForm from "./components/loginForm";
 import { getTranslations } from "next-intl/server";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Логин"
+}
 
 export default async function Login() {
   const t = await getTranslations("LoginPage")

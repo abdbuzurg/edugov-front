@@ -1,20 +1,20 @@
-import { EmployeeProfile } from "@/types/personnel";
+import { PersonnelProfile } from "@/types/personnel";
 import Link from "next/link";
 import { BsMortarboardFill } from "react-icons/bs";
 import { FaAddressCard, FaMicroscope, FaLandmark, FaClock, FaDatabase } from "react-icons/fa";
 
 interface Props {
-  employeeProfile: EmployeeProfile
+  employeeProfile: PersonnelProfile
+  locale: string
 }
 
-export default function ProfileCard({employeeProfile}: Props) {
+export default function ProfileCard({ employeeProfile, locale }: Props) {
   return (
     <div className="flex border border-[#095088] rounded-2xl">
       <div className="flex-1 flex flex-col gap-y-2 justify-center items-center text-center bg-[#095088] text-white rounded-l-[14px]">
         <div className="w-20 h-20 rounded-full bg-amber-400"></div>
         <p className="font-bold">{employeeProfile.fullname}</p>
-        <p className="">доцент</p>
-        <Link href="/" className="px-2 py-1 cursor-pointer bg-white text-[#095088] rounded mt-2">Профиль</Link>
+        <Link href={`/${locale}/employee/${employeeProfile.uid}`} className="px-2 py-1 cursor-pointer bg-white text-[#095088] rounded mt-2">Профиль</Link>
       </div>
       <div className="flex-4">
         <div className="py-4 px-6 grid grid-cols-3 gap-x-10 gap-y-5">
@@ -89,39 +89,25 @@ export default function ProfileCard({employeeProfile}: Props) {
             </div>
           </div>
         </div>
-        <hr />
-        <div className="py-4 px-6 flex gap-x-2 w-full justify-around">
-          <div className="py-3 px-6 bg-gray-100 rounded-2xl border-l-4 border-gray-100 hover:border-l-4 hover:border-[#095088] cursor-pointer">
-            <div className="flex gap-x-2 text-lg">
-              <FaDatabase size={22} color="#095088" />
-              <p>РИНЦ</p>
+        {employeeProfile.socials &&
+          <>
+            <hr />
+            <div className="py-4 px-6 flex gap-x-2 w-full justify-around">
+              {employeeProfile.socials.map((v, i) => (
+                <Link
+                  key={i}
+                  href={v.linkToSocial}
+                  className="py-3 px-6 bg-gray-100 rounded-2xl border-l-4 border-gray-100 hover:border-l-4 hover:border-[#095088] cursor-pointer"
+                >
+                  <div className="flex-1 flex gap-x-2 text-lg">
+                    <FaDatabase size={22} color="#095088" />
+                    <p>{v.socialName}</p>
+                  </div>
+                </Link>
+              ))}
             </div>
-          </div>
-          <div className="py-3 px-6 bg-gray-100 rounded-2xl border-l-4 border-gray-100 hover:border-l-4 hover:border-[#095088] cursor-pointer">
-            <div className="flex gap-x-2 text-lg">
-              <FaDatabase size={22} color="#095088" />
-              <p>Google Scolar</p>
-            </div>
-          </div>
-          <div className="py-3 px-6 bg-gray-100 rounded-2xl border-l-4 border-gray-100 hover:border-l-4 hover:border-[#095088] cursor-pointer">
-            <div className="flex gap-x-2 text-lg">
-              <FaDatabase size={22} color="#095088" />
-              <p>E-library</p>
-            </div>
-          </div>
-          <div className="py-3 px-6 bg-gray-100 rounded-2xl border-l-4 border-gray-100 hover:border-l-4 hover:border-[#095088] cursor-pointer">
-            <div className="flex gap-x-2 text-lg">
-              <FaDatabase size={22} color="#095088" />
-              <p>Scopus</p>
-            </div>
-          </div>
-          <div className="py-3 px-6 bg-gray-100 rounded-2xl border-l-4 border-gray-100 hover:border-l-4 hover:border-[#095088] cursor-pointer">
-            <div className="flex gap-x-2 text-lg">
-              <FaDatabase size={22} color="#095088" />
-              <p>Web Of Science</p>
-            </div>
-          </div>
-        </div>
+          </>
+        }
       </div>
     </div>
   )
