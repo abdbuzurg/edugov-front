@@ -35,7 +35,13 @@ export default function PersonnelView({ locale }: Props) {
   })
 
   const [paginatedData, setPaginatedData] = useState<PersonnelProfile[]>([])
-  const personnelDataQuery = useInfiniteQuery<
+  const {
+    data: personnelPaginatedData,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    isPending
+  } = useInfiniteQuery<
     PersonnelPaginatedData,
     AxiosError<ApiError>,
     InfiniteData<PersonnelPaginatedData>,
@@ -48,12 +54,12 @@ export default function PersonnelView({ locale }: Props) {
     getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined
   })
   useEffect(() => {
-    if (personnelDataQuery.data) {
+    if (personnelPaginatedData) {
       setPaginatedData([
-        ...personnelDataQuery.data.pages.reduce<PersonnelProfile[]>((acc, page) => [...acc, ...page.data], [])
+        ...personnelPaginatedData.pages.reduce<PersonnelProfile[]>((acc, page) => [...acc, ...page.data], [])
       ])
     }
-  }, [personnelDataQuery.data])
+  }, [personnelPaginatedData])
 
   const observer = useRef<HTMLDivElement | null>(null)
 
@@ -66,10 +72,10 @@ export default function PersonnelView({ locale }: Props) {
     const { bottom } = triggerElement.getBoundingClientRect();
     const { clientHeight } = document.documentElement;
 
-    if (bottom <= clientHeight && personnelDataQuery.hasNextPage && !personnelDataQuery.isFetchingNextPage) {
-      personnelDataQuery.fetchNextPage();
+    if (bottom <= clientHeight && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
-  }, [personnelDataQuery.hasNextPage, personnelDataQuery.isFetchingNextPage, personnelDataQuery])
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   useEffect(() => {
     const currentObserver = observer.current;
@@ -107,7 +113,7 @@ export default function PersonnelView({ locale }: Props) {
               employeeProfile={v}
             />
           ))}
-          {personnelDataQuery.isPending &&
+          {isPending &&
             <div>
               <Loading />
             </div>
