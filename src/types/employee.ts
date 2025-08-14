@@ -49,8 +49,9 @@ export type EmployeeWorkExperience = {
   workplace: string
   jobTitle: string
   description: string
-  dateStart: Date
-  dateEnd: Date
+  dateStart: Date | null
+  dateEnd: Date | null
+  ongoing: boolean
   createdAt: Date
   updatedAt: Date
 }
