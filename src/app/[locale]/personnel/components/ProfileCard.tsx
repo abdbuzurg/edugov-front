@@ -1,3 +1,4 @@
+import ProfilePicture from "@/components/ProfilePicture";
 import { PersonnelProfile } from "@/types/personnel";
 import Link from "next/link";
 import { BsMortarboardFill } from "react-icons/bs";
@@ -9,10 +10,26 @@ interface Props {
 }
 
 export default function ProfileCard({ employeeProfile, locale }: Props) {
+  let allPropertiesNotNull = true
+  for (const key of Object.keys(employeeProfile) as Array<keyof PersonnelProfile>) {
+    if (employeeProfile[key] === null || employeeProfile[key] === undefined) {
+      allPropertiesNotNull = false;
+      break;
+    }
+  }
+  if (!allPropertiesNotNull) return null;
+
   return (
     <div className="flex border border-[#095088] rounded-2xl">
-      <div className="flex-1 flex flex-col gap-y-2 justify-center items-center text-center bg-[#095088] text-white rounded-l-[14px]">
-        <div className="w-20 h-20 rounded-full bg-amber-400"></div>
+      <div className="flex-1 py-2 px-2 box-border flex flex-col gap-y-2 justify-center items-center text-center bg-[#095088] text-white rounded-l-[14px]">
+        <div className="py-2">
+          <ProfilePicture
+            fallbackSrc={`/images/profile_placeholder_${locale}.svg`}
+            src={`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}employee/profile-picture/${employeeProfile.uid}`}
+            alt={`personnel-profile-${employeeProfile.uid}`}
+            className="rounded-full h-30 w-30"
+          />
+        </div>
         <p className="font-bold">{employeeProfile.fullname}</p>
         <Link href={`/${locale}/employee/${employeeProfile.uid}`} className="px-2 py-1 cursor-pointer bg-white text-[#095088] rounded mt-2">Профиль</Link>
       </div>
@@ -92,7 +109,7 @@ export default function ProfileCard({ employeeProfile, locale }: Props) {
         {employeeProfile.socials &&
           <>
             <hr />
-            <div className="py-4 px-6 flex gap-x-2 w-full justify-around">
+            <div className="py-4 px-6 flex gap-x-2 w-full justify-around items-center">
               {employeeProfile.socials.map((v, i) => (
                 <Link
                   key={i}

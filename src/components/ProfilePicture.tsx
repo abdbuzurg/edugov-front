@@ -20,7 +20,7 @@ export default function ProfilePicture({
 
   return (
     <Image
-      className="w-full h-full object-fill"
+      className={props.className}
       src={imgSrc}
       alt="profile_picture"
       width={100}

@@ -11,7 +11,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { FaPen } from "react-icons/fa";
 import { toast } from "react-toastify";
 import * as yup from "yup"
-import ProfilePicture from "./ProfilePicture";
+import ProfilePicture from "../../../../../components/ProfilePicture";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -142,8 +142,9 @@ function DetailsDisplay({ details, employeeID, uid, locale }: DetailsDisplayProp
   return (
     <>
       <div className="w-full px-6">
-        <div className="h-60 bg-gray-300 rounded-xl">
+        <div className="rounded-xl w-full aspect-[4/3]">
           <ProfilePicture
+            className="w-full h-full object-scale-down"
             fallbackSrc={`/images/profile_placeholder_${locale}.svg`}
             src={`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}employee/profile-picture/${uid}`}
             alt="profile_picture"
@@ -330,6 +331,7 @@ function DetailsEdit({
             <div className="h-60 bg-gray-300 rounded-xl">
               {!employeeImage &&
                 <ProfilePicture
+                  className="w-full h-full  object-fill"
                   src={`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}employee/profile-picture/${uid}`}
                   alt="profile_picture"
                   fallbackSrc={`/images/profile_placeholder_${locale}.svg`}
@@ -337,6 +339,7 @@ function DetailsEdit({
               }
               {employeeImage &&
                 <ProfilePicture
+                  className="w-full h-full object-fill"
                   src={URL.createObjectURL(employeeImage)}
                   alt="profile_picture"
                   fallbackSrc={`/images/profile_placeholder_${locale}.svg`}
