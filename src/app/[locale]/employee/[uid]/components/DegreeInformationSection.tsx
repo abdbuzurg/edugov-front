@@ -2,6 +2,7 @@
 
 import { employeeApi } from "@/api/employee";
 import { ApiError } from "@/api/types";
+import DatePickerSelect, { SelectedDate } from "@/components/DatePicker";
 import Dialog from "@/components/Dialog";
 import { EmployeeDegree } from "@/types/employee";
 import formatDate from "@/utils/dateFormatter";
@@ -33,9 +34,9 @@ export default function DegreeInformationSection({ degree, employeeID, locale, i
   useEffect(() => {
     setDegreeState(degree ? degree.map(v => ({
       ...v,
-      dateStart: new Date(v.dateStart),
-      dateEnd: new Date(v.dateEnd),
-      dateDegreeRecieved: new Date(v.dateDegreeRecieved),
+      dateStart: v.dateStart ? new Date(v.dateStart) : null,
+      dateEnd: v.dateEnd ? new Date(v.dateEnd) : null,
+      dateDegreeRecieved: v.dateDegreeRecieved ? new Date(v.dateDegreeRecieved) : null,
       editMode: false
     })) : [])
   }, [])
@@ -53,9 +54,9 @@ export default function DegreeInformationSection({ degree, employeeID, locale, i
     if (degreeQuery.data) {
       setDegreeState([...degreeQuery.data.map(v => ({
         ...v,
-        dateStart: new Date(v.dateStart),
-        dateEnd: new Date(v.dateEnd),
-        dateDegreeRecieved: new Date(v.dateDegreeRecieved),
+        dateStart: v.dateStart ? new Date(v.dateStart) : null,
+        dateEnd: v.dateEnd ? new Date(v.dateEnd) : null,
+        dateDegreeRecieved: v.dateDegreeRecieved ? new Date(v.dateDegreeRecieved) : null,
         editMode: false
       }))])
     }
@@ -74,10 +75,10 @@ export default function DegreeInformationSection({ degree, employeeID, locale, i
       degreeLevel: "",
       universityName: "",
       speciality: "",
-      dateStart: new Date(),
-      dateEnd: new Date(),
+      dateStart: null,
+      dateEnd: null,
       givenBy: "",
-      dateDegreeRecieved: new Date(),
+      dateDegreeRecieved: null,
       editMode: true,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -199,6 +200,8 @@ interface DegreeDisplayProps {
 
 function DegreeDisplay({ degree, enableEditMode, onDeleteClick, isCurrentUserProfile }: DegreeDisplayProps) {
   if (!degree) return null
+  if (!degree.dateStart) return null
+  if (!degree.dateEnd) return null
 
   return (
     <div className="flex flex-col space-y-1  border-b-1 pb-2">
@@ -258,6 +261,39 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
     mutationFn: employeeApi.updateDegree,
   })
 
+  const [dateStart, setDateStart] = useState<SelectedDate>({
+    day: degree.dateStart?.getDate() ?? 0,
+    month: degree.dateStart ? degree.dateStart.getMonth() + 1 : 0,
+    year: degree.dateStart?.getFullYear() ?? 0,
+  })
+  useEffect(() => {
+    if (dateStart.day != 0 && dateStart.month != 0 && dateStart.year != 0) {
+      form.setFieldValue("dateStart", new Date(Date.UTC(dateStart.year, dateStart.month - 1, dateStart.day)))
+    }
+  }, [dateStart])
+
+  const [dateEnd, setDateEnd] = useState<SelectedDate>({
+    day: degree.dateEnd?.getDate() ?? 0,
+    month: degree.dateEnd ? degree.dateEnd.getMonth() + 1 : 0,
+    year: degree.dateEnd?.getFullYear() ?? 0,
+  })
+  useEffect(() => {
+    if (dateEnd.day != 0 && dateEnd.month != 0 && dateEnd.year != 0) {
+      form.setFieldValue("dateEnd", new Date(Date.UTC(dateEnd.year, dateEnd.month - 1, dateEnd.day)))
+    }
+  }, [dateEnd])
+
+  const [dateDegreeRecieved, setDateDegreeRecieved] = useState<SelectedDate>({
+    day: degree.dateDegreeRecieved?.getDate() ?? 0,
+    month: degree.dateDegreeRecieved ? degree.dateDegreeRecieved.getMonth() + 1 : 0,
+    year: degree.dateDegreeRecieved?.getFullYear() ?? 0,
+  })
+  useEffect(() => {
+    if (dateDegreeRecieved.day != 0 && dateDegreeRecieved.month != 0 && dateDegreeRecieved.year != 0) {
+      form.setFieldValue("dateDegreeRecieved", new Date(Date.UTC(dateDegreeRecieved.year, dateDegreeRecieved.month - 1, dateDegreeRecieved.day)))
+    }
+  }, [dateDegreeRecieved])
+
   const form = useFormik({
     initialValues: {
       ...degree,
@@ -284,19 +320,21 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
       givenBy: yup
         .string()
         .when('degreeLevel', {
-          is: (value: any) => highDigreeLevelCheck(value),
+          is: (value: string) => highDigreeLevelCheck(value),
           then: (schema) => schema
             .required(t("givenByValidationRequiredText")),
           otherwise: (schema) => schema.optional(),
         }),
       dateDegreeRecieved: yup
         .date()
-        .when('degreeLvel', {
-          is: (value: any) => highDigreeLevelCheck(value),
+        .nullable()
+        .when('degreeLevel', {
+          is: (value: string) => highDigreeLevelCheck(value),
           then: (schema) =>
             schema
               .required(t("dateDegreeRecievedValidationRequiredText"))
-              .max(new Date(), t("dateDegreeRecievedValidationMaxText")),
+              .max(new Date(), t("dateDegreeRecievedValidationMaxText"))
+              .min(yup.ref('dateStart'), t("dateDegreeRecievedValidationMinText")),
           otherwise: (schema) => schema.optional(),
         })
     }),
@@ -361,12 +399,10 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
     }
   })
 
-  const onDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    form.setFieldValue(e.target.name, new Date(e.target.value))
-  }
-
   const highDigreeLevelCheck = (degreeLevel: string): boolean => {
-    return degreeLevel == "Кандидат Наук" || degreeLevel == "PhD" || degreeLevel == "Доктор Наук"
+    return degreeLevel == t("degreeLevelCandidateOfScienceText")
+      || degreeLevel == t("degreeLevelPHDText")
+      || degreeLevel == t("degreeLevelDoctorOfScience")
   }
 
   const onCancelClick = (id: number) => {
@@ -487,43 +523,35 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
 
       <div className="flex flex-col space-y-1">
         <label className="font-semibold">{t("yearsOfStudyText")}</label>
-        <div className="flex space-x-2">
-          <div className="flex flex-col space-y-1">
+        <div className="flex space-x-10">
+          <div className="flex-1 flex flex-col space-y-1">
             <label>{t("startLabelText")}</label>
-            <input
-              type="date"
-              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-              id={`${index}_dateStart`}
-              name="dateStart"
-              value={form.values.dateStart.toISOString().slice(0, 10)}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
+            <DatePickerSelect
+              date={dateStart}
+              onDateChange={setDateStart}
             />
             {form.errors.dateStart && form.touched.dateStart && (
               // @ts-ignore
               <div className="text-red-500 font-bold text-sm">{form.errors.dateStart}</div>
             )}
           </div>
-          <div className="flex flex-col space-y-1">
+          <div className="flex-1 flex flex-col space-y-1">
             <label>{t("endLabelText")}</label>
-            <input
-              type="date"
-              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-              id={`${index}_dateEnd`}
-              name="dateEnd"
-              value={form.values.dateEnd.toISOString().slice(0, 10)}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
+            <DatePickerSelect
+              date={dateEnd}
+              onDateChange={setDateEnd}
             />
-            {form.errors.dateStart && form.touched.dateStart && (
+            {form.errors.dateEnd && form.touched.dateEnd && (
               // @ts-ignore
-              <div className="text-red-500 font-bold text-sm">{form.errors.dateStart}</div>
+              <div className="text-red-500 font-bold text-sm">{form.errors.dateEnd}</div>
             )}
           </div>
         </div>
       </div>
 
       {highDigreeLevelCheck(form.values.degreeLevel) && (
-        <div className="flex space-x-2">
-          <div className="flex flex-col space-y-1">
+        <div className="flex space-x-10">
+          <div className="flex-1 flex flex-col space-y-1">
             <label htmlFor={`degree[${index}.givenBy]`}>{t("givenByLabelText")}</label>
             <input
               type="text"
@@ -537,15 +565,11 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
               <div className="text-red-500 font-bold text-sm">{form.errors.givenBy}</div>
             )}
           </div>
-          <div className="flex flex-col space-y-1">
+          <div className="flex-1 flex flex-col space-y-1">
             <label>{t("dateDegreeRecievedLabelText")}</label>
-            <input
-              type="date"
-              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-              id={`${index}_dateDegreeRecieved`}
-              name="dateDegreeRecieved"
-              value={form.values.dateDegreeRecieved.toISOString().slice(0, 10)}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => onDateChange(e)}
+            <DatePickerSelect
+              date={dateDegreeRecieved}
+              onDateChange={setDateDegreeRecieved}
             />
             {form.errors.dateDegreeRecieved && form.touched.dateDegreeRecieved && (
               //@ts-ignore

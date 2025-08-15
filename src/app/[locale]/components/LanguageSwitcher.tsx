@@ -40,7 +40,7 @@ export default function LanguageSwitcher() {
         "
     >
       {locales.map((locale) => (
-        <option key={locale.code} value={locale.code}>
+        <option key={locale.code} value={locale.code} disabled={locale.code != "tg"}>
           {locale.label}
         </option>
       ))}

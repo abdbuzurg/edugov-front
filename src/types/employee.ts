@@ -35,10 +35,10 @@ export type EmployeeDegree = {
   degreeLevel: string
   universityName: string
   speciality: string
-  dateStart: Date
-  dateEnd: Date
+  dateStart: Date | null
+  dateEnd: Date | null
   givenBy: string
-  dateDegreeRecieved: Date
+  dateDegreeRecieved: Date | null
   createdAt: Date
   updatedAt: Date
 }

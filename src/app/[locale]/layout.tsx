@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { serverSideApi } from '@/api/serverSide';
+import { cookies } from 'next/headers';
 
 export default async function LocaleLayout({
   children,
@@ -19,12 +21,23 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  const cookieStore = await cookies()
+
+  const currentUser = await serverSideApi.me(cookieStore)
+  let profileLink: string | null = null
+  if (currentUser) {
+    profileLink = `/${locale}/${currentUser.type}/${currentUser.uniqueID}`
+  }
+
   return (
     <html lang={locale}>
       <body>
         <NextIntlClientProvider>
           <Providers>
-            <NavigationBar locale={locale}/>
+            <NavigationBar
+              locale={locale}
+              profileLink={profileLink}
+            />
             {children}
           </Providers>
         </NextIntlClientProvider>

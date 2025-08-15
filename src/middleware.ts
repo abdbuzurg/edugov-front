@@ -127,17 +127,19 @@ async function refreshToken(request: NextRequest): Promise<NextResponse> {
 
 // The main middleware that orchestrates the two parts.
 export default async function middleware(request: NextRequest) {
-  // 1. Run the authentication logic first.
-  const authResponse = await handleAuth(request);
+  // 1. Run the existing authentication and i18n logic to get the intended response.
+  // This response could be a redirect, a rewrite, or just "next".
+  const response = await (async () => {
+    const authResponse = await handleAuth(request);
+    if (authResponse) {
+      // If auth logic returned a response (e.g., a redirect), use it.
+      return authResponse;
+    }
+    // Otherwise, proceed with the i18n logic.
+    return createMiddleware(routing)(request);
+  })();
 
-  // If the auth logic returned a response (e.g., a redirect or a new cookie),
-  // return it immediately and stop the chain.
-  if (authResponse) {
-    return authResponse;
-  }
-
-  // 2. If auth logic did nothing, proceed with the i18n logic.
-  return createMiddleware(routing)(request);
+  return response;
 }
 
 

@@ -194,6 +194,7 @@ function WorkExperienceDisplay({ workExperience, enableEditMode, onDeleteClick, 
   if (!workExperience) return null
   if (!workExperience.dateStart) return null
   if (!workExperience.dateEnd) return null
+  const t = useTranslations("Employee.WorkExperience")
 
   return (
     <div className="flex flex-col space-y-1  border-b-1 pb-2">
@@ -217,7 +218,7 @@ function WorkExperienceDisplay({ workExperience, enableEditMode, onDeleteClick, 
       <div>
         <h5>{workExperience.jobTitle}</h5>
         <div className="flex space-x-2">
-          <h4>{formatDate(workExperience.dateStart)} - {formatDate(workExperience.dateEnd)}</h4>
+          <h4>{formatDate(workExperience.dateStart)} - {!workExperience.ongoing ? formatDate(workExperience.dateEnd) : t("currentWorkplace")}</h4>
         </div>
         <p>{workExperience.description}</p>
       </div>
@@ -253,7 +254,10 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
     year: workExperience.dateStart?.getFullYear() ?? 0,
   })
   useEffect(() => {
-    form.setFieldValue("dateStart", new Date(dateStart.year, dateStart.month - 1, dateStart.day))
+    console.log(form.values.dateStart)
+    if (dateStart.day != 0 && dateStart.month != 0 && dateStart.year != 0) {
+      form.setFieldValue("dateStart", new Date(Date.UTC(dateStart.year, dateStart.month - 1, dateStart.day)))
+    }
   }, [dateStart])
 
   const [dateEnd, setDateEnd] = useState<SelectedDate>({
@@ -262,7 +266,9 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
     year: workExperience.dateEnd?.getFullYear() ?? 0,
   })
   useEffect(() => {
-    form.setFieldValue("dateEnd", new Date(dateEnd.year, dateEnd.month - 1, dateStart.day))
+    if (dateEnd.day != 0 && dateEnd.month != 0 && dateEnd.year != 0) {
+      form.setFieldValue("dateEnd", new Date(Date.UTC(dateEnd.year, dateEnd.month - 1, dateStart.day)))
+    }
   }, [dateEnd])
 
   const form = useFormik({
@@ -285,8 +291,9 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
         .max(new Date(), t("dateStartValidationMaxText")),
       dateEnd: yup
         .date()
+        .nullable()
         .when('ongoing', {
-          is: () => !form.values.ongoing,
+          is: false,
           then: (schema) => schema
             .required(t("dateEndValidationRequiredText"))
             .max(new Date(), t("dateEndValidationMaxText"))
@@ -295,11 +302,6 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
         })
     }),
     onSubmit: values => {
-      console.log({
-        ...values,
-        dateEnd: null
-      })
-      return
       if (values.id === 0) {
         const loadingStateToast = toast.info(t("createLoadingToastText"))
         createWorkExperience.mutate(values, {
@@ -396,28 +398,34 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
         <label className="font-semibold">{t("periodTextLabelText")}</label>
         <div className="flex gap-x-10 items-center">
           <div className="flex-1 flex flex-col gap-y-0.5">
-            <label>Начало</label>
+            <label>{t("dateStartLabelText")}</label>
             <DatePickerSelect
               date={dateStart}
               onDateChange={setDateStart}
             />
+            {form.errors.dateStart && form.touched.dateStart &&
+              <div className="text-red-500 font-bold text-sm">{form.errors.dateStart}</div>
+            }
           </div>
           <div className="flex-1 flex flex-col gap-y-0.5">
-            <label>Конец</label>
+            <label>{t("dateEndLabelText")}</label>
             <DatePickerSelect
               date={dateEnd}
               onDateChange={setDateEnd}
               isDisabled={form.values.ongoing}
             />
+            {form.errors.dateEnd && form.touched.dateEnd &&
+              <div className="text-red-500 font-bold text-sm">{form.errors.dateEnd}</div>
+            }
           </div>
           <div className="flex flex-col gap-y-0.5">
             <label className="invisible">kek</label>
             <div className="flex gap-x-1 items-center">
-              <input type="checkbox" name="ongoing" className="w-5 h-5" onChange={() => {
+              <input type="checkbox" name="ongoing" className="w-5 h-5" checked={form.values.ongoing} onChange={() => {
                 setDateEnd({ day: 0, month: 0, year: 0 })
                 form.setFieldValue("ongoing", !form.values.ongoing)
               }} />
-              <label>Текущая работа</label>
+              <label>{t("currentWorkplace")}</label>
             </div>
           </div>
         </div>
