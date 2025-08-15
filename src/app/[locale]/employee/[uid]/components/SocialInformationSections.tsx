@@ -229,7 +229,6 @@ function SocialEdit({ index, employeeID, social, disableEditMode, removeNewDegre
 
   const defaultSocials = [
     "Google Scolar",
-    "РИНЦ",
     "Scopus",
     "E-library",
     t("otherValue"),
