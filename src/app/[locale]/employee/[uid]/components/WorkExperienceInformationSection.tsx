@@ -254,7 +254,6 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
     year: workExperience.dateStart?.getFullYear() ?? 0,
   })
   useEffect(() => {
-    console.log(form.values.dateStart)
     if (dateStart.day != 0 && dateStart.month != 0 && dateStart.year != 0) {
       form.setFieldValue("dateStart", new Date(Date.UTC(dateStart.year, dateStart.month - 1, dateStart.day)))
     }

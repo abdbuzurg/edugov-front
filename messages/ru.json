@@ -376,5 +376,21 @@
       "saveButtonText": "Сохранить",
       "cancelButtonText": "Отмена"
     }
+  },
+  "Personnel": {
+    "pageTitle": "Научно-педагогические кадры",
+    "academicTitleText": "Ученое звание",
+    "scientificSpecialityText": "Научная специальность",
+    "workplaceText": "Место работы",
+    "workExperienceText": "Стаж работы",
+    "filterTitleText": "Фильтрация для поиска кадров",
+    "nsidInformationText": "При заполнения этого поля другие поля игнорируются",
+    "nameLabelText":"Имя",
+    "surnameLabelText": "Фамилия",
+    "middlenameLabelText": "Отчество",
+    "numberOfCardsPerPaginationLabelText": "Количество профилей за раз",
+    "confirmButtonText": "Применить",
+    "clearButtonText": "Очистить фильт",
+    "cancelButtonText": "Отмена"
   }
 }

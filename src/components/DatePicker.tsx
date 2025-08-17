@@ -29,6 +29,10 @@ interface DatePickerSelectProps {
   isDisabled?: boolean
 }
 
+function getMonthNameInLocale(date: Date, locale: string): string {
+  return date.toLocaleString(locale, { month: 'long' });
+}
+
 export default function DatePickerSelect({
   date,
   onDateChange,
@@ -109,7 +113,7 @@ export default function DatePickerSelect({
         <option disabled value={0}>Месяц</option>
         {months.map((month) => (
           <option key={month} value={month}>
-            {month}
+            {month}-{getMonthNameInLocale(new Date(1990, month-1, 1), "ru-RU")}
           </option>
         ))}
       </select>

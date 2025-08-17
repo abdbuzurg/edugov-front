@@ -78,7 +78,6 @@ export default async function EmployeeProfile({
               isCurrentUserProfile={isCurrentUserProfile}
             />
           }
-          {/* {employeeMock.mainResearchAreas && <MainResearchAreaInformationSection mainResearchArea={employeeMock.mainResearchAreas} />} */}
 
           {(isCurrentUserProfile || employee.publications) &&
             <PublicationInformationSection

@@ -11,6 +11,7 @@ import { personnelApi, PersonnelPaginatedData } from "@/api/personnel";
 import { FaFilter } from "react-icons/fa";
 import { Metadata } from "next";
 import Loading from "../../loading";
+import { useTranslations } from "next-intl";
 
 export const metadata: Metadata = {
   title: "Кадры"
@@ -21,6 +22,8 @@ interface Props {
 }
 
 export default function PersonnelView({ locale }: Props) {
+  const t = useTranslations("Personnel")
+
   const [filterDisplayState, setFilterDisplayState] = useState(false)
   const [filterData, setFilterData] = useState<PersonnelFilter>({
     uid: "",
@@ -91,7 +94,7 @@ export default function PersonnelView({ locale }: Props) {
     <div className="bg-white w-full">
       <div className="m-auto lg:w-[1280px] w-full flex flex-col gap-x-4 gap-y-2 py-4 ">
         <div className="py-2 flex justify-between">
-          <p className="font-bold text-2xl">Научно-педагогические кадры</p>
+          <p className="font-bold text-2xl">{t("pageTitle")}</p>
           <div
             className="cursor-pointer"
             onClick={() => setFilterDisplayState(true)}

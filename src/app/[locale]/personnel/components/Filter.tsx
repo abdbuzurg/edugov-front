@@ -1,6 +1,7 @@
 import Dialog from "@/components/Dialog";
 import { PersonnelFilter } from "@/types/personnel";
 import { useFormik } from "formik";
+import { useTranslations } from "next-intl";
 import { Dispatch, SetStateAction } from "react";
 
 interface Props {
@@ -16,6 +17,7 @@ export default function PersonnelFilterDialog({
   filterData,
   setFilterData,
 }: Props) {
+  const t = useTranslations("Personnel")
 
   const form = useFormik({
     initialValues: {
@@ -36,7 +38,7 @@ export default function PersonnelFilterDialog({
         className="flex flex-col gap-y-3"
         onSubmit={form.handleSubmit}
       >
-        <p className="font-bold text-xl">Фильтрация для поиска кадров</p>
+        <p className="font-bold text-xl">{t("filterTitleText")}</p>
         <div className="flex flex-col gap-y-1">
           <label htmlFor="uid" className="font-bold">NSID</label>
           <input
@@ -47,11 +49,11 @@ export default function PersonnelFilterDialog({
             value={form.values.uid}
             onChange={form.handleChange}
           />
-          <p className="italic text-gray-500 text-sm">При заполнения этого поля другие поля игнорируются</p>
+          <p className="italic text-gray-500 text-sm">{t("nsidInformationText")}</p>
         </div>
         <hr />
         <div className="grid grid-cols-4 gap-y-3 gap-x-5 items-center">
-          <label htmlFor="name" className="font-semibold">Имя</label>
+          <label htmlFor="name" className="font-semibold">{t("nameLabelText")}</label>
           <input
             type="text"
             className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
@@ -61,7 +63,7 @@ export default function PersonnelFilterDialog({
             onChange={form.handleChange}
           />
 
-          <label htmlFor="surname" className="font-bold">Фамилия</label>
+          <label htmlFor="surname" className="font-bold">{t("surnameLabelText")}</label>
           <input
             type="text"
             className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
@@ -71,7 +73,7 @@ export default function PersonnelFilterDialog({
             onChange={form.handleChange}
           />
 
-          <label htmlFor="middlename" className="font-bold">Отчество</label>
+          <label htmlFor="middlename" className="font-bold">{t("middlenameLabelText")}</label>
           <input
             type="text"
             className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
@@ -83,7 +85,7 @@ export default function PersonnelFilterDialog({
         </div>
         <hr />
         <div className="grid grid-cols-4 gap-y-3 gap-x-10 items-center">
-          <label htmlFor="highestAcademicDegree" className="font-bold">Ученная степерь</label>
+          <label htmlFor="highestAcademicDegree" className="font-bold">{t("academicTitleText")}</label>
           <input
             type="text"
             className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
@@ -93,7 +95,7 @@ export default function PersonnelFilterDialog({
             onChange={form.handleChange}
           />
 
-          <label htmlFor="speciality" className="font-bold">Специальность</label>
+          <label htmlFor="speciality" className="font-bold">{t("scientificSpecialityText")}</label>
           <input
             type="text"
             className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
@@ -103,7 +105,7 @@ export default function PersonnelFilterDialog({
             onChange={form.handleChange}
           />
 
-          <label htmlFor="workExperience" className="font-bold">Стаж работы</label>
+          <label htmlFor="workExperience" className="font-bold">{t("workExperienceText")}</label>
           <input
             type="nubmer"
             className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
@@ -116,7 +118,7 @@ export default function PersonnelFilterDialog({
         <hr />
         <div className="flex gap-x-2">
           <div className="flex-1 flex flex-col gap-y-1">
-            <label htmlFor="workExperience">Количество профилей за раз</label>
+            <label htmlFor="workExperience">{t("numberOfCardsPerPaginationLabelText")}</label>
             <input
               type="nubmer"
               className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
@@ -133,23 +135,17 @@ export default function PersonnelFilterDialog({
           <button
             type="submit"
             className="py-2 px-4 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
-          >
-            Применить
-          </button>
+          >{t("confirmButtonText")}</button>
           <button
             type="button"
             className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
             onClick={() => form.resetForm()}
-          >
-            Очистить фильт
-          </button>
+          >{t("clearButtonText")}</button>
           <button
             type="button"
             className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
             onClick={onClose}
-          >
-            Отмена
-          </button>
+          >{t("cancelButtonText")}</button>
         </div>
       </form>
     </Dialog>

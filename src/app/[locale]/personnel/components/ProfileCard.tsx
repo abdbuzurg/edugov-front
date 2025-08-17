@@ -1,5 +1,6 @@
 import ProfilePicture from "@/components/ProfilePicture";
 import { PersonnelProfile } from "@/types/personnel";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { BsMortarboardFill } from "react-icons/bs";
 import { FaAddressCard, FaMicroscope, FaLandmark, FaClock, FaDatabase } from "react-icons/fa";
@@ -18,6 +19,7 @@ export default function ProfileCard({ employeeProfile, locale }: Props) {
     }
   }
   if (!allPropertiesNotNull) return null;
+  const t = useTranslations("Personnel")
 
   return (
     <div className="flex border border-[#095088] rounded-2xl">
@@ -58,7 +60,7 @@ export default function ProfileCard({ employeeProfile, locale }: Props) {
                 />
               </div>
               <div className="flex flex-col">
-                <p className="font-bold text-lg">Унвони Илми</p>
+                <p className="font-bold text-lg">{t("academicTitleText")}</p>
                 <p className="font-semibold text-md">{employeeProfile.highestAcademicDegree}</p>
               </div>
             </div>
@@ -72,7 +74,7 @@ export default function ProfileCard({ employeeProfile, locale }: Props) {
                 />
               </div>
               <div className="flex flex-col">
-                <p className="font-bold text-lg">Ихтисоси Илми</p>
+                <p className="font-bold text-lg">{t("scientificSpecialityText")}</p>
                 <p className="font-semibold text-sm">{employeeProfile.speciality}</p>
               </div>
             </div>
@@ -86,7 +88,7 @@ export default function ProfileCard({ employeeProfile, locale }: Props) {
                 />
               </div>
               <div className="flex flex-col">
-                <p className="font-bold text-lg">Чойи Кор</p>
+                <p className="font-bold text-lg">{t("workplaceText")}</p>
                 <p className="font-semibold text-sm">{employeeProfile.currentWorkplace}</p>
               </div>
             </div>
@@ -100,7 +102,7 @@ export default function ProfileCard({ employeeProfile, locale }: Props) {
                 />
               </div>
               <div className="flex flex-col">
-                <p className="font-bold text-lg">Стажи кор</p>
+                <p className="font-bold text-lg">{t("workExperienceText")}</p>
                 <p className="font-semibold text-sm">{employeeProfile.workExperience}</p>
               </div>
             </div>
@@ -114,6 +116,7 @@ export default function ProfileCard({ employeeProfile, locale }: Props) {
                 <Link
                   key={i}
                   href={v.linkToSocial}
+                  target="_blank"
                   className="py-3 px-6 bg-gray-100 rounded-2xl border-l-4 border-gray-100 hover:border-l-4 hover:border-[#095088] cursor-pointer"
                 >
                   <div className="flex-1 flex gap-x-2 text-lg">
