@@ -27,8 +27,6 @@ export default async function Institutions(
     notFound()
   }
 
-  console.log(allInstitutions)
-
   return (
     <div className="bg-white w-full">
       <div className="m-auto lg:w-[1280px] w-full flex flex-col gap-x-4 gap-y-2 py-4 ">
