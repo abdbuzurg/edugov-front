@@ -379,5 +379,20 @@
   },
   "Institutions": {
     "institutionTitle": "Муассисаҳо"
+  },
+  "Personnel": {
+    "academicTitleText": "Унвони Илм",
+    "scientificSpecialityText": "Ихтисоси Илми",
+    "workplaceText": "Чойи Кор",
+    "workExperienceText": "Стажи кор",
+    "nameLabelText": "Ном",
+    "surnameLabelText": "Насаб",
+    "middlenameLabelText": "Номи падар",
+    "numberOfCardsPerPaginationLabelText": "Шумораи профилҳо дар як вақт",
+    "pageTitle": "Ходимони илмй-педагогй",
+    "filterTitleText": "Филтр",
+    "confirmButtonText": "Тасдиқ",
+    "clearButtonText": "Тоза кардан",
+    "cancelButtonText": "Бекор кардан"
   }
 }

@@ -49,7 +49,6 @@ export default function PersonnelFilterDialog({
             value={form.values.uid}
             onChange={form.handleChange}
           />
-          <p className="italic text-gray-500 text-sm">{t("nsidInformationText")}</p>
         </div>
         <hr />
         <div className="grid grid-cols-4 gap-y-3 gap-x-5 items-center">
