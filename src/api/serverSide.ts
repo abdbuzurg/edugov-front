@@ -3,6 +3,7 @@ import axios from "axios";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { Employee } from "@/types/employee";
 import { cache } from "react";
+import { InstitutionCard } from "@/types/institutions";
 
 export const serverSideApi = {
   me: cache(async (cookieStore: ReadonlyRequestCookies): Promise<Me | null> => {
@@ -34,6 +35,21 @@ export const serverSideApi = {
       })
       return response.data
     } catch (error: any) {
+      return null
+    }
+  },
+  getAllInstitutions: async(locale: string): Promise<InstitutionCard[] | null> => {
+    try {
+      const response = await axios.get<InstitutionCard[]>(`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}institution/all`, {
+        adapter: 'fetch',
+        fetchOptions: {cache: 'no-store'},
+        headers: {
+          'Accept-Language': locale,
+        }
+      })
+
+      return response.data
+    } catch(error: any) {
       return null
     }
   }

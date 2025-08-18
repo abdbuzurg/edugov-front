@@ -93,7 +93,7 @@ export default function PersonnelView({ locale }: Props) {
   return (
     <div className="bg-white w-full">
       <div className="m-auto lg:w-[1280px] w-full flex flex-col gap-x-4 gap-y-2 py-4 ">
-        <div className="py-2 flex justify-between">
+        <div className="flex justify-between">
           <p className="font-bold text-2xl">{t("pageTitle")}</p>
           <div
             className="cursor-pointer"
