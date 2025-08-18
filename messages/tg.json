@@ -375,6 +375,9 @@
     "keyTopicsTitleLabelText": "Мавзӯъҳои асосӣ",
     "saveButtonText": "Захира кардан",
     "cancelButtonText": "Бекор кардан"
-  }
+    }
+  },
+  "Institutions": {
+    "institutionTitle": "Муассисаҳо"
   }
 }

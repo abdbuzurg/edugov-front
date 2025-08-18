@@ -1,8 +1,14 @@
 import { serverSideApi } from "@/api/serverSide";
+import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { FaCity, FaGraduationCap, FaLink, FaPhoneAlt } from "react-icons/fa";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdEmail } from "react-icons/md";
+
+export const metadata: Metadata = {
+  title: "Муассисаҳо"
+}
 
 export default async function Institutions(
   {
@@ -14,6 +20,7 @@ export default async function Institutions(
   }
 ) {
 
+  const t = await getTranslations("Institutions")
   const { locale } = await params;
   const allInstitutions = await serverSideApi.getAllInstitutions(locale)
   if (!allInstitutions) {
@@ -26,7 +33,7 @@ export default async function Institutions(
     <div className="bg-white w-full">
       <div className="m-auto lg:w-[1280px] w-full flex flex-col gap-x-4 gap-y-2 py-4 ">
         <div className="flex justify-between">
-          <p className="font-bold text-2xl">Институты</p>
+          <p className="font-bold text-2xl">{t("institutionTitle")}</p>
         </div>
         <div className="grid grid-cols-3 gap-x-15 gap-y-10">
           {allInstitutions.map((v, i) => (

@@ -1,6 +1,11 @@
+import { Metadata } from "next";
 import { FaPhoneAlt, FaRegClock } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosMail } from "react-icons/io";
+
+export const metadata: Metadata = {
+  title: "Тамос"
+}
 
 export default function Contacts() {
   return (
