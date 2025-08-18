@@ -35,7 +35,7 @@ export default function Contacts() {
           </div>
           <div className="flex flex-col">
             <p className="font-semibold">Телефони боварӣ</p>
-            <p>+992 2277686</p>
+            <p>2273259</p>
             <p>+992 2277686</p>
           </div>
         </div>
@@ -49,7 +49,8 @@ export default function Contacts() {
           </div>
           <div className="flex flex-col">
             <p className="font-semibold">Почтаи электронӣ</p>
-            <p>mort@maorif.tj</p>
+            <p>ilm@maorif.tj</p>
+            <p>nsid@maorif.tj</p>
           </div>
         </div>
         <div className="flex py-2 gap-x-4">
