@@ -43,16 +43,7 @@ export default function LoginForm() {
 
           toast.info(t("toastLoginSuccess"), { delay: 2 })
           const locale = localStorage.getItem("currentLocale")
-          switch (data.userRole) {
-            case "employee":
-              router.push(`/${locale}/employee/${data.uid}`)
-              break
-            case "institution":
-              router.push(`/${locale}/institution/${data.uid}`)
-              break
-            default:
-              console.log("ERROR INCORRECT USER ROLE")
-          }
+          router.push(`/${locale}/employee/${data.uid}`)
           router.refresh()
         },
         onError: (error) => {

@@ -12,7 +12,7 @@ export default async function Home() {
     <main>
       <div className="flex m-auto lg:w-[1280px] w-full">
         <div className="">
-          <Image 
+          <Image
             src="/images/president.png"
             alt={t("presidentImageAlt")}
             loading="eager"

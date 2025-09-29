@@ -2,6 +2,13 @@ import { Me } from "@/types/me"
 import authAxios from "./authAxios"
 import clientAxios from "./clientAxios"
 
+export type RegisterRequest = {
+  email: string
+  password: string
+  gender: string
+  tin: string
+}
+
 export type AuthRequest = {
   email: string
   password: string
@@ -16,7 +23,7 @@ export type AuthResponse = {
 }
 
 export const authApi = {
-  register: async (credentials: AuthRequest): Promise<boolean> => {
+  register: async (credentials: RegisterRequest): Promise<boolean> => {
     const response = await clientAxios.post(`auth/register`, credentials)
     return response.status === 201
   },
