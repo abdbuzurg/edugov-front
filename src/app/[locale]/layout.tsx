@@ -26,7 +26,7 @@ export default async function LocaleLayout({
   const currentUser = await serverSideApi.me(cookieStore)
   let profileLink: string | null = null
   if (currentUser) {
-    profileLink = `/${locale}/${currentUser.type}/${currentUser.uniqueID}`
+    profileLink = `/${locale}/employee/${currentUser.uniqueID}`
   }
 
   return (

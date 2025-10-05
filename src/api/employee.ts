@@ -184,7 +184,7 @@ export const employeeApi = {
   deleteResearchActivity: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${researchActivityURL}/${id}`)
   },
-  getMRAEmployeeID: async(employeeID: number): Promise<EmployeeMainResearchArea[]> => {
+  getMRAEmployeeID: async (employeeID: number): Promise<EmployeeMainResearchArea[]> => {
     const response = await clientAxios.get<EmployeeMainResearchArea[]>(`${rootURL}${mraURL}/${employeeID}`)
     return response.data
   },
@@ -199,4 +199,8 @@ export const employeeApi = {
   deleteMRA: async (id: number): Promise<void> => {
     await clientAxios.delete(`${rootURL}${mraURL}/${id}`)
   },
+  getInstitutionNames: async (): Promise<string[]> => {
+    const response = await clientAxios.get<string[]>(`/institution/names`)
+    return response.data
+  }
 }
