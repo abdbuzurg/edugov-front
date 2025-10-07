@@ -1,4 +1,3 @@
-import { Employee } from "@/types/employee";
 import DegreeInformationSection from "./components/DegreeInformationSection";
 import WorkExperienceInformationSection from "./components/WorkExperienceInformationSection";
 import MainResearchAreaInformationSection from "./components/MainResearchAreaInformationSection";
@@ -14,9 +13,9 @@ import { serverSideApi } from "@/api/serverSide";
 import SocialInformationSection from "./components/SocialInformationSections";
 import ParticipationInEventInfromationSection from "./components/ParticipationInEventInformationSection";
 import ResearchActivityInformationSection from "./components/ResearchActivityInformationSection";
+import HelpInformationSection from "./components/HelpInformationSection";
 
 export const dynamic = "force-dynamic"
-
 
 export default async function EmployeeProfile({
   params
@@ -59,6 +58,9 @@ export default async function EmployeeProfile({
               employeeID={employee.id}
               isCurrentUserProfile={isCurrentUserProfile}
             />
+          }
+          {isCurrentUserProfile &&
+            <HelpInformationSection />
           }
         </div>
         <div className="flex-5  flex flex-col gap-y-4">
