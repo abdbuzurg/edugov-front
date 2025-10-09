@@ -258,6 +258,16 @@ const ammitData = [
   "Академияи давлатии тиббии Қирғизистон ба номи И.К. Охунбоев", "Академияи миллии илмҳои Ҷумҳурии Қирғизистон", "Академияи маорифи Қирғизистон", "Академияи идоракунии давлатӣ дар назди Президенти Ҷумҳурии Қирғизистон", "Академияи давлатии ҳуқуқии Қирғизистон", "Академияи давлатии тарбияи ҷисмонӣ ва варзиши Қирғизистон ба номи Б.Т. Турусбеков", "Академияи байналмилалии идоракунии ҳуқуқ, молия ва тиҷорат", "Академияи миллии \"Манас\" (Қирғизистон)", "Академияи миллии ҳунарҳои Ҷумҳурии Қирғизистон ба номи акад. Т. Содиқов", "Донишгоҳи давлатии тиҷорати Тоҷикистон", "Донишгоҳи технологии Тоҷикистон", "Донишкадаи омӯзгории Тоҷикистон дар ноҳияи Рашт", "Пажӯҳишгоҳи рушди маориф ба номи Абдураҳмони Ҷомии Академияи таҳсилоти Тоҷикистон",
 ];
 
+const listOfGovermentalInstitution = [
+  "КОА назди Президенти Ҷумҳурии Тоҷикистон",
+  "КОА Федератсияи Россия",
+  "КОА Ҷумҳурии Узбекистон",
+  "КОА Ҷумҳурии Қирғизистон",
+  "КОА Ҷумҳурии Қазоқистон",
+  "КОА Ҷумҳурии Беларус",
+  "КОА Ҷумҳурии Украина",
+]
+
 interface DegreeEditProps {
   index: number
   employeeID: number
@@ -528,6 +538,34 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
     setShowInstitutionNames(false);
   };
 
+  const [governmentalInstitutionList, setGovernmentalInstitutionList] = useState<string[]>(listOfGovermentalInstitution)
+  const [selectedGovernmentalInstitution, setSelectedGovernmentalInstitution] = useState<string>(degree.givenBy)
+  const [showGovernmentalList, setShowGovernmentalList] = useState(false)
+  const [filteredGovernmentalList, setFilteredGovernmentalList] = useState<string[]>([])
+
+  const handleGovernmentalInstitutionSearch = (value: string) => {
+    setSelectedGovernmentalInstitution(value);
+
+    if (value.trim()) {
+      const filtered = governmentalInstitutionList
+        .filter(c => c.toLowerCase().includes(value.toLowerCase()))
+        .slice(0, 10);
+      setFilteredGovernmentalList(filtered);
+      setShowGovernmentalList(true);
+    } else {
+      setFilteredGovernmentalList([]);
+      setShowGovernmentalList(false);
+    }
+  }
+
+  const selectGovernmentalInstitution = (governmentalInstitution: string) => {
+    if (governmentalInstitutionList.includes(governmentalInstitution)) {
+      setSelectedGovernmentalInstitution(governmentalInstitution);
+      form.setFieldValue('givenBy', governmentalInstitution)
+    }
+    setShowGovernmentalList(false);
+  };
+
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="relative">
@@ -718,19 +756,44 @@ function DegreeEdit({ degree, locale, index, employeeID, disableEditMode, remove
 
       {highDigreeLevelCheck(form.values.degreeLevel) && (
         <div className="flex space-x-10">
-          <div className="flex-1 flex flex-col space-y-1">
+          <div className="flex-1 flex flex-col space-y-1 w-full">
             <label htmlFor={`degree[${index}.givenBy]`}>{t("givenByLabelText")}</label>
-            <input
-              type="text"
-              className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-              id={`${index}_givenBy`}
-              name="givenBy"
-              value={form.values.givenBy}
-              onChange={form.handleChange}
-            />
-            {form.errors.givenBy && form.touched.givenBy && (
-              <div className="text-red-500 font-bold text-sm">{form.errors.givenBy}</div>
-            )}
+            <div className="relative w-full">
+              <input
+                type="text"
+                className="border p-2 rounded-xl border-gray-400 bg-gray-300 w-full"
+                id={`${index}_givenBy`}
+                name="givenBy"
+                value={selectedGovernmentalInstitution}
+                onChange={(e) => handleGovernmentalInstitutionSearch(e.target.value)}
+                onFocus={() => {
+                  if (selectedGovernmentalInstitution.trim()) {
+                    const filtered = governmentalInstitutionList
+                      .filter(c => c.toLowerCase().includes(selectedGovernmentalInstitution.toLowerCase()))
+                      .slice(0, 10);
+                    setFilteredGovernmentalList(filtered);
+                    setShowGovernmentalList(true);
+                  }
+                }}
+              />
+              {form.errors.givenBy && form.touched.givenBy && (
+                <div className="text-red-500 font-bold text-sm">{form.errors.givenBy}</div>
+              )}
+              {showGovernmentalList && filteredGovernmentalList.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                  {filteredGovernmentalList.map((governmentalInstitution, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => selectGovernmentalInstitution(governmentalInstitution)}
+                      className="w-full px-4 py-3 text-left hover:bg-green-50 transition-colors duration-200 first:rounded-t-xl last:rounded-b-xl"
+                    >
+                      {governmentalInstitution}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex-1 flex flex-col space-y-1">
             <label>{t("dateDegreeRecievedLabelText")}</label>
