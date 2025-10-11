@@ -33,7 +33,7 @@ export default function PersonnelView({ locale }: Props) {
     highestAcademicDegree: "",
     speciality: "",
     workExperience: 0,
-    limit: 10,
+    limit: 50,
     locale: locale as string,
   })
 

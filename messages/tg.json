@@ -107,6 +107,8 @@
       "degreeLevelMasterValueText": "Магистр",
       "degreeLevelSpecialityValueText": "Мутахассис",
       "degreeLevelCandidateOfScienceText": "Номзади илм",
+      "degreeLevelIntershipText": "Интернатура",
+      "degreeLevelResidencyText": "Ординатура",
       "degreeLevelPHDText": "PhD (Доктори фалсафа)",
       "degreeLevelDoctorOfScience": "Доктори илм",
       "specialityLabelText": "Ихтисос",
