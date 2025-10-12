@@ -170,8 +170,8 @@
       "updateLoadingToastText": "Навсозии маълумот дар категорияи Интишорот...",
       "updateSuccessToastText": "Маълумот дар категорияи Интишорот бомуваффақият навсозӣ шуд.",
       "updateErrorToastText": "Хатогӣ ҳангоми навсозии маълумоти категорияи Интишорот.",
-      "publicationTitleLabelText": "Номи нашрия",
-      "linkToPublicationLabelText": "Истинод ба нашрия",
+      "publicationTitleLabelText": "Номи мақола",
+      "linkToPublicationLabelText": "Истинод ба мақола (линк)",
       "saveButtonText": "Захира кардан",
       "cancelButtonText": "Бекор кардан"
     },
@@ -395,6 +395,8 @@
     "filterTitleText": "Филтр",
     "confirmButtonText": "Тасдиқ",
     "clearButtonText": "Тоза кардан",
-    "cancelButtonText": "Бекор кардан"
+    "cancelButtonText": "Бекор кардан",
+    "nextPageButtonText": "Навбати",
+    "previousPageButtonText": "Пешина"
   }
 }

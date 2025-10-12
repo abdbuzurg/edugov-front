@@ -76,7 +76,7 @@ export default function RegisterForm() {
   return (
     <form className="mt-4 flex flex-col gap-y-3" onSubmit={form.handleSubmit}>
       <div className="flex flex-col gap-y-1">
-        <label htmlFor="tin" className="text-l">ИНН</label>
+        <label htmlFor="tin" className="text-l">РМА(ИНН)</label>
         <input
           className="border p-2 rounded-xl border-gray-400"
           type="text"
