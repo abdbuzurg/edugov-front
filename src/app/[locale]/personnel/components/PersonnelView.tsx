@@ -89,7 +89,7 @@ export default function PersonnelView({ locale }: Props) {
             onClick={() => {
               if (filterData.page - 1 != 0) setFilterData({ ...filterData, page: filterData.page - 1 })
             }}
-          >{t("nextPageButtonText")}</button>
+          >{t("previousPageButtonText")}</button>
           <button
             type="submit"
             className={`py-2 px-4 ${filterData.page + 1 > Math.floor(totalData / filterData.limit) + 1 ? "bg-gray-400 text-black" : "bg-[#095088] hover:bg-blue-700 text-white cursor-pointer"} rounded `}
@@ -97,7 +97,7 @@ export default function PersonnelView({ locale }: Props) {
             onClick={() => {
               if (filterData.page + 1 < Math.floor(totalData / filterData.limit) + 1) setFilterData({ ...filterData, page: filterData.page + 1 })
             }}
-          >{t("previousPageButtonText")}</button>
+          >{t("nextPageButtonText")}</button>
         </div>
       </div>
     </div>
