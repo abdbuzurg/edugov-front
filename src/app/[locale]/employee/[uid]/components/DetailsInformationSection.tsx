@@ -205,9 +205,7 @@ function DetailsEdit({
   })
 
   const [employeeImage, setEmployeeImage] = useState<File | undefined>()
-  useEffect(() => {
-    console.log(employeeImage)
-  }, [employeeImage])
+  const [previewURL, setPreviewURL] = useState<string | null>()
   const onPofilePictureChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.files) {
       if (e.currentTarget.files.length > 1) {
@@ -223,7 +221,7 @@ function DetailsEdit({
         return
       }
 
-      const maximumImageSize = 10 * 1024 * 1024
+      const maximumImageSize = 5 * 1024 * 1024
       if (imageFile.size > maximumImageSize) {
         e.currentTarget.value = ''
         toast.error(t("onProfileImageSizeExceededErrorToastText"))
@@ -231,6 +229,9 @@ function DetailsEdit({
       }
 
       setEmployeeImage(imageFile)
+      setPreviewURL(URL.createObjectURL(imageFile))
+      console.log("kek")
+      e.currentTarget.value = ''
     }
   }
 
@@ -329,7 +330,7 @@ function DetailsEdit({
         <div className="w-full px-6 border-b-1 items-center">
           <div className="pb-4 flex flex-col space-y-4">
             <div className="h-60 bg-gray-300 rounded-xl">
-              {!employeeImage &&
+              {!previewURL &&
                 <ProfilePicture
                   className="w-full h-full  object-fill"
                   src={`${process.env.NEXT_PUBLIC_ACTUAL_BACKEND_URL}employee/profile-picture/${uid}`}
@@ -337,10 +338,11 @@ function DetailsEdit({
                   fallbackSrc={`/images/profile_placeholder_${locale}.svg`}
                 />
               }
-              {employeeImage &&
+              {previewURL &&
                 <ProfilePicture
+                  key={previewURL}
                   className="w-full h-full object-fill"
-                  src={URL.createObjectURL(employeeImage)}
+                  src={previewURL}
                   alt="profile_picture"
                   fallbackSrc={`/images/profile_placeholder_${locale}.svg`}
                 />
