@@ -75,45 +75,36 @@ export default function PersonnelView({ locale }: Props) {
         }
         {personnelQuery.isSuccess &&
           <>
-            {personnelQuery.data.data.length > 0 &&
-              <>
-                <div className="flex flex-col gap-y-7 w-full">
-                  {paginatedData.map(v => (
-                    <ProfileCard
-                      key={v.uid}
-                      locale={locale as string}
-                      employeeProfile={v}
-                    />
-                  ))}
-                </div>
-                <div className="flex justify-end gap-x-2 items-center">
-                  <p className="">
-                    Саҳифаи <span className="font-bold">{filterData.page}</span> аз <span className="font-bold">{Math.floor(totalData / filterData.limit) + 1}</span>
-                  </p>
-                  <button
-                    type="submit"
-                    className={`py-2 px-4 ${filterData.page - 1 == 0 ? "bg-gray-400 text-black" : "bg-[#095088] hover:bg-blue-700 text-white cursor-pointer"} rounded`}
-                    disabled={filterData.page - 1 == 0}
-                    onClick={() => {
-                      if (filterData.page - 1 != 0) setFilterData({ ...filterData, page: filterData.page - 1 })
-                    }}
-                  >{t("previousPageButtonText")}</button>
-                  <button
-                    type="submit"
-                    className={`py-2 px-4 ${filterData.page + 1 > Math.floor(totalData / filterData.limit) + 1 ? "bg-gray-400 text-black" : "bg-[#095088] hover:bg-blue-700 text-white cursor-pointer"} rounded `}
-                    disabled={filterData.page + 1 > Math.floor(totalData / filterData.limit) + 1}
-                    onClick={() => {
-                      if (filterData.page + 1 < Math.floor(totalData / filterData.limit) + 1) setFilterData({ ...filterData, page: filterData.page + 1 })
-                    }}
-                  >{t("nextPageButtonText")}</button>
-                </div>
-              </>
-            }
-            {personnelQuery.data.data.length == 0 &&
-              <div className="text-center">
-                <p className="font-bold">Чунин кадрхои илмй вучуд надоранд</p>
-              </div>
-            }
+            <div className="flex flex-col gap-y-7 w-full">
+              {paginatedData.map(v => (
+                <ProfileCard
+                  key={v.uid}
+                  locale={locale as string}
+                  employeeProfile={v}
+                />
+              ))}
+            </div>
+            <div className="flex justify-end gap-x-2 items-center">
+              <p className="">
+                Саҳифаи <span className="font-bold">{filterData.page}</span> аз <span className="font-bold">{Math.floor(totalData / filterData.limit) + 1}</span>
+              </p>
+              <button
+                type="submit"
+                className={`py-2 px-4 ${filterData.page - 1 == 0 ? "bg-gray-400 text-black" : "bg-[#095088] hover:bg-blue-700 text-white cursor-pointer"} rounded`}
+                disabled={filterData.page - 1 == 0}
+                onClick={() => {
+                  if (filterData.page - 1 != 0) setFilterData({ ...filterData, page: filterData.page - 1 })
+                }}
+              >{t("previousPageButtonText")}</button>
+              <button
+                type="submit"
+                className={`py-2 px-4 ${filterData.page + 1 > Math.floor(totalData / filterData.limit) + 1 ? "bg-gray-400 text-black" : "bg-[#095088] hover:bg-blue-700 text-white cursor-pointer"} rounded `}
+                disabled={filterData.page + 1 > Math.floor(totalData / filterData.limit) + 1}
+                onClick={() => {
+                  if (filterData.page + 1 < Math.floor(totalData / filterData.limit) + 1) setFilterData({ ...filterData, page: filterData.page + 1 })
+                }}
+              >{t("nextPageButtonText")}</button>
+            </div>
           </>
         }
       </div>
