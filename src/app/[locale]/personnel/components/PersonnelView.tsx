@@ -36,7 +36,6 @@ export default function PersonnelView({ locale }: Props) {
     locale: locale as string,
   })
   const [page, setPage] = useState(1)
-
   const [totalData, setTotalData] = useState(0)
   const [paginatedData, setPaginatedData] = useState<PersonnelProfile[]>([])
   const personnelQuery = useQuery<PersonnelProfile[], Error, PersonnelProfile[]>({
@@ -73,8 +72,10 @@ export default function PersonnelView({ locale }: Props) {
         </div>
         {filterDisplayState &&
           <PersonnelFilterDialog
+            setFilterDisplayState={setFilterDisplayState}
             filterData={filterData}
             setFilterData={setFilterData}
+            setPage={setPage}
           />
         }
         {(personnelQuery.isPending || personnelQuery.isLoading) &&

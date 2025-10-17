@@ -1,17 +1,20 @@
-import Dialog from "@/components/Dialog";
 import { PersonnelFilter } from "@/types/personnel";
 import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
 import { Dispatch, SetStateAction } from "react";
 
 interface Props {
+  setFilterDisplayState: Dispatch<SetStateAction<boolean>>
   filterData: PersonnelFilter
   setFilterData: Dispatch<SetStateAction<PersonnelFilter>>
+  setPage: Dispatch<SetStateAction<number>>
 }
 
 export default function PersonnelFilterDialog({
+  setFilterDisplayState,
   filterData,
   setFilterData,
+  setPage,
 }: Props) {
   const t = useTranslations("Personnel")
 
@@ -20,7 +23,9 @@ export default function PersonnelFilterDialog({
       ...filterData,
     },
     onSubmit: (values) => {
+      setPage(1)
       setFilterData(values)
+      setFilterDisplayState(false)
     }
   })
 
@@ -129,13 +134,18 @@ export default function PersonnelFilterDialog({
         <button
           type="button"
           className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
-          onClick={() => form.resetForm()}
+          onClick={() => {
+            form.resetForm()
+            setFilterData(form.values)
+            setPage(1)
+          }}
         >{t("clearButtonText")}</button>
         <button
           type="button"
           className="py-2 px-4 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer"
+          onClick={() => setFilterDisplayState(false)}
         >{t("cancelButtonText")}</button>
       </div>
-    </form>
+    </form >
   )
 }
