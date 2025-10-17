@@ -7,9 +7,10 @@ import PersonnelFilterDialog from "./Filter";
 import { FaFilter } from "react-icons/fa";
 import { Metadata } from "next";
 import { useTranslations } from "next-intl";
-import { personnelApi, PersonnelPaginatedData } from "@/api/personnel";
+import { personnelApi } from "@/api/personnel";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../loading";
+import Loader from "@/components/Loader";
 
 export const metadata: Metadata = {
   title: "Кадры"
@@ -32,25 +33,31 @@ export default function PersonnelView({ locale }: Props) {
     speciality: "",
     workExperience: 0,
     limit: 15,
-    page: 1,
     locale: locale as string,
   })
+  const [page, setPage] = useState(1)
 
   const [totalData, setTotalData] = useState(0)
   const [paginatedData, setPaginatedData] = useState<PersonnelProfile[]>([])
-  const personnelQuery = useQuery<PersonnelPaginatedData, Error, PersonnelPaginatedData>({
-    queryKey: ["personnel", filterData],
-    queryFn: () => personnelApi.getPersonnelPaginated(filterData)
+  const personnelQuery = useQuery<PersonnelProfile[], Error, PersonnelProfile[]>({
+    queryKey: ["personnel", filterData, page],
+    queryFn: () => personnelApi.getPersonnelPaginated(filterData, page)
   })
   useEffect(() => {
     if (personnelQuery.data && personnelQuery.isSuccess) {
-      setTotalData(personnelQuery.data.total)
-      setPaginatedData(personnelQuery.data.data)
+      setPaginatedData(personnelQuery.data)
     }
   }, [personnelQuery.data])
+
+  const personnelCountQuery = useQuery<number, Error, number>({
+    queryKey: ["personnel-count", filterData],
+    queryFn: () => personnelApi.getPersonnelCountPaginated(filterData)
+  })
   useEffect(() => {
-    personnelQuery.refetch()
-  }, [filterData])
+    if (personnelCountQuery.isSuccess && personnelCountQuery.data) {
+      setTotalData(personnelCountQuery.data)
+    }
+  }, [personnelCountQuery.data])
 
   return (
     <div className="bg-white w-full">
@@ -71,7 +78,9 @@ export default function PersonnelView({ locale }: Props) {
           />
         }
         {(personnelQuery.isPending || personnelQuery.isLoading) &&
-          <Loading />
+          <div className="flex justify-center">
+            <Loader />
+          </div>
         }
         {personnelQuery.isSuccess &&
           <>
@@ -86,22 +95,22 @@ export default function PersonnelView({ locale }: Props) {
             </div>
             <div className="flex justify-end gap-x-2 items-center">
               <p className="">
-                Саҳифаи <span className="font-bold">{filterData.page}</span> аз <span className="font-bold">{Math.floor(totalData / filterData.limit) + 1}</span>
+                Саҳифаи <span className="font-bold">{page}</span> аз <span className="font-bold">{Math.floor(totalData / filterData.limit) + 1}</span>
               </p>
               <button
                 type="submit"
-                className={`py-2 px-4 ${filterData.page - 1 == 0 ? "bg-gray-400 text-black" : "bg-[#095088] hover:bg-blue-700 text-white cursor-pointer"} rounded`}
-                disabled={filterData.page - 1 == 0}
+                className={`py-2 px-4 ${page - 1 == 0 ? "bg-gray-400 text-black" : "bg-[#095088] hover:bg-blue-700 text-white cursor-pointer"} rounded`}
+                disabled={page - 1 == 0}
                 onClick={() => {
-                  if (filterData.page - 1 != 0) setFilterData({ ...filterData, page: filterData.page - 1 })
+                  if (page - 1 != 0) setPage(page - 1)
                 }}
               >{t("previousPageButtonText")}</button>
               <button
                 type="submit"
-                className={`py-2 px-4 ${filterData.page + 1 > Math.floor(totalData / filterData.limit) + 1 ? "bg-gray-400 text-black" : "bg-[#095088] hover:bg-blue-700 text-white cursor-pointer"} rounded `}
-                disabled={filterData.page + 1 > Math.floor(totalData / filterData.limit) + 1}
+                className={`py-2 px-4 ${page + 1 > Math.floor(totalData / filterData.limit) + 1 ? "bg-gray-400 text-black" : "bg-[#095088] hover:bg-blue-700 text-white cursor-pointer"} rounded `}
+                disabled={page + 1 > Math.floor(totalData / filterData.limit) + 1}
                 onClick={() => {
-                  if (filterData.page + 1 < Math.floor(totalData / filterData.limit) + 1) setFilterData({ ...filterData, page: filterData.page + 1 })
+                  if (page + 1 < Math.floor(totalData / filterData.limit) + 1) setPage(page + 1)
                 }}
               >{t("nextPageButtonText")}</button>
             </div>

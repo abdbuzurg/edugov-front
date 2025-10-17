@@ -22,6 +22,5 @@ export type PersonnelFilter = {
   speciality: string
   workExperience: number
   limit: number
-  page: number
   locale: string
 }
