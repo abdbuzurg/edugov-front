@@ -267,6 +267,8 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
   useEffect(() => {
     if (dateEnd.day != 0 && dateEnd.month != 0 && dateEnd.year != 0) {
       form.setFieldValue("dateEnd", new Date(Date.UTC(dateEnd.year, dateEnd.month - 1, dateStart.day)))
+    } else {
+      form.setFieldValue("dateEnd", null)
     }
   }, [dateEnd])
 
