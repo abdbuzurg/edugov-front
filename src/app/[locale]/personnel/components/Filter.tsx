@@ -1,7 +1,9 @@
+import { personnelApi } from "@/api/personnel";
 import { PersonnelFilter } from "@/types/personnel";
+import { useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useTranslations } from "next-intl";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface Props {
   setFilterDisplayState: Dispatch<SetStateAction<boolean>>
@@ -28,6 +30,17 @@ export default function PersonnelFilterDialog({
       setFilterDisplayState(false)
     }
   })
+
+  const [allUniqueWorkplaces, setAllUniqueWorkeplaces] = useState<string[]>([])
+  const workplacesQuery = useQuery<string[], Error, string[]>({
+    queryKey: ["personnel-workplaces"],
+    queryFn: () => personnelApi.listUniqueOngoingWorkplaces()
+  })
+  useEffect(() => {
+    if (workplacesQuery.data && workplacesQuery.isSuccess) {
+      setAllUniqueWorkeplaces(workplacesQuery.data)
+    }
+  }, [workplacesQuery.data])
 
   return (
     <form
@@ -77,40 +90,26 @@ export default function PersonnelFilterDialog({
           value={form.values.middlename}
           onChange={form.handleChange}
         />
+
+        <label htmlFor="workplace" className="font-bold">
+          {t("workplaceLabelText")}
+        </label>
+        <select
+          className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
+          name="workplace"
+          id="workplace"
+          value={(form.values as any).workplace ?? ""}
+          onChange={form.handleChange}
+        >
+          <option value=""></option>
+          {allUniqueWorkplaces.map((wp) => (
+            <option key={wp} value={wp}>
+              {wp}
+            </option>
+          ))}
+        </select>
       </div>
       <hr />
-      {/* <div className="grid grid-cols-4 gap-y-3 gap-x-10 items-center"> */}
-      {/*   <label htmlFor="highestAcademicDegree" className="font-bold">{t("academicTitleText")}</label> */}
-      {/*   <input */}
-      {/*     type="text" */}
-      {/*     className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100" */}
-      {/*     name="highestAcademicDegree" */}
-      {/*     id="highestAcademicDegree" */}
-      {/*     value={form.values.highestAcademicDegree} */}
-      {/*     onChange={form.handleChange} */}
-      {/*   /> */}
-      {/**/}
-      {/*   <label htmlFor="speciality" className="font-bold">{t("scientificSpecialityText")}</label> */}
-      {/*   <input */}
-      {/*     type="text" */}
-      {/*     className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100" */}
-      {/*     name="speciality" */}
-      {/*     id="speciality" */}
-      {/*     value={form.values.speciality} */}
-      {/*     onChange={form.handleChange} */}
-      {/*   /> */}
-      {/**/}
-      {/*   <label htmlFor="workExperience" className="font-bold">{t("workExperienceText")}</label> */}
-      {/*   <input */}
-      {/*     type="nubmer" */}
-      {/*     className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100" */}
-      {/*     name="workExperience" */}
-      {/*     id="workExperience" */}
-      {/*     value={form.values.workExperience} */}
-      {/*     onChange={form.handleChange} */}
-      {/*   /> */}
-      {/* </div> */}
-      {/* <hr /> */}
       <div className="flex gap-x-2">
         <div className="flex-1 flex flex-col gap-y-1">
           <label htmlFor="workExperience">{t("numberOfCardsPerPaginationLabelText")}</label>
@@ -136,6 +135,7 @@ export default function PersonnelFilterDialog({
           className="py-2 px-4 bg-red-500 hover:bg-red-700 text-white rounded cursor-pointer"
           onClick={() => {
             form.resetForm()
+            form.setFieldValue("workplace", "")
             setFilterData(form.values)
             setPage(1)
           }}

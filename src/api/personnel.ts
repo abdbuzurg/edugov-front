@@ -19,5 +19,10 @@ export const personnelApi = {
     })
 
     return response.data
+  },
+  listUniqueOngoingWorkplaces: async (): Promise<string[]> => {
+    const response = await clientAxios.get<string[]>('/employee/personnel/list-workplaces')
+
+    return response.data
   }
 } 

@@ -18,9 +18,7 @@ export type PersonnelFilter = {
   name: string
   surname: string
   middlename: string
-  highestAcademicDegree: string
-  speciality: string
-  workExperience: number
+  workplace: string
   limit: number
   locale: string
 }
