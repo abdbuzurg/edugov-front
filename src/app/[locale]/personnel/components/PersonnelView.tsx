@@ -30,7 +30,7 @@ export default function PersonnelView({ locale }: Props) {
     surname: "",
     middlename: "",
     workplace: "",
-    limit: 15,
+    limit: 50,
     locale: locale as string,
   })
   const [page, setPage] = useState(1)
