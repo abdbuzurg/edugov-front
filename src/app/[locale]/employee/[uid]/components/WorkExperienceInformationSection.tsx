@@ -14,6 +14,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import * as yup from "yup"
+import { workplaceNames } from "./workplaceName";
 
 interface Props {
   workExperience: EmployeeWorkExperience[] | undefined
@@ -365,18 +366,72 @@ function WorkExperienceEdit({ workExperience, employeeID, index, locale, removeN
     disableEditMode()
   }
 
+  const [workplaceList] = useState<string[]>(workplaceNames)
+  const [selectedWorkplace, setSelectedWorkplace] = useState<string>(workExperience.workplace)
+  const [showWorkplaceList, setShowWorkplaceList] = useState(false)
+  const [filteredWorkplaces, setFilteredWorkplaces] = useState<string[]>([])
+
+  const handleWorkplaceSearch = (value: string) => {
+    setSelectedWorkplace(value)
+
+    if (value.trim()) {
+      const filtered = workplaceList
+        .filter(c => c.toLowerCase().includes(value.toLowerCase()))
+        .slice(0, 10);
+      setFilteredWorkplaces(filtered);
+      setShowWorkplaceList(true);
+    } else {
+      setFilteredWorkplaces([]);
+      setShowWorkplaceList(false);
+    }
+  }
+
+  const selectWorkplace = (workplace: string) => {
+    if (workplaceList.includes(workplace)) {
+      setSelectedWorkplace(workplace);
+      form.setFieldValue('workplace', workplace)
+    }
+    setShowWorkplaceList(false);
+  };
+
   return (
     <form onSubmit={form.handleSubmit} className="flex flex-col space-y-2 border-b-1 pb-2">
       <div className="flex flex-col space-y-1">
         <label htmlFor={`${index}_workplace]`} className="font-semibold">{t("workPlaceLabelText")}</label>
-        <input
-          type="text"
-          className="border p-2 rounded-xl border-gray-400 bg-gray-300"
-          id={`${index}_workplace`}
-          name={`workplace`}
-          value={form.values.workplace}
-          onChange={form.handleChange}
-        />
+        <div className="relative w-full">
+          <input
+            type="text"
+            className="border p-2 rounded-xl border-gray-400 bg-gray-300 w-full"
+            id={`${index}_workplace`}
+            name={`workplace`}
+            value={selectedWorkplace}
+            onChange={(e) => handleWorkplaceSearch(e.target.value)}
+            onFocus={() => {
+              if (selectedWorkplace.trim()) {
+                const filtered = workplaceList
+                  .filter(c => c.toLowerCase().includes(selectedWorkplace.toLowerCase()))
+                  .slice(0, 10);
+                setFilteredWorkplaces(filtered);
+                setShowWorkplaceList(true);
+              }
+            }}
+            onBlur={() => setTimeout(() => setShowWorkplaceList(false), 200)}
+          />
+          {showWorkplaceList && filteredWorkplaces.length > 0 && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+              {filteredWorkplaces.map((workplace, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => selectWorkplace(workplace)}
+                  className="w-full px-4 py-3 text-left hover:bg-green-50 transition-colors duration-200 first:rounded-t-xl last:rounded-b-xl"
+                >
+                  {workplace}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       {form.errors.workplace && form.touched.workplace && (
         <div className="text-red-500 font-bold text-sm">{form.errors.workplace}</div>

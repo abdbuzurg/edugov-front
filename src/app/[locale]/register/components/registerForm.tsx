@@ -48,8 +48,6 @@ export default function RegisterForm() {
       const registationInProcessToast = toast.info(t("toastRegistrationInProccess"), {
         delay: 5,
       })
-      toast.info("Идут технические работы", {delay: 10})
-      return
 
       registerMutation.mutate({
         email: values.email,

@@ -33,8 +33,6 @@ export default function LoginForm() {
     }),
     onSubmit: values => {
       const loginInProgressToast = toast.info(t("toastLoginInProgress"))
-      toast.info("Идет техническая работа сервера")
-      return
       loginMutition.mutate(values, {
         onSettled: () => {
           toast.dismiss(loginInProgressToast)
