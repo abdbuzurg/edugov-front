@@ -42,6 +42,17 @@ export default function PersonnelFilterDialog({
     }
   }, [workplacesQuery.data])
 
+  const [allAcademicDegrees, setAllAcademicDegrees] = useState<string[]>([])
+  const academicDegreesQuery = useQuery<string[], Error, string[]>({
+    queryKey: ["personnel-academic-degrees"],
+    queryFn: () => personnelApi.listHighestAcademicDegrees()
+  })
+  useEffect(() => {
+    if (academicDegreesQuery.data && academicDegreesQuery.isSuccess) {
+      setAllAcademicDegrees(academicDegreesQuery.data)
+    }
+  }, [academicDegreesQuery.data])
+
   return (
     <form
       className="flex flex-col gap-y-3"
@@ -108,6 +119,24 @@ export default function PersonnelFilterDialog({
             </option>
           ))}
         </select>
+
+        <label htmlFor="academic_degree" className="font-bold">
+          {t("academicDegreeLabelText")}
+        </label>
+        <select
+          className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
+          name="academic_degree"
+          id="academic_degree"
+          value={(form.values as any).academic_degree ?? ""}
+          onChange={form.handleChange}
+        >
+          <option value=""></option>
+          {allAcademicDegrees.map((degree) => (
+            <option key={degree} value={degree}>
+              {degree}
+            </option>
+          ))}
+        </select>
       </div>
       <hr />
       <div className="flex gap-x-2">
@@ -136,6 +165,7 @@ export default function PersonnelFilterDialog({
           onClick={() => {
             form.resetForm()
             form.setFieldValue("workplace", "")
+            form.setFieldValue("academic_degree", "")
             setFilterData(form.values)
             setPage(1)
           }}

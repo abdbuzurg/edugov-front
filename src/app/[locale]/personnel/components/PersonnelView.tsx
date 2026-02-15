@@ -30,6 +30,7 @@ export default function PersonnelView({ locale }: Props) {
     surname: "",
     middlename: "",
     workplace: "",
+    academic_degree: "",
     limit: 50,
     locale: locale as string,
   })

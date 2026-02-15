@@ -388,6 +388,7 @@
     "nameLabelText":"Имя",
     "surnameLabelText": "Фамилия",
     "middlenameLabelText": "Отчество",
+    "academicDegreeLabelText": "Ученая степень",
     "numberOfCardsPerPaginationLabelText": "Количество профилей за раз",
     "confirmButtonText": "Применить",
     "clearButtonText": "Очистить фильт",
