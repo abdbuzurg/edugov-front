@@ -20,6 +20,7 @@ export type PersonnelFilter = {
   middlename: string
   workplace: string
   academic_degree: string
+  speciality: string
   limit: number
   locale: string
 }

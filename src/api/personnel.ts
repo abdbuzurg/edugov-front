@@ -29,5 +29,10 @@ export const personnelApi = {
     const response = await clientAxios.get<string[]>('/employee/personnel/list-of-highest-academic-degrees')
 
     return response.data
+  },
+  listSpecialities: async (): Promise<string[]> => {
+    const response = await clientAxios.get<string[]>('/employee/personnel/list-specialities')
+
+    return response.data
   }
 } 

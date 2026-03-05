@@ -53,6 +53,17 @@ export default function PersonnelFilterDialog({
     }
   }, [academicDegreesQuery.data])
 
+  const [allSpecialities, setAllSpecialities] = useState<string[]>([])
+  const specialitiesQuery = useQuery<string[], Error, string[]>({
+    queryKey: ["personnel-specialities"],
+    queryFn: () => personnelApi.listSpecialities()
+  })
+  useEffect(() => {
+    if (specialitiesQuery.data && specialitiesQuery.isSuccess) {
+      setAllSpecialities(specialitiesQuery.data)
+    }
+  }, [specialitiesQuery.data])
+
   return (
     <form
       className="flex flex-col gap-y-3"
@@ -137,6 +148,24 @@ export default function PersonnelFilterDialog({
             </option>
           ))}
         </select>
+
+        <label htmlFor="speciality" className="font-bold">
+          {t("scientificSpecialityText")}
+        </label>
+        <select
+          className="col-span-3 border p-2 rounded-xl border-gray-400 bg-gray-100"
+          name="speciality"
+          id="speciality"
+          value={(form.values as any).speciality ?? ""}
+          onChange={form.handleChange}
+        >
+          <option value=""></option>
+          {allSpecialities.map((speciality) => (
+            <option key={speciality} value={speciality}>
+              {speciality}
+            </option>
+          ))}
+        </select>
       </div>
       <hr />
       <div className="flex gap-x-2">
@@ -166,6 +195,7 @@ export default function PersonnelFilterDialog({
             form.resetForm()
             form.setFieldValue("workplace", "")
             form.setFieldValue("academic_degree", "")
+            form.setFieldValue("speciality", "")
             setFilterData(form.values)
             setPage(1)
           }}

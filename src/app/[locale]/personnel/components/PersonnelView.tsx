@@ -33,6 +33,7 @@ export default function PersonnelView({ locale }: Props) {
     academic_degree: "",
     limit: 50,
     locale: locale as string,
+    speciality: ""
   })
   const [page, setPage] = useState(1)
   const [totalData, setTotalData] = useState(0)
@@ -42,20 +43,20 @@ export default function PersonnelView({ locale }: Props) {
     queryFn: () => personnelApi.getPersonnelPaginated(filterData, page)
   })
   useEffect(() => {
-    if (personnelQuery.data && personnelQuery.isSuccess) {
-      setPaginatedData(personnelQuery.data)
+    if (personnelQuery.isSuccess) {
+      setPaginatedData(personnelQuery.data ?? [])
     }
-  }, [personnelQuery.data])
+  }, [personnelQuery.data, personnelQuery.isSuccess])
 
   const personnelCountQuery = useQuery<number, Error, number>({
     queryKey: ["personnel-count", filterData],
     queryFn: () => personnelApi.getPersonnelCountPaginated(filterData)
   })
   useEffect(() => {
-    if (personnelCountQuery.isSuccess && personnelCountQuery.data) {
-      setTotalData(personnelCountQuery.data)
+    if (personnelCountQuery.isSuccess) {
+      setTotalData(personnelCountQuery.data ?? 0)
     }
-  }, [personnelCountQuery.data])
+  }, [personnelCountQuery.data, personnelCountQuery.isSuccess])
 
   return (
     <div className="bg-white w-full">
