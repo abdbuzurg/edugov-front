@@ -17,7 +17,17 @@
   },
   "Landing": {
     "presidentImageAlt": "Image of president",
-    "presidentQuoteText": "I am confident that our scientists, as always, fulfilling their mission before the nation and state with high patriotic devotion, will make a valuable contribution to protecting the achievements of independence, preserving national sacred sites, strengthening the historical and cultural memory of the Tajik nation, and worthily representing our beloved Motherland – Tajikistan."
+    "presidentQuoteText": "I am confident that our scientists, as always, fulfilling their mission before the nation and state with high patriotic devotion, will make a valuable contribution to protecting the achievements of independence, preserving national sacred sites, strengthening the historical and cultural memory of the Tajik nation, and worthily representing our beloved Motherland – Tajikistan.",
+    "conferenceSectionTitle": "Scientific Events Plan for 2026",
+    "conferenceTabText": "Scientific Events",
+    "normativeTabText": "Regulatory Documents",
+    "conferenceShowingLabel": "Showing:",
+    "conferenceOfLabel": "of",
+    "conferencePageLabel": "Page:",
+    "conferencePreviousButtonText": "Previous",
+    "conferenceNextButtonText": "Next",
+    "normativeSectionTitle": "Regulatory and Legal Documents",
+    "normativeDocumentsCountLabel": "Total documents"
   },
   "RegisterPage": {
     "header": "Registration",
