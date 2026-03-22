@@ -47,7 +47,7 @@ export default function NavigationBar({ locale, profileLink }: Props) {
             <Link href={`/${locale}/institutions`} className={`${currentPath.includes('/institutions') ? "bg-[#0b64a8]" : "hover:bg-[#0b64a8]"} text-white font-bold py-3 px-6`}>{t("institutions")}</Link>
             <Link href={`/${locale}/personnel`} className={`${currentPath.includes('/personnel') ? "bg-[#0b64a8]" : "hover:bg-[#0b64a8]"} text-white font-bold py-3 px-6`}>{t("personnel")}</Link>
             <Link href={`/${locale}/library`} className={`${currentPath.includes('/library') ? "bg-[#0b64a8]" : "hover:bg-[#0b64a8]"} text-white font-bold py-3 px-6`}>{t("library")}</Link>
-            <Link href={`/${locale}/scientific_publications`} className={`${currentPath.includes('/scientific_publications') ? "bg-[#0b64a8]" : "hover:bg-[#0b64a8]"} text-white font-bold py-3 px-6`}>{t("scientificPublications")}</Link>
+            <Link href="https://journals.vak.tj/" target="_blank" className={`${currentPath.includes('/scientific_publications') ? "bg-[#0b64a8]" : "hover:bg-[#0b64a8]"} text-white font-bold py-3 px-6`}>{t("scientificPublications")}</Link>
             <Link href={`/${locale}/contacts`} className={`${currentPath.includes('/contacts') ? "bg-[#0b64a8]" : "hover:bg-[#0b64a8]"} text-white font-bold py-3 px-6`}>{t("contacts")}</Link>
           </div>
           <div className="flex">
